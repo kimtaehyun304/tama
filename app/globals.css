@@ -19,3 +19,30 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* react-slick */
+.slick-prev {
+  display: none !important;
+}
+
+.slick-next {
+  display: none !important;
+}
+
+@media (min-width: 1280px) { /* XL 화면 이상 */
+  .slick-prev {
+    display: block !important;
+  }
+  .slick-next {
+    display: block !important;
+  }
+}
+
+.slick-prev:before {
+  color:black !important;
+}
+
+.slick-next:before {
+  color:black !important;
+}
+

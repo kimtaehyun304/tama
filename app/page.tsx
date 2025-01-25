@@ -1,101 +1,367 @@
+"use client";
+
+import { AuthContext } from "@/components/context/AuthContext";
+import LoadingScreen from "@/components/LoadingScreen";
+import BannerSlider from "@/components/slider/BannerSlider";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useRouter } from 'next/navigation'
+import { useState, useEffect, useContext } from "react";
+
+const images: BannerImageType[] = [
+  { src: "/banner1.jpg", alt: "Banner 1" },
+  { src: "/banner2.jpg", alt: "Banner 2" },
+  { src: "/banner3.jpg", alt: "Banner 3" },
+];
+
+const items = [
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: null,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+  {
+    id: 2411929109,
+    src: "/woman-pants.jpg",
+    alt: "woman-pants",
+    name: "여 코듀로이 와이드 팬츠",
+    price: 49900,
+    discountedPrice: 39900,
+    starRatingAvg: 4.9,
+    comments: 19,
+  },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tempToken = searchParams.get("tempToken");
+  const authContext = useContext(AuthContext);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  useEffect(() => {
+    if (tempToken) {
+      router.replace(pathname)
+      async function fetchAccessToken() {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/auth/access-token`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tempToken: tempToken }),
+          }
+        );
+        const data:AccessTokenType = await res.json();
+        if (res.status !== 200) {
+          alert(data.message);
+          return;
+        }
+        localStorage.setItem("tamaAccessToken", data.accessToken);
+        authContext?.setIsLogined(true);
+      }
+      fetchAccessToken();
+    }
+  }, []);
+
+  return (
+    <article className="xl:mx-standard">
+      <BannerSlider images={images} />
+
+      {/* 카테고리 베스트 */}
+      <section className="xl:block my-16">
+        <nav className="flex justify-between items-end border-b pb-6 px-3 xl:px-0 text">
+          <div className="flex justify-start items-end gap-x-4">
+            <span className="font-extrabold text-3xl">카테고리 베스트</span>
+            <span className="hidden xl:inline text-[#999]  text-sm">
+              전일기준의 상품 매출, 판매 수량, 조회 수를 반영하여 선정됩니다.
+            </span>
+          </div>
+          <Link href={"/"} className="text-end text-[#777]">
+            더보기 &#10095;
+          </Link>
+        </nav>
+
+        <nav className="">
+          <div className="flex gap-x-2 text-sm justify-center xl:justify-start py-4">
+            <Link href={"/"} className="">
+              <div className="grid justify-items-center">
+                <Image
+                  src="/icon/icon-hamburger.png"
+                  alt="mypae"
+                  width={60}
+                  height={60}
+                />
+                <div className="">전체</div>
+              </div>
+            </Link>
+
+            <Link href={"/"} className="">
+              <div className="grid justify-items-center">
+                <Image
+                  src="/icon/icon-woman-fashion.jpg"
+                  alt="mypae"
+                  width={60}
+                  height={60}
+                />
+                <div className="">여성패션</div>
+              </div>
+            </Link>
+
+            <Link href={"/"} className="">
+              <div className="grid justify-items-center">
+                <Image
+                  src="/icon/icon-man-fashion.jpg"
+                  alt="mypae"
+                  width={60}
+                  height={60}
+                />
+                <div className="">남성패션</div>
+              </div>
+            </Link>
+
+            <Link href={"/"} className="">
+              <div className="grid justify-items-center">
+                <Image
+                  src="/icon/icon-sleep-wear.jpg"
+                  alt="mypae"
+                  width={60}
+                  height={60}
+                />
+                <div className="">슬립웨어</div>
+              </div>
+            </Link>
+
+            <Link href={"/"} className="">
+              <div className="grid justify-items-center">
+                <Image
+                  src="/icon/icon-under-wear.jpg"
+                  alt="mypae"
+                  width={60}
+                  height={60}
+                />
+                <div className="">언더웨어</div>
+              </div>
+            </Link>
+
+            <Link href={"/"} className="">
+              <div className="grid justify-items-center">
+                <Image
+                  src="/icon/icon-fashion-haberdashery.jpg"
+                  alt="mypae"
+                  width={60}
+                  height={60}
+                />
+                <div className="">패션잡화</div>
+              </div>
+            </Link>
+          </div>
+          <div className="grid px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6 justify-items-center xl:justify-items-start">
+            {items.map((item, index) => (
+              <Link
+                href={`/color-items/${item.id}`}
+                key={`categoryBestimages-${index}`}
+              >
+                <div className="relative max-w-[232px]">
+                  <Image
+                    src={item.src}
+                    alt={item.alt}
+                    width={232}
+                    height={232}
+                  />
+                  <div className="absolute top-2 left-2 bg-[#ffffff] p-1">
+                    {index + 1}위
+                  </div>
+                  <div className="">
+                    <div className="py-1">{item.name}</div>
+                    <div className="flex items-center gap-x-2 py-1">
+                      <span>
+                        <span className="font-semibold">
+                          {item.discountedPrice
+                            ? item.discountedPrice.toLocaleString("ko-KR")
+                            : item.price.toLocaleString("ko-KR")}
+                        </span>
+                        원
+                      </span>
+                      <span className="text-sm text-[#aaa]">
+                        {item.discountedPrice &&
+                          `${item.price.toLocaleString("ko-KR")}원`}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-x-1 text-sm text-[#aaa]">
+                      <Image
+                        src="/icon/icon-star.png"
+                        alt={item.alt}
+                        width={16}
+                        height={16}
+                      />
+                      {item.starRatingAvg}
+                      <span>({item.comments})</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </section>
+
+      {/* 리뷰가 좋은 인기상품 */}
+      {/*
+      <section className="xl:block my-16">
+        <nav className="flex justify-between items-end border-b pb-6 px-3 xl:px-0 text">
+          <div className="flex justify-start items-end gap-x-4">
+            <span className="font-extrabold text-3xl">
+              {" "}
+              리뷰가 좋은 인기상품
+            </span>
+            <span className="hidden xl:inline text-[#999]  text-sm">
+              최근 30일간 별점과 리뷰수를 반영하여 선정된 제품입니다.
+            </span>
+          </div>
+          <Link href={"/"} className="text-end text-[#777]">
+            더보기 &#10095;
+          </Link>
+        </nav>
+
+        <nav className="">
+          <div className="grid px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6 justify-items-center xl:justify-items-start">
+            {items.map((item, index) => (
+              <Link
+                href={`/items/${item.id}`}
+                key={`categoryBestimages-${index}`}
+              >
+                <div className="relative max-w-[232px]">
+                  <Image
+                    src={item.src}
+                    alt={item.alt}
+                    width={232}
+                    height={232}
+                  />
+                  <div className="absolute top-2 left-2 bg-[#ffffff] p-1">
+                    {index + 1}위
+                  </div>
+                  <div className="">
+                    <div className="py-1">{item.name}</div>
+                    <div className="flex items-center gap-x-2 py-1">
+                      <span>
+                        <span className="font-semibold">
+                          {item.discountedPrice
+                            ? item.discountedPrice.toLocaleString("ko-KR")
+                            : item.price.toLocaleString("ko-KR")}
+                        </span>
+                        원
+                      </span>
+                      <span className="text-sm text-[#aaa]">
+                        {item.discountedPrice &&
+                          `${item.price.toLocaleString("ko-KR")}원`}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-x-1 text-sm text-[#aaa]">
+                      <Image
+                        src="/icon/icon-star.png"
+                        alt={item.alt}
+                        width={16}
+                        height={16}
+                      />
+                      {item.starRatingAvg}
+                      <span>({item.comments})</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </section>
+      */}
+    </article>
   );
 }

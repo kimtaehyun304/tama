@@ -1,0 +1,3 @@
+type SimpleResponseType = {
+  message: string;
+};
