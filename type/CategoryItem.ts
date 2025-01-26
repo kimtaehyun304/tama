@@ -1,5 +1,6 @@
 type CategoryItemType = {
   content: CategoryItemContentType[];
+  page: PageType;
 };
 
 type CategoryItemContentType = {
@@ -15,6 +16,13 @@ type RlatedColorItemType = {
   hexCode: string;
   imageSrc: string;
   totalStock: number;
+};
+
+type PageType = {
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
 };
 
 type ColorType = {

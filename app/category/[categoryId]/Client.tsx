@@ -5,6 +5,8 @@ import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
 import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
+import MyPagination from "@/components/MyPagination";
+import PaginatedItems from "@/components/PaginatedItems";
 import Review from "@/components/Review";
 import ItemSlider from "@/components/slider/ItemSlider";
 import StarRating from "@/components/StarRating";
@@ -13,16 +15,41 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect, useRef, useContext } from "react";
+import ReactPaginate from "react-paginate";
 
 type Props = {
   categories: CateogoryType[];
-  categoryItems: CategoryItemType;
   colors: ColorType[];
 };
 
-export default function Client({ categories, categoryItems, colors }: Props) {
+export default function Client({ categories, colors }: Props) {
   const params = useParams<{ categoryId: string }>();
   const categoryId = parseInt(params.categoryId);
+  const [categoryItems, setCategoryItems] = useState<CategoryItemType>();
+  const [page, setPage] = useState<number>(0);
+
+  useEffect(() => {
+    async function fetchCategoryItems() {
+      const categoryItemRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${page}&size=1`,
+        {
+          cache: "no-store",
+        }
+      );
+      if(!categoryItemRes.ok){
+        alert("에러")
+        return
+      }
+        
+      setCategoryItems(await categoryItemRes.json());
+    }
+    fetchCategoryItems()
+  }, [page]);
+
+  if(!categoryItems){
+    return "에러"
+  }
+
   return (
     <article className="xl:mx-32 xl:my-[2%] flex gap-x-16">
       {/*검색 필터*/}
@@ -141,7 +168,11 @@ export default function Client({ categories, categoryItems, colors }: Props) {
             </div>
           </div>
         ))}
-        
+
+        <MyPagination
+          pageCount={categoryItems.page.totalPages}
+          pageRangeDisplayed={5}
+        />
       </section>
     </article>
   );
