@@ -115,7 +115,7 @@ export default function Client({ colorItem }: Props) {
   //옷 사이즈 바꿀때 사용
   const [stock, setStock] = useState(colorItem.stocks[0].stock);
   const [sizeIndex, setSizeIndex] = useState(0);
- 
+
   const simpleModalContext = useContext(SimpleModalContext); // 모달 상태 관리
 
   function changeItem(index: number) {
@@ -174,9 +174,8 @@ export default function Client({ colorItem }: Props) {
       localStorage.setItem("tamaCart", JSON.stringify(jsons));
     } else localStorage.setItem("tamaCart", JSON.stringify(Array(itemToPut)));
 
-    simpleModalContext?.setMessage("쇼핑백에 상품을 담았습니다.")
+    simpleModalContext?.setMessage("쇼핑백에 상품을 담았습니다.");
     simpleModalContext?.setIsOpenSimpleModal(true);
-
   }
 
   return (
@@ -238,13 +237,11 @@ export default function Client({ colorItem }: Props) {
             </div>
             <div className="py-2 text-xl">{colorItem.common.name}</div>
             <div className="py-2 flex items-end gap-x-4">
-              {colorItem.stocks[0].discountedPrice && (
+              {colorItem.discountedPrice && (
                 <span className="font-semibold text-3xl text-[#d99c63]">
                   {100 -
                     Math.round(
-                      (colorItem.stocks[0].discountedPrice /
-                        colorItem.stocks[0].price) *
-                        100
+                      (colorItem.discountedPrice / colorItem.price) * 100
                     )}
                   %
                 </span>
@@ -252,19 +249,17 @@ export default function Client({ colorItem }: Props) {
 
               <span className="text-3xl">
                 <span className="font-semibold">
-                  {colorItem.stocks[0].discountedPrice
-                    ? colorItem.stocks[0].discountedPrice.toLocaleString(
-                        "ko-KR"
-                      )
-                    : colorItem.stocks[0].price.toLocaleString("ko-KR")}
+                  {colorItem.discountedPrice
+                    ? colorItem.discountedPrice.toLocaleString("ko-KR")
+                    : colorItem.price.toLocaleString("ko-KR")}
                 </span>
                 원
               </span>
 
-              {colorItem.stocks[0].discountedPrice && (
+              {colorItem.discountedPrice && (
                 <span className="text-lg text-[#a0a0a0]">
                   <span className="">
-                    {colorItem.stocks[0].price.toLocaleString("ko-KR")}
+                    {colorItem.price.toLocaleString("ko-KR")}
                   </span>
                   원
                 </span>
@@ -293,14 +288,14 @@ export default function Client({ colorItem }: Props) {
                 <div className="font-semibold">적립예정포인트</div>
                 <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
                   <span className="underline cursor-pointer">
-                    0.5%({Math.round(colorItem.stocks[0].price / 200)}P)
+                    0.5%({Math.round(colorItem.price / 200)}P)
                   </span>
                 </div>
               </div>
               <div className="flex justify-between">
                 <div className="font-semibold">배송비</div>
                 <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
-                  {colorItem.stocks[0].discountedPrice >= 40000
+                  {colorItem.discountedPrice >= 40000
                     ? "무료"
                     : "3,000원 (40,000원 이상 결제 시 무료)"}
                 </div>
@@ -413,13 +408,11 @@ export default function Client({ colorItem }: Props) {
                 <div className="text-xl font-bold py-3">판매가</div>
                 <div>
                   <span className="text-4xl font-bold">
-                    {colorItem.stocks[0].discountedPrice
-                      ? (
-                          colorItem.stocks[0].discountedPrice * orderCount
-                        ).toLocaleString("ko-KR")
-                      : (colorItem.stocks[0].price * orderCount).toLocaleString(
+                    {colorItem.discountedPrice
+                      ? (colorItem.discountedPrice * orderCount).toLocaleString(
                           "ko-KR"
-                        )}
+                        )
+                      : (colorItem.price * orderCount).toLocaleString("ko-KR")}
                   </span>
                   원
                 </div>

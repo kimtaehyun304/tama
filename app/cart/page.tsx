@@ -43,14 +43,6 @@ export default function Cart() {
           itemStocks.push(json.itemStockId);
         });
 
-        /*
-        const newCartMap = new Map(cartMap);
-        jsonCart.forEach((json) => {
-          newCartMap?.set(json.itemStockId, json.orderCount);
-          itemStocks.push(json.itemStockId);
-        });
-        setCartMap(newCartMap);
-*/
         if (itemStocks.length > 0) {
           const res = await fetch(
             `${
@@ -61,7 +53,9 @@ export default function Cart() {
             }
           );
 
-          setCartItems(await res.json());
+          const cartItemsJson = await res.json();
+          if (!res.ok) return cartItemsJson;
+          setCartItems(cartItemsJson);
         }
       }
     }
@@ -156,6 +150,7 @@ export default function Cart() {
     }
   }
 
+  //cartItems 빈 배열로 초기화 해놔서 검사 안필요
   //if (!cartItems) return <LoadingScreen />;
 
   return (

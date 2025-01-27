@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+// 클라이언트 컴포넌트에서 try-catch 대신에 쓸 수 있음
 export default function Error({
   error,
   reset,

@@ -28,20 +28,8 @@ export default function Client({ categories, colors }: Props) {
   const [categoryItems, setCategoryItems] = useState<CategoryItemType>();
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
-  const [page, setPage] = useState<number>(1);
 
-  const router = useRouter();
-  /*
   useEffect(() => {
-    console.log("pagePrams = "+pagePrams)
-    if (pagePrams) {
-      setPage(parseInt(pagePrams));
-    }
-  }, []);
-  */
-  useEffect(() => {
-    console.log("pageState = " + page);
-    //router.push(`?page=${page}`);
     async function fetchCategoryItems() {
       const categoryItemRes = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${pagePrams}&size=1`,
@@ -51,8 +39,7 @@ export default function Client({ categories, colors }: Props) {
       );
 
       if (!categoryItemRes.ok) {
-        alert(categoryItems?.message);
-        return;
+        return categoryItemRes;
       }
 
       setCategoryItems(await categoryItemRes.json());
@@ -187,7 +174,6 @@ export default function Client({ categories, colors }: Props) {
         <MyPagination
           pageCount={categoryItems.page.pageCount}
           pageRangeDisplayed={5}
-          setPage={setPage}
         />
       </section>
     </article>

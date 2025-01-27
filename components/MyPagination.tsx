@@ -45,17 +45,14 @@ const StyledReactPaginate = styled(ReactPaginate).attrs({
 type PaginationProps = {
   pageCount: number;
   pageRangeDisplayed: number;
-  setPage: Dispatch<SetStateAction<number>>;
 };
 
-export default ({
-  pageCount,
-  pageRangeDisplayed,
-  setPage,
-}: PaginationProps) => {
+export default ({ pageCount, pageRangeDisplayed }: PaginationProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
+
+  //initalPage는 페이지 바뀌면서 초기화하는거라 onPageChange 작동해서 어려움
   return (
     <StyledReactPaginate
       pageCount={pageCount}
@@ -64,10 +61,9 @@ export default ({
       previousLabel="<"
       nextLabel=">"
       onPageChange={(selectedItem) => {
-        //setPage(selectedItem.selected + 1);
         router.push(`?page=${selectedItem.selected + 1}`);
       }}
-      forcePage={pagePrams-1}
+      forcePage={pagePrams - 1}
     />
   );
 };

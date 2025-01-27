@@ -48,6 +48,8 @@ type ColorItemType = {
   images: string[];
   id: number;
   color: string;
+  price: number;
+  discountedPrice: number;
   common: CommonInfoType;
   stocks: ItemStockType[];
   relatedColorItems: RelatedColorItemType[];
