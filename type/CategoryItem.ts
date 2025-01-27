@@ -1,6 +1,7 @@
 type CategoryItemType = {
   content: CategoryItemContentType[];
   page: PageType;
+  message:string;
 };
 
 type CategoryItemContentType = {
@@ -19,10 +20,10 @@ type RlatedColorItemType = {
 };
 
 type PageType = {
+  page: number;
   size: number;
-  number: number;
-  totalElements: number;
-  totalPages: number;
+  //totalElements: number;
+  pageCount: number;
 };
 
 type ColorType = {

@@ -13,7 +13,7 @@ import StarRating from "@/components/StarRating";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef, useContext } from "react";
 import ReactPaginate from "react-paginate";
 
@@ -26,28 +26,43 @@ export default function Client({ categories, colors }: Props) {
   const params = useParams<{ categoryId: string }>();
   const categoryId = parseInt(params.categoryId);
   const [categoryItems, setCategoryItems] = useState<CategoryItemType>();
-  const [page, setPage] = useState<number>(0);
+  const searchParams = useSearchParams();
+  const pagePrams = Number(searchParams.get("page")) || 1;
+  const [page, setPage] = useState<number>(1);
 
+  const router = useRouter();
+  /*
   useEffect(() => {
+    console.log("pagePrams = "+pagePrams)
+    if (pagePrams) {
+      setPage(parseInt(pagePrams));
+    }
+  }, []);
+  */
+  useEffect(() => {
+    console.log("pageState = " + page);
+    //router.push(`?page=${page}`);
     async function fetchCategoryItems() {
       const categoryItemRes = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${page}&size=1`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${pagePrams}&size=1`,
         {
           cache: "no-store",
         }
       );
-      if(!categoryItemRes.ok){
-        alert("에러")
-        return
+
+      if (!categoryItemRes.ok) {
+        alert(categoryItems?.message);
+        return;
       }
-        
+
       setCategoryItems(await categoryItemRes.json());
     }
-    fetchCategoryItems()
-  }, [page]);
+    fetchCategoryItems();
+  }, [pagePrams]);
 
-  if(!categoryItems){
-    return "에러"
+  //loading.tsx때문에 자동으로 뜨지만, 생략하면 categoryItems' is possibly 'undefined'.ts(18048) 에러 생김
+  if (!categoryItems) {
+    return <LoadingScreen />;
   }
 
   return (
@@ -170,8 +185,9 @@ export default function Client({ categories, colors }: Props) {
         ))}
 
         <MyPagination
-          pageCount={categoryItems.page.totalPages}
+          pageCount={categoryItems.page.pageCount}
           pageRangeDisplayed={5}
+          setPage={setPage}
         />
       </section>
     </article>

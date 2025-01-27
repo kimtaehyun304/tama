@@ -61,7 +61,6 @@ export default function Cart() {
             }
           );
 
-
           setCartItems(await res.json());
         }
       }

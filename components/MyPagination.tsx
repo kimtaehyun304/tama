@@ -1,3 +1,5 @@
+import { useRouter, useSearchParams } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
 import ReactPaginate from "react-paginate";
 import { styled } from "styled-components";
 
@@ -43,15 +45,29 @@ const StyledReactPaginate = styled(ReactPaginate).attrs({
 type PaginationProps = {
   pageCount: number;
   pageRangeDisplayed: number;
+  setPage: Dispatch<SetStateAction<number>>;
 };
 
-export default ({ pageCount, pageRangeDisplayed }: PaginationProps) => (
-  <StyledReactPaginate
-    pageCount={pageCount}
-    pageRangeDisplayed={pageRangeDisplayed}
-    marginPagesDisplayed={0}
-    previousLabel="<"
-    nextLabel=">"
-    onPageChange={}
-  />
-);
+export default ({
+  pageCount,
+  pageRangeDisplayed,
+  setPage,
+}: PaginationProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pagePrams = Number(searchParams.get("page")) || 1;
+  return (
+    <StyledReactPaginate
+      pageCount={pageCount}
+      pageRangeDisplayed={pageRangeDisplayed}
+      marginPagesDisplayed={0}
+      previousLabel="<"
+      nextLabel=">"
+      onPageChange={(selectedItem) => {
+        //setPage(selectedItem.selected + 1);
+        router.push(`?page=${selectedItem.selected + 1}`);
+      }}
+      forcePage={pagePrams-1}
+    />
+  );
+};
