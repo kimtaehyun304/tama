@@ -6,12 +6,13 @@ import LoadingScreen from "@/components/LoadingScreen";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
 import BannerSlider from "@/components/slider/BannerSlider";
 import { error } from "console";
+import { Metadata } from "next";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useContext, SetStateAction } from "react";
 
 // 사이즈 삭제 됐을때 예외처리 필요
-
 export default function Cart() {
   const [isLoading, setIsLoading] = useState(true);
   // 로컬스트리지에서 가져옴
@@ -155,125 +156,130 @@ export default function Cart() {
 
   return (
     <>
-      <OutOfStockModal
-        stock={stock}
-        isOpenOutOfStockModal={isOpenOutOfStockModal}
-        setIsOpenOutOfStockModal={setIsOpenOutOfStockModal}
-      />
-      <article className="mx-[5%] xl:mx-[20%]">
-        <section className="text-2xl font-bold text-center border-b-2 border-black py-5">
-          쇼핑백
-        </section>
-        <section className="grid gap-y-4 gap-x-4 lg:grid-cols-2">
-          {cartItems.map((item, index) => (
-            <div className="border flex gap-x-6" key={`item-${index}`}>
-              <Image
-                src={item.image}
-                alt={item.name}
-                width={100}
-                height={100}
-              />
+      <Head>
+        <title>쇼핑백</title>
+      </Head>
+      <article>
+        <OutOfStockModal
+          stock={stock}
+          isOpenOutOfStockModal={isOpenOutOfStockModal}
+          setIsOpenOutOfStockModal={setIsOpenOutOfStockModal}
+        />
+        <article className="mx-[5%] xl:mx-[20%]">
+          <section className="text-2xl font-bold text-center border-b-2 border-black py-5">
+            쇼핑백
+          </section>
+          <section className="grid gap-y-4 gap-x-4 lg:grid-cols-2">
+            {cartItems.map((item, index) => (
+              <div className="border flex gap-x-6" key={`item-${index}`}>
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  width={100}
+                  height={100}
+                />
 
-              {/* 상품정보 */}
-              <div className="space-y-1 flex-1">
-                <div className="text-red-500">
-                  {item.stock.stock === 0 && "품절"}
-                </div>
-                <div>{item.name}</div>
-                <div>
-                  {item.color}/{item.stock.size}
+                {/* 상품정보 */}
+                <div className="space-y-1 flex-1">
+                  <div className="text-red-500">
+                    {item.stock.stock === 0 && "품절"}
+                  </div>
+                  <div>{item.name}</div>
+                  <div>
+                    {item.color}/{item.stock.size}
+                  </div>
+
+                  {/* 가격 및 주문수량 */}
+                  <div className="text-sm text-[#aaa]">
+                    {item.discountedPrice &&
+                      `${item.price.toLocaleString("ko-KR")}원`}
+                  </div>
+
+                  <div className="text-2xl font-semibold">
+                    {item.discountedPrice
+                      ? item.discountedPrice.toLocaleString("ko-KR")
+                      : item.price.toLocaleString("ko-KR")}
+                    원
+                  </div>
+
+                  <div className="flex">
+                    <button
+                      className="border p-2 flex-1"
+                      onClick={() => {
+                        minusOurderCount(item.stock);
+                      }}
+                    >
+                      -
+                    </button>
+                    <button className="border p-2 flex-1">
+                      {cartMap.get(item.stock.id)}
+                    </button>
+                    <button
+                      className="border p-2 flex-1"
+                      onClick={() => {
+                        plusOurderCount(item.stock);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
-                {/* 가격 및 주문수량 */}
-                <div className="text-sm text-[#aaa]">
-                  {item.discountedPrice &&
-                    `${item.price.toLocaleString("ko-KR")}원`}
-                </div>
-
-                <div className="text-2xl font-semibold">
-                  {item.discountedPrice
-                    ? item.discountedPrice.toLocaleString("ko-KR")
-                    : item.price.toLocaleString("ko-KR")}
-                  원
-                </div>
-
-                <div className="flex">
+                <div className="flex flex-col ">
                   <button
-                    className="border p-2 flex-1"
                     onClick={() => {
-                      minusOurderCount(item.stock);
+                      deleteCartItem(item.stock);
                     }}
                   >
-                    -
-                  </button>
-                  <button className="border p-2 flex-1">
-                    {cartMap.get(item.stock.id)}
-                  </button>
-                  <button
-                    className="border p-2 flex-1"
-                    onClick={() => {
-                      plusOurderCount(item.stock);
-                    }}
-                  >
-                    +
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="black"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                      <line x1="6" y1="18" x2="18" y2="6" />
+                    </svg>
                   </button>
                 </div>
               </div>
-
-              <div className="flex flex-col ">
-                <button
-                  onClick={() => {
-                    deleteCartItem(item.stock);
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="black"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                    <line x1="6" y1="18" x2="18" y2="6" />
-                  </svg>
+            ))}
+          </section>
+          <section className="text-center m-4">
+            <div className="bg-[#f5f5f5] inline-block p-4 space-y-3">
+              <div className="flex justify-center gap-x-20">
+                <span className="grow">상품금액</span>
+                <span className="grow">
+                  {itemTotalPrice.toLocaleString("ko-KR")}원
+                </span>
+              </div>
+              <div className="flex justify-center">
+                <span className="">배송비</span>
+                <span className="grow text-right">
+                  {shippingFee.toLocaleString("ko-KR")}원
+                </span>
+              </div>
+              <hr />
+              <div className="flex font-semibold  text-xl">
+                <span>총</span>
+                <span className="grow text-right ">
+                  {(itemTotalPrice + shippingFee).toLocaleString("ko-KR")}
+                </span>
+                원
+              </div>
+              <div>
+                <button className="bg-[#131922] text-[#fff] border p-4 w-full">
+                  주문하기
                 </button>
               </div>
             </div>
-          ))}
-        </section>
-        <section className="text-center m-4">
-          <div className="bg-[#f5f5f5] inline-block p-4 space-y-3">
-            <div className="flex justify-center gap-x-20">
-              <span className="grow">상품금액</span>
-              <span className="grow">
-                {itemTotalPrice.toLocaleString("ko-KR")}원
-              </span>
-            </div>
-            <div className="flex justify-center">
-              <span className="">배송비</span>
-              <span className="grow text-right">
-                {shippingFee.toLocaleString("ko-KR")}원
-              </span>
-            </div>
-            <hr />
-            <div className="flex font-semibold  text-xl">
-              <span>총</span>
-              <span className="grow text-right ">
-                {(itemTotalPrice + shippingFee).toLocaleString("ko-KR")}
-              </span>
-              원
-            </div>
-            <div>
-              <button className="bg-[#131922] text-[#fff] border p-4 w-full">
-                주문하기
-              </button>
-            </div>
-          </div>
-        </section>
+          </section>
+        </article>
       </article>
     </>
   );
