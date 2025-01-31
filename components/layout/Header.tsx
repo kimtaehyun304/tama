@@ -24,7 +24,7 @@ export default async function Header() {
           <div className="flex justify-between items-center text-sm pb-4">
             <div className="flex justify-center gap-x-10">
               <Link href={"/"} className="">
-                <div className="font-extrabold text-4xl">TAMA</div>
+                <div className="font-nanumGothicBold text-4xl">TAMA</div>
               </Link>
 
               <div className="flex border rounded-full bg-[#F9F9F9] px-4 py-1">

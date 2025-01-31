@@ -28,11 +28,17 @@ export default function Client({ categories, colors }: Props) {
   const [categoryItems, setCategoryItems] = useState<CategoryItemType>();
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
+  const pageSize = 1;
+  const [selectedIndex, setSelectedIndex] = useState<number[]>(
+    Array(pageSize).fill(0)
+  );
+  const [minPrice, setMinPrice] = useState<number>();
+  const [maxPrice, setMaxPrice] = useState<number>();
 
   useEffect(() => {
     async function fetchCategoryItems() {
       const categoryItemRes = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${pagePrams}&size=1`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${pagePrams}&size=${pageSize}`,
         {
           cache: "no-store",
         }
@@ -47,6 +53,26 @@ export default function Client({ categories, colors }: Props) {
     fetchCategoryItems();
   }, [pagePrams]);
 
+  useEffect(() => {
+    async function fetchMinMaxPrice() {
+      const priceRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/min-max-price?categoryId=${categoryId}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!priceRes.ok) {
+        return priceRes;
+      }
+
+      const prices: MinMaxPrice = await priceRes.json();
+      setMinPrice(prices.minPrice);
+      setMaxPrice(prices.maxPrice);
+    }
+    fetchMinMaxPrice();
+  }, []);
+
   //loading.tsx때문에 자동으로 뜨지만, 생략하면 categoryItems' is possibly 'undefined'.ts(18048) 에러 생김
   if (!categoryItems) {
     return <LoadingScreen />;
@@ -54,21 +80,25 @@ export default function Client({ categories, colors }: Props) {
 
   return (
     <article className="xl:mx-32 xl:my-[2%] flex gap-x-16">
-      {/*검색 필터*/}
+      {/* 카테고리, 검색 필터*/}
       <aside>
         <section>
           {categories.map((category, index) => (
             <ul className="py-1" key={`category${index}`}>
-              <li className={category.id === categoryId ? "font-bold" : ""}>
+              <li
+                className={
+                  category.id === categoryId ? "font-nanumGothicBold " : ""
+                }
+              >
                 <Link href={`/category/${category.id}`}>{category.name}</Link>
               </li>
-              <ul className="bg-[#f8f8f8]">
-                {category.children.map((child, index) => (
+              <ul className="bg-[#f8f8f8] py-2">
+                {category.children.map((child, categoryChildindex) => (
                   <li
-                    className={`indent-4 py-1 text-sm ${
+                    className={`indent-4 py-2 text-sm ${
                       child.id === categoryId ? "font-bold" : ""
                     }`}
-                    key={`child${index}`}
+                    key={`categorychild${categoryChildindex}`}
                   >
                     <Link href={`/category/${child.id}`}>{child.name}</Link>
                   </li>
@@ -86,8 +116,10 @@ export default function Client({ categories, colors }: Props) {
               <input
                 type="text"
                 id="priceMin"
-                className="ml-2 border focus:outline-none"
-                placeholder="10000"
+                className="ml-2 border focus:outline-none text-right p-1"
+                placeholder={`${minPrice} 이상`}
+                value={minPrice}
+                onChange={() => {}}
               />
             </div>
             <div>
@@ -95,8 +127,10 @@ export default function Client({ categories, colors }: Props) {
               <input
                 type="text"
                 id="priceMax"
-                className="ml-2 border focus:outline-none"
-                placeholder="100000"
+                className="ml-2 border focus:outline-none text-right p-1"
+                placeholder={`${maxPrice} 이하`}
+                value={maxPrice}
+                onChange={() => {}}
               />
             </div>
           </section>
@@ -141,43 +175,60 @@ export default function Client({ categories, colors }: Props) {
         <button className="border p-3 w-full">적용</button>
       </aside>
       <section className="grow space-x-5">
-        {categoryItems.content.map((item, index) => (
-          <Link
-            href={`/color-items/${item.relatedColorItems[0].colorItemId}`}
-            key={`color-items${index}`}
-          >
-            <div className="inline-block">
-              <Image
-                src={item.relatedColorItems[0].imageSrc}
-                width={250}
-                height={250}
-                alt={item.name}
-              />
-              <div>{item.name}</div>
-              <div className="flex gap-x-1">
-                {item.discountedPrice && (
-                  <span className="font-semibold  text-[#d99c63]">
-                    {100 -
-                      Math.round((item.discountedPrice / item.price) * 100)}
-                    %
-                  </span>
-                )}
-                {item.discountedPrice || item.price}
+        <ul>
+          {categoryItems.content.map((item, categoryItemindex) => (
+            <li key={`color-items${categoryItemindex}`}>
+              <div className="inline-block">
+                <Link
+                  href={`/color-items/${
+                    item.relatedColorItems[selectedIndex[categoryItemindex]]
+                      .colorItemId
+                  }`}
+                >
+                  <Image
+                    src={
+                      item.relatedColorItems[selectedIndex[categoryItemindex]]
+                        .imageSrc
+                    }
+                    width={250}
+                    height={250}
+                    alt={item.name}
+                  />
+                  <div>{item.name}</div>
+                  <div className="flex gap-x-1">
+                    {item.discountedPrice && (
+                      <span className="font-semibold text-[#d99c63]">
+                        {100 -
+                          Math.round((item.discountedPrice / item.price) * 100)}
+                        %
+                      </span>
+                    )}
+                    {item.discountedPrice || item.price}
+                  </div>
+                </Link>
+                <div className="flex gap-x-1">
+                  {item.relatedColorItems.map((related, relatdIndex) => (
+                    <div
+                      style={{ backgroundColor: related.hexCode }}
+                      className={`w-[20px] h-[20px] inline-block border cursor-pointer ${
+                        relatdIndex === selectedIndex[categoryItemindex]
+                          ? "border-black"
+                          : "border-gray-300"
+                      }`}
+                      data-tooltip={related.color}
+                      key={`relatdColrItem${relatdIndex}`}
+                      onClick={() => {
+                        let newArr = [...selectedIndex];
+                        newArr[categoryItemindex] = relatdIndex;
+                        setSelectedIndex(newArr);
+                      }}
+                    ></div>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-x-1">
-                {item.relatedColorItems.map((child, index) => (
-                  <div
-                    style={{ backgroundColor: child.hexCode }}
-                    className="w-[20px] h-[20px] inline-block border"
-                    data-tooltip={child.color}
-                    key={`child${index}`}
-                  ></div>
-                ))}
-              </div>
-            </div>
-          </Link>
-        ))}
-
+            </li>
+          ))}
+        </ul>
         <MyPagination
           pageCount={categoryItems.page.pageCount}
           pageRangeDisplayed={5}

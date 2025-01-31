@@ -70,3 +70,8 @@ type Data = {
   item: string;
   content: string;
 };
+
+type MinMaxPrice = {
+  minPrice: number;
+  maxPrice: number;
+};

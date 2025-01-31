@@ -125,6 +125,7 @@ export default function Home() {
   const tempToken = searchParams.get("tempToken");
   const authContext = useContext(AuthContext);
 
+  //tempToken파라미터가 사라지기전에 새로고침하면 alert 발생 
   useEffect(() => {
     if (tempToken) {
       router.replace(pathname)

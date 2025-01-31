@@ -15,10 +15,16 @@ const geistSans = localFont({
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const nanumGothic = localFont({
+  src: "./fonts/NanumGothic.woff2",
+  variable: "--font-nanum-gothic",
+});
+
+const nanumGothicBold = localFont({
+  src: "./fonts/NanumGothicBold.woff2",
+  style: "bold",
+  variable: "--font-nanum-gothic-bold",
 });
 
 export const metadata: Metadata = {
@@ -36,7 +42,7 @@ export default function RootLayout({
   return (
     <html>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex flex-col h-[100vh]`}
+        className={`${nanumGothic.className} ${nanumGothicBold.variable} flex flex-col h-[100vh]`}
       >
         <AuthProvider>
           <LoginModalProvider>

@@ -7,8 +7,12 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+
+  //const categoryId = await params.categoryId; 경고 뜸
+  const {categoryId} = await params;
+
   const categoryRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category/${params.categoryId}`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category/${categoryId}`
   );
   const category: CateogoryType = await categoryRes.json();
 

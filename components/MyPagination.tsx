@@ -53,17 +53,19 @@ export default ({ pageCount, pageRangeDisplayed }: PaginationProps) => {
   const pagePrams = Number(searchParams.get("page")) || 1;
 
   //initalPage는 페이지 바뀌면서 초기화하는거라 onPageChange 작동해서 어려움
-  return (
-    <StyledReactPaginate
-      pageCount={pageCount}
-      pageRangeDisplayed={pageRangeDisplayed}
-      marginPagesDisplayed={0}
-      previousLabel="<"
-      nextLabel=">"
-      onPageChange={(selectedItem) => {
-        router.push(`?page=${selectedItem.selected + 1}`);
-      }}
-      forcePage={pagePrams - 1}
-    />
-  );
+  if (pageCount > 0) {
+    return (
+      <StyledReactPaginate
+        pageCount={pageCount}
+        pageRangeDisplayed={pageRangeDisplayed}
+        marginPagesDisplayed={0}
+        previousLabel="<"
+        nextLabel=">"
+        onPageChange={(selectedItem) => {
+          router.push(`?page=${selectedItem.selected + 1}`);
+        }}
+        forcePage={pagePrams - 1}
+      />
+    );
+  }
 };

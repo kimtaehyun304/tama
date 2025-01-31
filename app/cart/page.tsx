@@ -48,7 +48,7 @@ export default function Cart() {
           const res = await fetch(
             `${
               process.env.NEXT_PUBLIC_SERVER_URL
-            }/api/itemStocks?id=${itemStocks.join()}`,
+            }/api/item-stocks?id=${itemStocks.join()}`,
             {
               cache: "no-store",
             }
