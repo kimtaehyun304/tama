@@ -7,21 +7,18 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-
   //const categoryId = await params.categoryId; 경고 뜸
-  const {categoryId} = await params;
+  const { categoryId } = await params;
 
-  const categoryRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category/${categoryId}`
+  const categoriesRes = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
   );
-  const category: CateogoryType = await categoryRes.json();
+  const categories: CateogoryType[] = await categoriesRes.json();
 
-  if (!categoryRes.ok) {
-    return { title: "카테고리" };
-  }
+  if (!categoriesRes.ok) return { title: "카테고리" };
 
   return {
-    title: category.name,
+    title: categories.find((category) => category.id == categoryId)?.name,
   };
 }
 
@@ -31,23 +28,24 @@ export default async ({
   params: Promise<{ categoryId: number }>;
 }) => {
   const categoriesRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
+    {
+      cache: "no-store",
+    }
   );
   const categories: CateogoryType[] = await categoriesRes.json();
 
-  if (!categoriesRes.ok) {
-    return categories;
-  }
-
-  //const categoryId = (await params).categoryId;
+  if (!categoriesRes.ok) return categories;
 
   const colorsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/colors`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/colors`,
+    {
+      cache: "no-store",
+    }
   );
   const colors: ColorType[] = await colorsRes.json();
 
-  if (!colorsRes.ok) {
-    return colors;
-  }
-  return <Client categories={categories} colors={colors} />;
+  if (!colorsRes.ok) return colors;
+
+  return <Client categories={categories} colors={colors}/>;
 };

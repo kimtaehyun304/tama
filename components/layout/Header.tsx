@@ -7,7 +7,12 @@ import MyError from "../MyError";
 export default async function Header() {
   let categories: CateogoryType[] = [];
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
+    {
+      cache: "no-store",
+    }
+  );
   categories = await res.json();
 
   return (

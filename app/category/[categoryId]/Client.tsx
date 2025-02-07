@@ -28,60 +28,135 @@ export default function Client({ categories, colors }: Props) {
   const [categoryItems, setCategoryItems] = useState<CategoryItemType>();
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
-  const pageSize = 1;
-  const [selectedIndex, setSelectedIndex] = useState<number[]>(
-    Array(pageSize).fill(0)
-  );
+
+  //아이템 개수
+  const pageSize = 2;
+
+  //배열을 만들고 아이템 개수만큼 selectedColorItemIndex를 할당한다. 초기값은 0
+  //EX) pageSize 1 가정. 이 아이템 색상은 빨강, 파랑이다. 파랑 클릭하면 selectedColorItemIndex는 [0] -> [1] 바뀜
+  const [selectedColorItemIndex, setSelectedColorItemIndex] = useState<
+    number[]
+  >(Array(pageSize).fill(0));
+
+  //기본값 신상품순
+  const [sortProperty, setSortProperty] = useState<string>("createdAt");
+  const [sortDirection, setSortDirection] = useState<string>("desc");
+  //sortProperty,sortDirection로 분류한 sort 이름
+  const [sort, setSort] = useState<string>("신상품순");
+
+  //fetchMinMaxPrice()로 채워짐
   const [minPrice, setMinPrice] = useState<number>();
   const [maxPrice, setMaxPrice] = useState<number>();
+  const [colorIds, setColorIds] = useState<number[]>([]);
+  const [genders, setGenders] = useState<string[]>([]);
+  const [isContainSoldOut, setIsContainSoldOut] = useState<boolean>(false);
+  const [display, setDisplay] = useState<string>("none");
+
+  //필터 적용 버튼에 필요해서 useEffect에서 분리
+  async function fetchCategoryItems() {
+    const params = new URLSearchParams();
+    params.append("categoryId", String(categoryId));
+    params.append("page", String(pagePrams));
+    params.append("size", String(pageSize));
+    params.append("sort", `${sortProperty},${sortDirection}`);
+
+    if (minPrice) params.append("minPrice", String(minPrice));
+    if (maxPrice) params.append("maxPrice", String(maxPrice));
+    if (colorIds.length) params.append("colorIds", colorIds.join(","));
+    if (genders.length) params.append("genders", genders.join(","));
+    if (isContainSoldOut)
+      params.append("isContainSoldOut", String(isContainSoldOut));
+
+    const categoryItemRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?${params.toString()}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!categoryItemRes.ok) {
+      return categoryItemRes;
+    }
+
+    setCategoryItems(await categoryItemRes.json());
+  }
+
+  /*검색 필터에 의도하지않은게 들어가서 불편함
+  async function fetchMinMaxPrice() {
+    const params = new URLSearchParams();
+    params.append("categoryId", String(categoryId));
+
+    if (minPrice) params.append("minPrice", String(minPrice));
+    if (maxPrice) params.append("maxPrice", String(maxPrice));
+    if (colorIds.length) params.append("colorIds", colorIds.join(","));
+    if (genders.length) params.append("genders", genders.join(","));
+    if (isContainSoldOut)
+      params.append("isContainSoldOut", String(isContainSoldOut));
+
+    const priceRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/minMaxPrice?${params.toString()}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!priceRes.ok) {
+      return priceRes;
+    }
+
+    const prices: MinMaxPrice = await priceRes.json();
+
+    setMinPrice(prices.minPrice);
+    setMaxPrice(prices.maxPrice);
+  }
+  */
 
   useEffect(() => {
-    async function fetchCategoryItems() {
-      const categoryItemRes = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items?categoryId=${categoryId}&page=${pagePrams}&size=${pageSize}`,
-        {
-          cache: "no-store",
-        }
-      );
-
-      if (!categoryItemRes.ok) {
-        return categoryItemRes;
-      }
-
-      setCategoryItems(await categoryItemRes.json());
-    }
     fetchCategoryItems();
-  }, [pagePrams]);
+  }, [pagePrams, sortProperty, sortDirection]);
 
+  /*
   useEffect(() => {
-    async function fetchMinMaxPrice() {
-      const priceRes = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/min-max-price?categoryId=${categoryId}`,
-        {
-          cache: "no-store",
-        }
-      );
-
-      if (!priceRes.ok) {
-        return priceRes;
-      }
-
-      const prices: MinMaxPrice = await priceRes.json();
-      setMinPrice(prices.minPrice);
-      setMaxPrice(prices.maxPrice);
-    }
     fetchMinMaxPrice();
   }, []);
+  */
+
+  useEffect(() => {
+    function switchSort() {
+      const value = `${sortProperty},${sortDirection}`;
+      switch (value) {
+        case "createdAt,desc":
+          setSort("신상품순");
+          break;
+        case "price,asc":
+          setSort("낮은가격순");
+          break;
+        case "price,desc":
+          setSort("높은가격순");
+          break;
+      }
+    }
+    switchSort();
+  }, [sortProperty, sortDirection]);
 
   //loading.tsx때문에 자동으로 뜨지만, 생략하면 categoryItems' is possibly 'undefined'.ts(18048) 에러 생김
-  if (!categoryItems) {
-    return <LoadingScreen />;
+  if (!categoryItems) return <LoadingScreen />;
+
+  //필터 성별 체크박스
+  function checkGender(gender: string) {
+    let newArr = [...genders];
+    const index = newArr.indexOf(gender);
+    // color.id가 이미 배열에 있으면 해당 인덱스에서 제거
+    if (index !== -1) newArr.splice(index, 1);
+    else newArr.push(gender);
+    setGenders(newArr);
+    console.log(newArr);
   }
 
   return (
     <article className="xl:mx-32 xl:my-[2%] flex gap-x-16">
       {/* 카테고리, 검색 필터*/}
-      <aside>
+      <aside className="hidden xl:block">
         <section>
           {categories.map((category, index) => (
             <ul className="py-1" key={`category${index}`}>
@@ -92,18 +167,23 @@ export default function Client({ categories, colors }: Props) {
               >
                 <Link href={`/category/${category.id}`}>{category.name}</Link>
               </li>
-              <ul className="bg-[#f8f8f8] py-2">
-                {category.children.map((child, categoryChildindex) => (
-                  <li
-                    className={`indent-4 py-2 text-sm ${
-                      child.id === categoryId ? "font-bold" : ""
-                    }`}
-                    key={`categorychild${categoryChildindex}`}
-                  >
-                    <Link href={`/category/${child.id}`}>{child.name}</Link>
-                  </li>
-                ))}
-              </ul>
+              {(category.id === categoryId ||
+                category.children
+                  .map((child) => child.id)
+                  .includes(categoryId)) && (
+                <ul className="bg-[#f8f8f8] py-2">
+                  {category.children.map((child, categoryChildindex) => (
+                    <li
+                      className={`indent-4 py-2 text-sm ${
+                        child.id === categoryId ? "font-bold" : ""
+                      }`}
+                      key={`categorychild${categoryChildindex}`}
+                    >
+                      <Link href={`/category/${child.id}`}>{child.name}</Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </ul>
           ))}
         </section>
@@ -111,27 +191,39 @@ export default function Client({ categories, colors }: Props) {
           <div className="font-bold">필터</div>
           <section className="space-y-2">
             <div>가격</div>
-            <div>
-              <label htmlFor="priceMin">최소</label>
+            <div className="relative">
+              <label htmlFor="priceMin" className="">
+                최소
+              </label>
               <input
                 type="text"
                 id="priceMin"
-                className="ml-2 border focus:outline-none text-right p-1"
-                placeholder={`${minPrice} 이상`}
-                value={minPrice}
-                onChange={() => {}}
+                className="ml-2 border text-right p-1 pr-8 focus:outline-none"
+                value={minPrice ?? ""}
+                onChange={(event) => {
+                  const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                  setMinPrice(value == "" ? undefined : Number(value));
+                }}
               />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                원
+              </span>
             </div>
-            <div>
+            <div className="relative">
               <label htmlFor="priceMax">최대</label>
               <input
                 type="text"
                 id="priceMax"
-                className="ml-2 border focus:outline-none text-right p-1"
-                placeholder={`${maxPrice} 이하`}
-                value={maxPrice}
-                onChange={() => {}}
+                className="ml-2 border text-right p-1 pr-8 focus:outline-none"
+                value={maxPrice ?? ""}
+                onChange={(event) => {
+                  const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                  setMaxPrice(value == "" ? undefined : Number(value));
+                }}
               />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                원
+              </span>
             </div>
           </section>
           <section className="space-y-2">
@@ -143,6 +235,14 @@ export default function Client({ categories, colors }: Props) {
                     type="checkbox"
                     className="w-[18px] h-[18px]"
                     id={`color${index}`}
+                    onChange={() => {
+                      let newArr = [...colorIds];
+                      const index = newArr.indexOf(color.id);
+                      // color.id가 이미 배열에 있으면 해당 인덱스에서 제거
+                      if (index !== -1) newArr.splice(index, 1);
+                      else newArr.push(color.id);
+                      setColorIds(newArr);
+                    }}
                   />
                   <label htmlFor={`color${index}`}>
                     <div
@@ -158,42 +258,138 @@ export default function Client({ categories, colors }: Props) {
           <section className="space-y-2">
             <div>기타</div>
             <div className="">
-              <input type="checkbox" id="man" />
-              <label htmlFor="man">남성</label>
+              <input
+                type="checkbox"
+                id="male"
+                onChange={() => {
+                  checkGender("MALE");
+                }}
+              />
+              <label htmlFor="male">남성</label>
             </div>
             <div>
-              <input type="checkbox" id="woman" />
-              <label htmlFor="woman">여성</label>
+              <input
+                type="checkbox"
+                id="female"
+                onChange={() => {
+                  checkGender("FEMALE");
+                }}
+              />
+              <label htmlFor="female">여성</label>
             </div>
             <div>
-              <input type="checkbox" id="soldout" />
+              <input
+                type="checkbox"
+                id="soldout"
+                onChange={(event) => {
+                  setIsContainSoldOut(event.target.checked);
+                }}
+              />
               <label htmlFor="soldout">품절포함</label>
             </div>
           </section>
         </section>
 
-        <button className="border p-3 w-full">적용</button>
+        <button
+          className="border p-3 w-full"
+          onClick={() => {
+            fetchCategoryItems();
+          }}
+        >
+          적용
+        </button>
       </aside>
-      <section className="grow space-x-5">
-        <ul>
+
+      {/*상품 리스트 */}
+      <section className="grow mx-[1%] lg:mx-0">
+        <div className="space-x-4">
+          <span>
+            <span className="font-semibold pr-1">전체 상품</span>
+            <span className="font-semibold text-[#d99c63]">
+              {categoryItems.page.rowCount}
+            </span>
+          </span>
+          {/* 정렬 리스트 */}
+          <span className="inline-flex flex-col relative bg-white">
+            <button
+              className="p-2"
+              onMouseEnter={() => setDisplay("block")}
+              onMouseLeave={() => setDisplay("none")}
+            >
+              {sort}∨
+            </button>
+            <ul
+              className="border space-y-2 absolute z-1 top-full bg-white px-4 whitespace-nowrap"
+              style={{ display: display }}
+              onMouseEnter={() => setDisplay("block")}
+              onMouseLeave={() => setDisplay("none")}
+            >
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("createdAt");
+                    setSortDirection("desc");
+                  }}
+                >
+                  신상품순
+                </button>
+              </li>
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("price");
+                    setSortDirection("asc");
+                  }}
+                >
+                  낮은가격순
+                </button>
+              </li>
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("price");
+                    setSortDirection("desc");
+                  }}
+                >
+                  높은가격순
+                </button>
+              </li>
+            </ul>
+          </span>
+        </div>
+
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-5 gap-x-1 pb-6">
           {categoryItems.content.map((item, categoryItemindex) => (
             <li key={`color-items${categoryItemindex}`}>
-              <div className="inline-block">
+              <Link
+                href={`/color-items/${
+                  item.relatedColorItems[
+                    selectedColorItemIndex[categoryItemindex]
+                  ].colorItemId
+                }`}
+              >
+                <Image
+                  src={
+                    item.relatedColorItems[
+                      selectedColorItemIndex[categoryItemindex]
+                    ].imageSrc
+                  }
+                  width={232}
+                  height={232}
+                  alt={item.name}
+                />
+              </Link>
+              <div className="pt-3">
                 <Link
                   href={`/color-items/${
-                    item.relatedColorItems[selectedIndex[categoryItemindex]]
-                      .colorItemId
+                    item.relatedColorItems[
+                      selectedColorItemIndex[categoryItemindex]
+                    ].colorItemId
                   }`}
                 >
-                  <Image
-                    src={
-                      item.relatedColorItems[selectedIndex[categoryItemindex]]
-                        .imageSrc
-                    }
-                    width={250}
-                    height={250}
-                    alt={item.name}
-                  />
                   <div>{item.name}</div>
                   <div className="flex gap-x-1">
                     {item.discountedPrice && (
@@ -203,7 +399,10 @@ export default function Client({ categories, colors }: Props) {
                         %
                       </span>
                     )}
-                    {item.discountedPrice || item.price}
+                    {(item.discountedPrice || item.price).toLocaleString(
+                      "ko-kr"
+                    )}
+                    원
                   </div>
                 </Link>
                 <div className="flex gap-x-1">
@@ -211,16 +410,17 @@ export default function Client({ categories, colors }: Props) {
                     <div
                       style={{ backgroundColor: related.hexCode }}
                       className={`w-[20px] h-[20px] inline-block border cursor-pointer ${
-                        relatdIndex === selectedIndex[categoryItemindex]
+                        relatdIndex ===
+                        selectedColorItemIndex[categoryItemindex]
                           ? "border-black"
                           : "border-gray-300"
                       }`}
                       data-tooltip={related.color}
                       key={`relatdColrItem${relatdIndex}`}
                       onClick={() => {
-                        let newArr = [...selectedIndex];
+                        let newArr = [...selectedColorItemIndex];
                         newArr[categoryItemindex] = relatdIndex;
-                        setSelectedIndex(newArr);
+                        setSelectedColorItemIndex(newArr);
                       }}
                     ></div>
                   ))}
@@ -229,6 +429,7 @@ export default function Client({ categories, colors }: Props) {
             </li>
           ))}
         </ul>
+
         <MyPagination
           pageCount={categoryItems.page.pageCount}
           pageRangeDisplayed={5}

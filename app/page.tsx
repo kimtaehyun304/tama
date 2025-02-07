@@ -250,7 +250,8 @@ export default function Home() {
                 href={`/color-items/${item.id}`}
                 key={`categoryBestimages-${index}`}
               >
-                <div className="relative max-w-[232px]">
+                <ul className="relative max-w-[232px]">
+                <li >
                   <Image
                     src={item.src}
                     alt={item.alt}
@@ -287,7 +288,8 @@ export default function Home() {
                       <span>({item.comments})</span>
                     </div>
                   </div>
-                </div>
+                </li>
+                </ul>
               </Link>
             ))}
           </div>

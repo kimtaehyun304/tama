@@ -337,18 +337,22 @@ export default function Client({ colorItem }: Props) {
                   </div>
                   <div className="flex gap-x-4 overflow-x-auto">
                     {colorItem.relatedColorItems.map((related, index) => (
-                      <Image
+                      <Link
+                        href={`/color-items/${related.id}`}
                         key={`relatedItem-${index}`}
-                        src={related.imageSrc}
-                        alt={related.color}
-                        width={50}
-                        height={50}
-                        className={
-                          related.id === colorItem.id
-                            ? "border-[1px] border-black"
-                            : ""
-                        }
-                      />
+                      >
+                        <Image
+                          src={related.imageSrc}
+                          alt={related.color}
+                          width={50}
+                          height={50}
+                          className={
+                            related.id === colorItem.id
+                              ? "border-[1px] border-black"
+                              : ""
+                          }
+                        />
+                      </Link>
                     ))}
                   </div>
                 </div>

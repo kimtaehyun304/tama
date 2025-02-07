@@ -24,6 +24,7 @@ type PageType = {
   size: number;
   //totalElements: number;
   pageCount: number;
+  rowCount: number;
 };
 
 type ColorType = {

@@ -8,7 +8,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const colorItemId = (await params).colorItemId;
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/color-items/${colorItemId}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/colorItems/${colorItemId}`,
     {
       cache: "no-store",
     }
@@ -31,7 +31,7 @@ export default async function Page({
 }) {
   const colorItemId = (await params).colorItemId;
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/color-items/${colorItemId}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/colorItems/${colorItemId}`,
     {
       cache: "no-store",
     }
