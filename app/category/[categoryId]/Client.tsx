@@ -156,7 +156,7 @@ export default function Client({ categories, colors }: Props) {
   return (
     <article className="xl:mx-32 xl:my-[2%] flex gap-x-16">
       {/* 카테고리, 검색 필터*/}
-      <aside className="hidden xl:block">
+      <aside className="hidden xl:block ">
         <section>
           {categories.map((category, index) => (
             <ul className="py-1" key={`category${index}`}>
@@ -191,39 +191,37 @@ export default function Client({ categories, colors }: Props) {
           <div className="font-bold">필터</div>
           <section className="space-y-2">
             <div>가격</div>
-            <div className="relative">
-              <label htmlFor="priceMin" className="">
-                최소
-              </label>
-              <input
-                type="text"
-                id="priceMin"
-                className="ml-2 border text-right p-1 pr-8 focus:outline-none"
-                value={minPrice ?? ""}
-                onChange={(event) => {
-                  const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-                  setMinPrice(value == "" ? undefined : Number(value));
-                }}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                원
-              </span>
+            <div className="flex items-center">
+              <label htmlFor="priceMin" className="whitespace-nowrap">최소</label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  id="priceMin"
+                  className="ml-2 border text-right p-1 pr-7 focus:outline-none"
+                  value={minPrice ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                    setMinPrice(value == "" ? undefined : Number(value));
+                  }}
+                />
+                <span className="relative right-6">원</span>
+              </div>
             </div>
-            <div className="relative">
-              <label htmlFor="priceMax">최대</label>
-              <input
-                type="text"
-                id="priceMax"
-                className="ml-2 border text-right p-1 pr-8 focus:outline-none"
-                value={maxPrice ?? ""}
-                onChange={(event) => {
-                  const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-                  setMaxPrice(value == "" ? undefined : Number(value));
-                }}
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                원
-              </span>
+            <div className="flex items-center">
+              <label htmlFor="priceMax" className="whitespace-nowrap">최대</label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  id="priceMax"
+                  className="ml-2 border text-right p-1 pr-7 focus:outline-none"
+                  value={maxPrice ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                    setMaxPrice(value == "" ? undefined : Number(value));
+                  }}
+                />
+                <span className="relative right-6">원</span>
+              </div>
             </div>
           </section>
           <section className="space-y-2">
