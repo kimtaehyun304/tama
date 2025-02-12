@@ -1,0 +1,5 @@
+space-x, before
+ㄴflex-gap과 같이 쓰기 좋은건 before    
+
+w-fit, h-fit
+ㄴdiv나 flex에서 원래 크기로 줄여줌

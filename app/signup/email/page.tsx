@@ -2,12 +2,7 @@
 
 import { LoginModalContext } from "@/components/context/LoginModalContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import LoadingScreen from "@/components/LoadingScreen";
-import BannerSlider from "@/components/slider/BannerSlider";
-import { error } from "console";
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useContext, useRef } from "react";
 
 export default function SignUpEmail() {
   const agreements = ["모두 동의", "이용약관", "개인정보 수집 및 이용동의"];
@@ -272,9 +267,9 @@ export default function SignUpEmail() {
         <div className="flex justify-center text-xl">
           <div>
             <div className="font-bold text-2xl">이용약관</div>
-            <div className="divide-y-2 space-y-1">
+            <div className="divide-y-2">
               {agreements.map((agreement, index) => (
-                <div className="p-1" key={`agreement${index}`}>
+                <div className="flex py-2" key={`agreement${index}`}>
                   <input
                     type="checkbox"
                     className="w-5 h-5"

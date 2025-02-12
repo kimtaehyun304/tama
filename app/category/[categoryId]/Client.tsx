@@ -6,7 +6,6 @@ import LoadingScreen from "@/components/LoadingScreen";
 import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
 import MyPagination from "@/components/MyPagination";
-import PaginatedItems from "@/components/PaginatedItems";
 import Review from "@/components/Review";
 import ItemSlider from "@/components/slider/ItemSlider";
 import StarRating from "@/components/StarRating";
@@ -50,6 +49,7 @@ export default function Client({ categories, colors }: Props) {
   const [colorIds, setColorIds] = useState<number[]>([]);
   const [genders, setGenders] = useState<string[]>([]);
   const [isContainSoldOut, setIsContainSoldOut] = useState<boolean>(false);
+  //정렬 open close
   const [display, setDisplay] = useState<string>("none");
 
   //필터 적용 버튼에 필요해서 useEffect에서 분리
@@ -115,12 +115,6 @@ export default function Client({ categories, colors }: Props) {
     fetchCategoryItems();
   }, [pagePrams, sortProperty, sortDirection]);
 
-  /*
-  useEffect(() => {
-    fetchMinMaxPrice();
-  }, []);
-  */
-
   useEffect(() => {
     function switchSort() {
       const value = `${sortProperty},${sortDirection}`;
@@ -150,7 +144,6 @@ export default function Client({ categories, colors }: Props) {
     if (index !== -1) newArr.splice(index, 1);
     else newArr.push(gender);
     setGenders(newArr);
-    console.log(newArr);
   }
 
   return (
@@ -187,6 +180,7 @@ export default function Client({ categories, colors }: Props) {
             </ul>
           ))}
         </section>
+
         <section className="space-y-4">
           <div className="font-bold">필터</div>
           <section className="space-y-2">

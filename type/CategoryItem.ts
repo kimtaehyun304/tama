@@ -19,13 +19,7 @@ type RlatedColorItemType = {
   totalStock: number;
 };
 
-type PageType = {
-  page: number;
-  size: number;
-  //totalElements: number;
-  pageCount: number;
-  rowCount: number;
-};
+
 
 type ColorType = {
   id: number;

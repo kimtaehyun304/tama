@@ -7,8 +7,12 @@ import { SimpleModalContext } from "../context/SimpleModalContex";
 import SimpleModal from "./SimpleModal";
 import { AuthContext } from "../context/AuthContext";
 
+type props = {
+  isContainOrder: boolean;
+};
+
 export default function LoginModal() {
-  const context = useContext(LoginModalContext); // 모달 상태 관리
+  const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
   const authContext = useContext(AuthContext);
   const simpleModalContext = useContext(SimpleModalContext);
   const [email, setEmail] = useState<string>();
@@ -16,10 +20,11 @@ export default function LoginModal() {
   const [message, setMessage] = useState<string>();
 
   const closeModal = () => {
-    context?.setIsOpenLoginModal(false);
+    loginModalContext?.setIsOpenLoginModal(false);
+    loginModalContext?.setIsContainOrder(false);
   };
 
-  if (!context?.isOpenLoginModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
+  if (!loginModalContext?.isOpenLoginModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -113,14 +118,20 @@ export default function LoginModal() {
                 type="email"
                 placeholder="아이디 (이메일주소)"
                 name="email"
-                onChange={(event) => {onChangeInput(event); setMessage("")}}
+                onChange={(event) => {
+                  onChangeInput(event);
+                  setMessage("");
+                }}
               />
               <input
                 className="border p-2 w-full mb-3"
                 type="password"
                 placeholder="비밀번호"
                 name="password"
-                onChange={(event) => {onChangeInput(event); setMessage("")}}
+                onChange={(event) => {
+                  onChangeInput(event);
+                  setMessage("");
+                }}
               />
               <div className="text-center text-red-400">{message}</div>
               <div className="flex justify-between mb-4">
@@ -164,7 +175,22 @@ export default function LoginModal() {
                 <button className="p-4 w-full">회원가입</button>
               </div>
             </Link>
-            <div className="text-center p-5">
+            <div className="flex justify-center gap-x-5 py-5">
+              {loginModalContext.isContainOrder && (
+                <>
+                  <Link
+                    href={"/order"}
+                    className="relative underline text-[#787878]"
+                    onClick={() => {
+                      closeModal();
+                      
+                    }}
+                  >
+                    비회원 주문하기
+                  </Link>
+                  <span className="text-[#e0e0e0]">｜</span>
+                </>
+              )}
               <Link href={"/"} className="underline text-[#787878]">
                 비회원 주문조회
               </Link>

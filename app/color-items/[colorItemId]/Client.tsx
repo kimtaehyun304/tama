@@ -1,5 +1,7 @@
 "use client";
 
+import { AuthContext } from "@/components/context/AuthContext";
+import { LoginModalContext } from "@/components/context/LoginModalContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -11,93 +13,8 @@ import StarRating from "@/components/StarRating";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef, useContext } from "react";
-/*
-
-const item = {
-  id: 2411929109,
-  src: [
-    "/woman-pants.jpg",
-    "/woman-pants-detail.jpg",
-    "/woman-pants-detail2.jpg",
-    "/woman-pants-detail.jpg",
-    "/woman-pants-detail2.jpg",
-    "/woman-pants-detail.jpg",
-    "/woman-pants-detail2.jpg",
-  ],
-  related: [
-    { id: 2411929109, src: "/woman-pants.jpg", color: "화이트" },
-    { id: 2411929110, src: "/woman-pink-pants.jpg", color: "핑크" },
-    { id: 2411929109, src: "/woman-pants.jpg", color: "화이트" },
-    { id: 2411929110, src: "/woman-pink-pants.jpg", color: "핑크" },
-  ],
-  seller: "tama",
-  code: "J124401105",
-  yearSeason: "24 F/W",
-  name: "여 코듀로이 와이드 팬츠",
-  price: 49900,
-  discountedPrice: 39900,
-  color: "아이보리",
-  //stock: 1,
-  sizes: [
-    {
-      size: "S(67CM)",
-      stock: 1,
-    },
-    {
-      size: "M(70CM)",
-      stock: 0,
-    },
-    {
-      size: "L(73CM)",
-      stock: 3,
-    },
-    {
-      size: "XL(76CM)",
-      stock: 4,
-    },
-  ],
-  detail: {
-    content:
-      "무형광 원단입니다. 전 년 상품 자주히트와 동일한 소재이며, 네이밍이변경되었습니다.",
-    dateOfManufacture: "2024-08",
-    countryOfManufacture: "방글라데시",
-    manufacturer: "(주)신세계인터내셔날",
-    category: "이너웨어",
-    textile:
-      "폴리에스터 94%, 폴리우레탄 6% (상표,장식,무늬,자수,밴드,심지,보강재 제외)",
-    precaution:
-      "세제는 중성세제를 사용하고 락스 등의 표백제는 사용을 금합니다. 세탁 시 삶아 빨 경우 섬유의 특성이 소멸되어 수축 및 물빠짐의 우려가 있으므로 미온 세탁하시기 바랍니다.",
-  },
-};
-*/
-
-const reviews: ReviewType = {
-  result: 22,
-  starRatingAvg: 3.5,
-  data: [
-    {
-      rating: 5,
-      email: "berry1234",
-      createdAt: new Date("2024-12-16"),
-      height: 156,
-      weight: 45,
-      item: "베이지/S(90)",
-      content:
-        "S사이즈로 아주 약간 큰 편이지만 키에 거의 딱 맞는거 같아요. 땀듯해서 입기 좋습니다ㅎㅎ",
-    },
-    {
-      rating: 5,
-      email: "berry1234",
-      createdAt: new Date("2024-12-16"),
-      height: 156,
-      weight: 45,
-      item: "베이지/S(90)",
-      content:
-        "S사이즈로 아주 약간 큰 편이지만 키에 거의 딱 맞는거 같아요. 땀듯해서 입기 좋습니다ㅎㅎ",
-    },
-  ],
-};
 
 type Props = {
   colorItem: ColorItemType;
@@ -110,13 +27,28 @@ export default function Client({ colorItem }: Props) {
   const itemReturnGuideRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<string>("상품상세정보");
   const [orderCount, setOrderCount] = useState<number>(1);
-  //const [isOutedOfStock, setIsOutedOfStock] = useState(false);
   const [isOpenOutOfStockModal, setIsOpenOutOfStockModal] = useState(false);
   //옷 사이즈 바꿀때 사용
   const [stock, setStock] = useState(colorItem.stocks[0].stock);
   const [sizeIndex, setSizeIndex] = useState(0);
+  const simpleModalContext = useContext(SimpleModalContext);
+  const params = useParams<{ colorItemId: string }>();
+  const colorItemId = parseInt(params.colorItemId);
+  const searchParams = useSearchParams();
+  const [reviews, setReviews] = useState<ReviewType>();
+  const pagePrams = Number(searchParams.get("page")) || 1;
+  //기본값 최신순
+  const [sortProperty, setSortProperty] = useState<string>("createdAt");
+  const [sortDirection, setSortDirection] = useState<string>("desc");
+  //sortProperty,sortDirection로 분류한 sort 이름
+  const [sort, setSort] = useState<string>("최신순");
+  //정렬 open close
+  const [display, setDisplay] = useState<string>("none");
+  //아이템 개수
+  const pageSize = 10;
 
-  const simpleModalContext = useContext(SimpleModalContext); // 모달 상태 관리
+  const loginModalContext = useContext(LoginModalContext);
+  const authContext = useContext(AuthContext);
 
   function changeItem(index: number) {
     setOrderCount(1);
@@ -178,6 +110,50 @@ export default function Client({ colorItem }: Props) {
     simpleModalContext?.setIsOpenSimpleModal(true);
   }
 
+  async function fetchReviews() {
+    const params = new URLSearchParams();
+    params.append("colorItemId", String(colorItemId));
+    params.append("page", String(pagePrams));
+    params.append("size", String(pageSize));
+    params.append("sort", `${sortProperty},${sortDirection}`);
+
+    const reviewsRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews?${params.toString()}`
+    );
+
+    if (!reviewsRes.ok) return reviewsRes;
+
+    setReviews(await reviewsRes.json());
+  }
+
+  function orderItem() {
+    if (!authContext?.isLogined) {
+      loginModalContext?.setIsContainOrder(true);
+      loginModalContext?.setIsOpenLoginModal(true);
+    }
+  }
+
+  useEffect(() => {
+    fetchReviews();
+  }, [pagePrams, sortProperty, sortDirection]);
+
+  useEffect(() => {
+    function switchSort() {
+      const value = `${sortProperty},${sortDirection}`;
+      switch (value) {
+        case "createdAt,desc":
+          setSort("최신순");
+          break;
+        case "createdAt,asc":
+          setSort("오래된순");
+          break;
+      }
+    }
+    switchSort();
+  }, [sortProperty, sortDirection]);
+
+  if (!reviews) return "에러";
+
   return (
     <article className="xl:mx-standard xl:my-[2%]">
       {/*재고 부족 모달*/}
@@ -196,14 +172,14 @@ export default function Client({ colorItem }: Props) {
           />
 
           <div className="flex justify-between border-y py-4">
-            <StarRating rating={reviews.starRatingAvg} />
+            <StarRating rating={reviews?.avgRating} />
             <div
               className="underline cursor-pointer"
               onClick={() => {
                 handleNavClick("리뷰");
               }}
             >
-              상품리뷰 더보기 ({reviews.result})
+              상품리뷰 더보기 ({reviews.page.rowCount})
             </div>
           </div>
         </div>
@@ -421,15 +397,18 @@ export default function Client({ colorItem }: Props) {
                   원
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-x-1 xl:text-2xl">
-                <button className="border p-4">선물하기</button>
+              <div className="grid grid-cols-2 gap-x-1 xl:text-2xl">
+                {/*<button className="border p-4">선물하기</button>*/}
                 <button
                   className="border p-4 bg-[#787878] text-[#fff]"
                   onClick={() => putItemInShoppingBag()}
                 >
                   쇼핑백 담기
                 </button>
-                <button className="border p-4 bg-[#131922] text-[#fff]">
+                <button
+                  className="border p-4 bg-[#131922] text-[#fff]"
+                  onClick={orderItem}
+                >
                   바로 구매
                 </button>
               </div>
@@ -454,7 +433,7 @@ export default function Client({ colorItem }: Props) {
             }`}
             onClick={() => handleNavClick("리뷰")}
           >
-            리뷰({reviews.result})
+            리뷰({reviews.page.rowCount})
           </button>
           <button
             className={`border-b pb-4 ${
@@ -522,7 +501,46 @@ export default function Client({ colorItem }: Props) {
 
         {/* 리뷰 */}
         <div ref={reviewRef} className="p-2" hidden={activeSection !== "리뷰"}>
-          <Review reviews={reviews} />
+          {/* 정렬 리스트 */}
+          <span className="inline-flex flex-col relative bg-white">
+            <button
+              className="p-2"
+              onMouseEnter={() => setDisplay("block")}
+              onMouseLeave={() => setDisplay("none")}
+            >
+              {sort}∨
+            </button>
+            <ul
+              className="border space-y-2 absolute z-10 top-full bg-white px-4 whitespace-nowrap"
+              style={{ display: display }}
+              onMouseEnter={() => setDisplay("block")}
+              onMouseLeave={() => setDisplay("none")}
+            >
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("createdAt");
+                    setSortDirection("desc");
+                  }}
+                >
+                  최신순
+                </button>
+              </li>
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("createdAt");
+                    setSortDirection("asc");
+                  }}
+                >
+                  오래된순
+                </button>
+              </li>
+            </ul>
+          </span>
+          <Review review={reviews} />
         </div>
 
         {/* 배송/상품/교환안내 */}

@@ -56,22 +56,34 @@ type ColorItemType = {
 };
 
 type ReviewType = {
-  result: number;
-  starRatingAvg: number;
-  data: Data[];
+  avgRating: number;
+  content: ReviewContent[];
+  page: PageType;
 };
 
-type Data = {
+type ReviewContent = {
+  member: ReviewMember;
+  option: string;
   rating: number;
-  email: string;
+  comment: string;
   createdAt: Date;
-  height: number;
-  weight: number;
-  item: string;
-  content: string;
+};
+
+type ReviewMember = {
+  nickname: string;
+  height: string;
+  weight: string;
 };
 
 type MinMaxPrice = {
   minPrice: number;
   maxPrice: number;
+};
+
+type PageType = {
+  page: number;
+  size: number;
+  //totalElements: number;
+  pageCount: number;
+  rowCount: number;
 };
