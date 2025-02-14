@@ -24,8 +24,6 @@ export default function LoginModal() {
     loginModalContext?.setIsContainOrder(false);
   };
 
-  if (!loginModalContext?.isOpenLoginModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
-
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
@@ -79,6 +77,8 @@ export default function LoginModal() {
     }
     fetchAccessToken();
   };
+
+  if (!loginModalContext?.isOpenLoginModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
 
   return (
     <article>
@@ -183,7 +183,6 @@ export default function LoginModal() {
                     className="relative underline text-[#787878]"
                     onClick={() => {
                       closeModal();
-                      
                     }}
                   >
                     비회원 주문하기

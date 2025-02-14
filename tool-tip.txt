@@ -3,3 +3,5 @@ space-x, before
 
 w-fit, h-fit
 ㄴdiv나 flex에서 원래 크기로 줄여줌
+
+max-w, grow를 쓰면 pc와 모바일 화면을 동시에 설정 가능

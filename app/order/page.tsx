@@ -3,6 +3,7 @@
 import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import LoadingScreen from "@/components/LoadingScreen";
+import AddressModal from "@/components/modal/AddressModal";
 import BannerSlider from "@/components/slider/BannerSlider";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,7 +26,10 @@ export default () => {
   );
   const simpleModalContext = useContext(SimpleModalContext);
   const [isAgreed, setIsAgreed] = useState<boolean>(false);
-  const [isDisplay, setIsDisplay] = useState<boolean>(false);
+  //배송메시지 리스트
+  const [isActiveUl, setIsActiveUl] = useState<boolean>(false);
+  //배송메시지 직접입력
+  const [isActiveInput, setIsActiveInput] = useState<boolean>(false);
 
   const deliveryMessages = [
     "배송 전에 미리 연락 바랍니다.",
@@ -38,6 +42,13 @@ export default () => {
   const [deliveryMessage, setDeliveryMessage] = useState<string>(
     deliveryMessages[0]
   );
+
+  const [isOpenAddressModal, setIsOpenAddressModal] = useState<boolean>(false);
+
+  //우편번호
+  const [zoneCode, setZoneCode] = useState<number | undefined>();
+  const [address, setAddress] = useState<string>("");
+  const [isDisabled, setIsDisabled] = useState(false);
 
   function check(event: React.ChangeEvent<HTMLInputElement>, index: number) {
     if (index === 0)
@@ -103,42 +114,39 @@ export default () => {
               {isAgreed || isAgreed && (
 
       )}
-
  */}
       <section>
-        <div className="font-bold text-2xl p-6 border-b-2">주문고객</div>
-        <div className="p-[1%]">
-          <div className="space-y-3  inline-block">
-            <div className="flex items-center ">
-              <label htmlFor="name" className="w-36  whitespace-nowrap">
-                이름
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="주문하시는 분"
-              />
-            </div>
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-36">
-                이메일 주소
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="이메일 주소"
-              />
-            </div>
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-36">
-                휴대폰 번호
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="숫자만 입력하세요"
-              />
-            </div>
+        <div className="font-bold text-2xl p-6 border-b">주문고객</div>
+        <div className="p-[1%] space-y-3 max-w-[50rem]">
+          <div className="flex items-center">
+            <label htmlFor="name" className="w-32  whitespace-nowrap">
+              이름
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="주문하시는 분"
+            />
+          </div>
+          <div className="flex items-center">
+            <label htmlFor="name" className="w-32">
+              이메일 주소
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="이메일 주소"
+            />
+          </div>
+          <div className="flex items-center">
+            <label htmlFor="name" className="w-32">
+              휴대폰 번호
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="숫자만 입력하세요"
+            />
           </div>
           <div className="text-[#787878] py-3">
             주문고객님의 정보로 주문정보(주문완료, 배송상태 등)를 안내해
@@ -148,107 +156,148 @@ export default () => {
       </section>
 
       <section>
-        <div className="font-bold text-2xl p-6 border-b-2">받는고객</div>
-        <div className="p-[1%]">
-          <div className="space-y-3 inline-block">
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-36 whitespace-nowrap">
-                이름
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="받으시는 분"
-              />
-            </div>
+        <div className="font-bold text-2xl p-6 border-b">받는고객</div>
+        <div className="p-[1%] space-y-3 max-w-[50rem]">
+          <div className="flex items-center">
+            <label htmlFor="name" className="w-32 whitespace-nowrap">
+              이름
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="받으시는 분"
+            />
+          </div>
 
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-36">
-                휴대폰 번호
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="숫자만 입력하세요"
-              />
-            </div>
+          <div className="flex items-center">
+            <label htmlFor="name" className="w-32">
+              휴대폰 번호
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="숫자만 입력하세요"
+            />
+          </div>
 
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-36 whitespace-nowrap">
-                배송지
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="우편번호"
-              />
-              <button className="border p-3 ml-3">우편번호 찾기</button>
-            </div>
+          <div className="flex items-center flex-wrap gap-y-3">
+            <label htmlFor="name" className="w-32 whitespace-nowrap">
+              우편번호
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="우편번호"
+              value={zoneCode ?? ""}
+              onChange={(event) => {
+                const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                setZoneCode(value == "" ? undefined : Number(value));
+              }}
+              disabled={isDisabled}
+            />
+            <button
+              className="border p-3 ml-auto"
+              onClick={() => {
+                setIsOpenAddressModal(true);
+              }}
+            >
+              우편번호 찾기
+            </button>
+          </div>
 
-            <div className="flex items-center">
-              <label htmlFor="name" className="w-36 whitespace-nowrap">
-                주소
-              </label>
-              <input
-                type="text"
-                className="border p-3 w-64 mr-3"
-                placeholder="도로명주소"
-              />
-              <input
-                type="text"
-                className="border p-3 w-64"
-                placeholder="상세주소"
-              />
-            </div>
+          <AddressModal
+            isOpenAddressModal={isOpenAddressModal}
+            setIsOpenAddressModal={setIsOpenAddressModal}
+            setZoneCode={setZoneCode}
+            setAddress={setAddress}
+            setIsDisabled={setIsDisabled}
+          />
+          <div className="flex items-center flex-wrap gap-y-3">
+            <label htmlFor="name" className="w-32 whitespace-nowrap">
+              도로명주소
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="도로명주소"
+              value={address}
+              onChange={(event) => setAddress(event.target.value)}
+              disabled={isDisabled}
+            />
+          </div>
+          <div className="flex items-center flex-wrap gap-y-3">
+            <label htmlFor="name" className="w-32 whitespace-nowrap">
+              상세주소
+            </label>
+            <input
+              type="text"
+              className="border p-3 grow"
+              placeholder="상세주소"
+            />
+          </div>
 
-            <div className="flex items-center">
-              <div className="w-36">배송 메시지 선택</div>
-              {/* 정렬 리스트 */}
-              <span className="inline-flex flex-col relative bg-white w-64">
-                <button
-                  className="p-3 border text-left"
-                  onClick={() => setIsDisplay(!isDisplay)}
-                >
-                  {deliveryMessage}∨
-                </button>
+          <div className="flex items-center gap-y-3">
+            <div className="w-32">배송 메시지 선택</div>
+            {/* 정렬 리스트 */}
+            <span className="flex flex-col bg-white grow">
+              <button
+                className="p-3 border text-left"
+                onClick={() => setIsActiveUl(!isActiveUl)}
+              >
+                {isActiveInput ? "직접입력" : deliveryMessage}∨
+              </button>
 
-                {isDisplay && (
-                  <ul className="border space-y-4 absolute z-1 top-full bg-white px-4 whitespace-nowrap w-64">
-                    {deliveryMessages.map((message, index) => (
-                      <li key={`deliveryMessage${index}`}>
-                        <button
-                          onClick={() => {
-                            setIsDisplay(false);
-                            setDeliveryMessage(message);
-                          }}
-                        >
-                          {message}
-                        </button>
-                      </li>
-                    ))}
-                    <li>
+              {isActiveUl && (
+                <ul className="border space-y-4 relative z-1  bg-white px-4 whitespace-nowrap">
+                  {deliveryMessages.map((message, index) => (
+                    <li key={`deliveryMessage${index}`}>
                       <button
                         onClick={() => {
-                          setIsDisplay(false);
-                          setDeliveryMessage("직접입력");
+                          setIsActiveUl(false);
+                          setIsActiveInput(false);
+                          setDeliveryMessage(message);
                         }}
                       >
-                        직접입력
+                        {message}
                       </button>
                     </li>
-                  </ul>
-                )}
-              </span>
-              {deliveryMessage === "직접입력" && (
-                <input
-                  type="text"
-                  className="border p-3 w-64 ml-3"
-                  placeholder="베송메시지를 입력하세요"
-                  onChange={(event)=>setDeliveryMessage(event.target.value)}
-                />
+                  ))}
+                  <li>
+                    <button
+                      onClick={() => {
+                        setIsActiveUl(false);
+                        setIsActiveInput(true);
+                        setDeliveryMessage("직접입력");
+                      }}
+                    >
+                      직접입력
+                    </button>
+                  </li>
+                </ul>
               )}
-            </div>
+            </span>
+
+            {isActiveInput && (
+              <input
+                type="text"
+                className="border p-3 grow"
+                placeholder="베송메시지를 입력하세요"
+                onChange={(event) => setDeliveryMessage(event.target.value)}
+              />
+            )}
           </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="font-bold text-2xl p-6 border-b">결제수단</div>
+        <div className="p-[1%] flex gap-x-2 flex-wrap">
+          <button className="border p-3">신용/체크카드</button>
+          <button className="border p-3">네이버페이</button>
+          <button className="border p-3">카카오페이</button>
+          <button className="border p-3">토스페이</button>
+          <button className="border p-3">계좌이체</button>
+          <button className="border p-3">휴대폰 결제</button>
         </div>
       </section>
     </article>

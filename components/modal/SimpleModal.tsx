@@ -4,8 +4,6 @@ import Link from "next/link";
 import React, { use, useContext, useState } from "react";
 import { SimpleModalContext } from "../context/SimpleModalContex";
 
-
-
 export default function SimpleModal() {
   const context = useContext(SimpleModalContext); // 모달 상태 관리
 

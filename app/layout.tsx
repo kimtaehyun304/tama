@@ -10,6 +10,7 @@ import SimpleModal from "@/components/modal/SimpleModal";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",

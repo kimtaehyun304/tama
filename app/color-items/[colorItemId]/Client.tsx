@@ -152,7 +152,7 @@ export default function Client({ colorItem }: Props) {
     switchSort();
   }, [sortProperty, sortDirection]);
 
-  if (!reviews) return "에러";
+  if (!reviews) return <LoadingScreen/>
 
   return (
     <article className="xl:mx-standard xl:my-[2%]">

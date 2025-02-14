@@ -1,0 +1,14 @@
+카카오 우편번호 API
+ㄴiframe이라 불편, 트래픽 무제한. 
+무제한이라 선택. 
+
+https://www.clien.net/service/board/park/3629655
+iframe 보안 이슈
+
+https://www.data.go.kr/data/15056971/openapi.do?recommendDataYn=Y#tab_layer_detail_function
+ㄴREST API 제공
+ㄴ트래픽 제한. 무제한으로 하려면?
+
+https://blog.portone.io/opi_pg-comparison/
+ㄴpg사 추천
+
