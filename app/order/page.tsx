@@ -10,7 +10,44 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
+import * as PortOne from "@portone/browser-sdk/v2";
 
+const TOSS_PAYMENTS_CHANNEL_KEY =
+  "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
+const TOSS_PAY_CHANNEL_KEY = "channel-key-09171e01-eac9-43b2-bd82-4e830a5fe852";
+const KAKAO_PAY_CHANNEL_KEY =
+  "channel-key-ffacf44e-5508-446e-9b4c-d136cfe12478";
+
+const enum payMethodEnum {
+  EASY_PAY = "EASY_PAY",
+  CARD = "CARD",
+}
+
+const enum channelEnum {
+  TOSS_PAYMENTS = "TOSS_PAYMENTS",
+  TOSS_PAY = "TOSS_PAY",
+  KAKAO_PAY = "KAKAO_PAY",
+}
+
+function requestPayment(channel: channelEnum, payMethod: payMethodEnum) {
+  PortOne.requestPayment({
+    storeId: "store-f9c6de63-d746-420d-88c6-0a6815d4352b",
+    paymentId: `payment-{${crypto.randomUUID()}`,
+    orderName: "나이키 와플 트레이너 2 SD",
+    totalAmount: 1000,
+    currency: "CURRENCY_KRW",
+    channelKey: channelKey,
+    payMethod: payMethod,
+  });
+}
+
+
+function generatePaymentId(channel: channelEnum) {
+  switch (payMethod) {
+    case payMethodEnum.CARD:
+      return;
+  }
+}
 export default () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -292,10 +329,31 @@ export default () => {
       <section>
         <div className="font-bold text-2xl p-6 border-b">결제수단</div>
         <div className="p-[1%] flex gap-x-2 flex-wrap">
-          <button className="border p-3">신용/체크카드</button>
+          <button
+            className="border p-3"
+            onClick={() =>
+              requestPayment(TOSS_PAYMENTS_CHANNEL_KEY, payMethodEnum.CARD)
+            }
+          >
+            신용/체크카드
+          </button>
           <button className="border p-3">네이버페이</button>
-          <button className="border p-3">카카오페이</button>
-          <button className="border p-3">토스페이</button>
+          <button
+            className="border p-3"
+            onClick={() =>
+              requestPayment(KAKAO_PAY_CHANNEL_KEY, payMethodEnum.EASY_PAY)
+            }
+          >
+            카카오페이
+          </button>
+          <button
+            className="border p-3"
+            onClick={() =>
+              requestPayment(TOSS_PAY_CHANNEL_KEY, payMethodEnum.EASY_PAY)
+            }
+          >
+            토스페이
+          </button>
           <button className="border p-3">계좌이체</button>
           <button className="border p-3">휴대폰 결제</button>
         </div>

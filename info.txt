@@ -12,3 +12,8 @@ https://www.data.go.kr/data/15056971/openapi.do?recommendDataYn=Y#tab_layer_deta
 https://blog.portone.io/opi_pg-comparison/
 ㄴpg사 추천
 
+https://helloinyong.tistory.com/305
+ㄴtree shaking으로 빌드 파일을 줄이자
+
+https://fe-developers.kakaoent.com/2022/221124-typescript-tip/
+ㄴenum과 union type
