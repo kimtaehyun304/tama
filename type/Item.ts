@@ -3,26 +3,38 @@ type ItemImageType = {
   src: string[];
 };
 
-type ItemStockType = {
+type ColorItemSizeStockType = {
   id: number;
   size: string;
   stock: number;
 };
 
-type LocalStorageCartItemType = {
+type StorageItemType = {
   itemStockId: number;
   orderCount: number;
 };
 
-type CartItemType = {
+//장바구니 or 주문 상품
+type StorageItemDetailType = {
   price: number;
   discountedPrice: number;
-  stock: ItemStockType;
+  sizeStocks: ColorItemSizeStockType;
   colorItemId: number;
   color: string;
   name: string;
   image: string;
 };
+
+type OrderItemType = {
+  price: number;
+  discountedPrice: number;
+  sizeStocks: ColorItemSizeStockType;
+  colorItemId: number;
+  color: string;
+  name: string;
+  image: string;
+};
+
 
 type CommonInfoType = {
   id: number;
@@ -51,7 +63,7 @@ type ColorItemType = {
   price: number;
   discountedPrice: number;
   common: CommonInfoType;
-  stocks: ItemStockType[];
+  stocks: ColorItemSizeStockType[];
   relatedColorItems: RelatedColorItemType[];
 };
 

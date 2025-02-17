@@ -12,42 +12,64 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
 import * as PortOne from "@portone/browser-sdk/v2";
 
-const TOSS_PAYMENTS_CHANNEL_KEY =
-  "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
-const TOSS_PAY_CHANNEL_KEY = "channel-key-09171e01-eac9-43b2-bd82-4e830a5fe852";
-const KAKAO_PAY_CHANNEL_KEY =
-  "channel-key-ffacf44e-5508-446e-9b4c-d136cfe12478";
-
 const enum payMethodEnum {
   EASY_PAY = "EASY_PAY",
   CARD = "CARD",
+  //휴대폰 소액결제
+  MOBILE = "MOBILE",
+  //실시간 계좌이체
+  TRANSFER = "TRANSFER",
 }
+
+const payMethodLabel = [
+  { type: payMethodEnum.CARD, label: "신용/체크카드" },
+  { type: payMethodEnum.TRANSFER, label: "계좌이체" },
+  { type: payMethodEnum.MOBILE, label: "휴대폰 결제" },
+];
 
 const enum channelEnum {
   TOSS_PAYMENTS = "TOSS_PAYMENTS",
   TOSS_PAY = "TOSS_PAY",
   KAKAO_PAY = "KAKAO_PAY",
+  KPN = "KPN",
 }
 
 function requestPayment(channel: channelEnum, payMethod: payMethodEnum) {
   PortOne.requestPayment({
     storeId: "store-f9c6de63-d746-420d-88c6-0a6815d4352b",
-    paymentId: `payment-{${crypto.randomUUID()}`,
+    paymentId: generatePaymentId(channel),
     orderName: "나이키 와플 트레이너 2 SD",
     totalAmount: 1000,
     currency: "CURRENCY_KRW",
-    channelKey: channelKey,
+    channelKey: getChannelKey(channel),
     payMethod: payMethod,
   });
 }
 
-
 function generatePaymentId(channel: channelEnum) {
-  switch (payMethod) {
-    case payMethodEnum.CARD:
-      return;
+  switch (channel) {
+    case channelEnum.TOSS_PAYMENTS:
+      return `payment-${crypto.randomUUID()}`;
+    case channelEnum.TOSS_PAY:
+      return `payment${Math.random().toString(36).slice(2)}`;
+    case channelEnum.KPN:
+      return `payment${Math.random().toString(36).slice(2)}`;
+    case channelEnum.KAKAO_PAY:
+      return `payment-${crypto.randomUUID()}`;
   }
 }
+
+function getChannelKey(channel: channelEnum) {
+  switch (channel) {
+    case channelEnum.TOSS_PAYMENTS:
+      return "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
+    case channelEnum.TOSS_PAY:
+      return "channel-key-09171e01-eac9-43b2-bd82-4e830a5fe852";
+    case channelEnum.KAKAO_PAY:
+      return "channel-key-ffacf44e-5508-446e-9b4c-d136cfe12478";
+  }
+}
+
 export default () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -86,6 +108,9 @@ export default () => {
   const [zoneCode, setZoneCode] = useState<number | undefined>();
   const [address, setAddress] = useState<string>("");
   const [isDisabled, setIsDisabled] = useState(false);
+  const [selectedPayMethod, setSelectedPayMethod] = useState<string>("");
+  const [orderItems, setOrderItems] = useState<OrderItemType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   function check(event: React.ChangeEvent<HTMLInputElement>, index: number) {
     if (index === 0)
@@ -103,6 +128,45 @@ export default () => {
       simpleModalContext?.setIsOpenSimpleModal(true);
     } else setIsAgreed(true);
   }
+
+  useEffect(() => {
+    async function fetchOrderItem() {
+      const jsonStrCart = localStorage.getItem("tamaOrder");
+      const parsedOrder = jsonStrCart ? JSON.parse(jsonStrCart) : null;
+
+      if (!jsonStrCart || parsedOrder.length === 0) {
+        simpleModalContext?.setMessage("주문할 상품이 없습니다");
+        simpleModalContext?.setIsOpenSimpleModal(true);
+        return;
+      }
+
+      const parsedCart: StorageItemType[] = JSON.parse(jsonStrCart);
+      let itemStocks: number[] = [];
+      parsedCart?.forEach((item) => {
+        itemStocks.push(item.itemStockId);
+      });
+
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_URL
+        }/api/colorItemSizeStock?id=${itemStocks.join()}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const cartItemsJson = await res.json();
+      if (!res.ok) {
+        alert(cartItemsJson.message);
+        return;
+      }
+      setOrderItems(cartItemsJson);
+    }
+
+    setIsLoading(false);
+
+    fetchOrderItem();
+  }, []);
 
   return (
     <article className="xl:mx-standard">
@@ -153,8 +217,8 @@ export default () => {
       )}
  */}
       <section>
-        <div className="font-bold text-2xl p-6 border-b">주문고객</div>
-        <div className="p-[1%] space-y-3 max-w-[50rem]">
+        <div className="font-bold text-2xl p-[1%] border-b">주문고객</div>
+        <div className="p-[2%] space-y-3 max-w-[50rem]">
           <div className="flex items-center">
             <label htmlFor="name" className="w-32  whitespace-nowrap">
               이름
@@ -193,8 +257,8 @@ export default () => {
       </section>
 
       <section>
-        <div className="font-bold text-2xl p-6 border-b">받는고객</div>
-        <div className="p-[1%] space-y-3 max-w-[50rem]">
+        <div className="font-bold text-2xl p-[1%] border-b">받는고객</div>
+        <div className="p-[2%] space-y-3 max-w-[50rem]">
           <div className="flex items-center">
             <label htmlFor="name" className="w-32 whitespace-nowrap">
               이름
@@ -327,35 +391,62 @@ export default () => {
       </section>
 
       <section>
-        <div className="font-bold text-2xl p-6 border-b">결제수단</div>
-        <div className="p-[1%] flex gap-x-2 flex-wrap">
-          <button
-            className="border p-3"
-            onClick={() =>
-              requestPayment(TOSS_PAYMENTS_CHANNEL_KEY, payMethodEnum.CARD)
-            }
-          >
-            신용/체크카드
-          </button>
-          <button className="border p-3">네이버페이</button>
-          <button
-            className="border p-3"
-            onClick={() =>
-              requestPayment(KAKAO_PAY_CHANNEL_KEY, payMethodEnum.EASY_PAY)
-            }
-          >
-            카카오페이
-          </button>
-          <button
-            className="border p-3"
-            onClick={() =>
-              requestPayment(TOSS_PAY_CHANNEL_KEY, payMethodEnum.EASY_PAY)
-            }
-          >
-            토스페이
-          </button>
-          <button className="border p-3">계좌이체</button>
-          <button className="border p-3">휴대폰 결제</button>
+        <div className="font-bold text-2xl p-[1%] border-b">결제수단</div>
+        <div className="p-[2%] flex gap-x-2 flex-wrap">
+          {payMethodLabel.map(({ type, label }) => {
+            const isSelected = selectedPayMethod === type;
+            return (
+              <button
+                key={type}
+                className={`border p-3 rounded-md ${
+                  isSelected
+                    ? "bg-gray-100 text-black border-black"
+                    : "bg-white"
+                }`}
+                onClick={() => setSelectedPayMethod(type)}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
+        <div className="font-bold text-2xl p-[1%] border-b">주문상품</div>
+        <div className="p-[2%] flex flex-col xl:grid xl:grid-cols-2 gap-3">
+          {orderItems.map((item, index) => (
+            <div className="border flex gap-x-4 p-2" key={`item-${index}`}>
+              <Image
+                src={item.image}
+                alt={item.name}
+                width={100}
+                height={100}
+              />
+              <div className="flex flex-col gap-y-2 flex-1">
+                <div>
+                  <div>{item.name}</div>
+                  <div>
+                    {item.color}/{item.sizeStocks.size}
+                  </div>
+                  <div>
+                    {item.sizeStocks.stock}개 주문
+                  </div>
+                </div>
+                <div className="text-sm text-[#aaa]">
+                  {item.discountedPrice &&
+                    `${item.price.toLocaleString("ko-KR")}원`}
+                </div>
+                <div className="text-2xl font-semibold">
+                  {item.discountedPrice
+                    ? item.discountedPrice.toLocaleString("ko-KR")
+                    : item.price.toLocaleString("ko-KR")}
+                  원
+                </div>
+              </div>
+              <div></div>
+            </div>
+          ))}
         </div>
       </section>
     </article>

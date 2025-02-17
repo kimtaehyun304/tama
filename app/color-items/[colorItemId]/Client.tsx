@@ -96,7 +96,7 @@ export default function Client({ colorItem }: Props) {
     const jsonString = localStorage.getItem("tamaCart");
 
     if (jsonString) {
-      let jsons: LocalStorageCartItemType[] = JSON.parse(jsonString);
+      let jsons: StorageItemType[] = JSON.parse(jsonString);
       const foundIndex = jsons.findIndex(
         (json) => json.itemStockId === itemToPut.itemStockId
       );
@@ -120,10 +120,13 @@ export default function Client({ colorItem }: Props) {
     const reviewsRes = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews?${params.toString()}`
     );
+    const reivews = await reviewsRes.json();
+    if (!reviewsRes.ok) {
+      alert(reivews.message);
+      return;
+    }
 
-    if (!reviewsRes.ok) return reviewsRes;
-
-    setReviews(await reviewsRes.json());
+    setReviews(reivews);
   }
 
   function orderItem() {
@@ -152,7 +155,7 @@ export default function Client({ colorItem }: Props) {
     switchSort();
   }, [sortProperty, sortDirection]);
 
-  if (!reviews) return <LoadingScreen/>
+  if (!reviews) return <LoadingScreen />;
 
   return (
     <article className="xl:mx-standard xl:my-[2%]">

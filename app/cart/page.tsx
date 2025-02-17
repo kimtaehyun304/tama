@@ -14,6 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useContext, SetStateAction } from "react";
 import Loading from "../loading";
+import router from "next/router";
+import { useRouter } from "next/navigation";
 
 // 사이즈 삭제 됐을때 예외처리 필요
 export default function Cart() {
@@ -23,19 +25,20 @@ export default function Cart() {
   const [itemTotalPrice, setItemTotalPrice] = useState<number>(0);
   const shippingFee = itemTotalPrice >= 40000 ? 0 : 3000;
   //fetch
-  const [cartItems, setCartItems] = useState<CartItemType[]>([]);
+  const [cartItems, setCartItems] = useState<StorageItemDetailType[]>([]);
   const simpleModalContext = useContext(SimpleModalContext);
   const [isOpenOutOfStockModal, setIsOpenOutOfStockModal] = useState(false);
   const [stock, setStock] = useState(0);
   const authContext = useContext(AuthContext);
   const loginModalContext = useContext(LoginModalContext);
   const NO_ITEM_MESSAGE = "장바구니에 담긴 상품이 없습니다";
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchCart() {
       const jsonStrCart = localStorage.getItem("tamaCart");
       if (jsonStrCart) {
-        const parsedCart: LocalStorageCartItemType[] = JSON.parse(jsonStrCart);
+        const parsedCart: StorageItemType[] = JSON.parse(jsonStrCart);
         let itemStocks: number[] = [];
         parsedCart?.forEach((item) => {
           itemStocks.push(item.itemStockId);
@@ -44,14 +47,18 @@ export default function Cart() {
           const res = await fetch(
             `${
               process.env.NEXT_PUBLIC_SERVER_URL
-            }/api/itemStocks?id=${itemStocks.join()}`,
+            }/api/colorItemSizeStock?id=${itemStocks.join()}`,
             {
               cache: "no-store",
             }
           );
 
           const cartItemsJson = await res.json();
-          if (!res.ok) return cartItemsJson;
+          if (!res.ok) {
+            alert(cartItemsJson.message);
+            return;
+          }
+
           setCartItems(cartItemsJson);
         }
       }
@@ -64,8 +71,7 @@ export default function Cart() {
   //로컬스토리지와 동기화
   function syncCartMap() {
     const stringCart = localStorage.getItem("tamaCart");
-    const parsedCart: LocalStorageCartItemType[] =
-      stringCart && JSON.parse(stringCart);
+    const parsedCart: StorageItemType[] = stringCart && JSON.parse(stringCart);
     const newCartMap = new Map();
     parsedCart?.forEach((cartItem) => {
       newCartMap?.set(cartItem.itemStockId, cartItem.orderCount);
@@ -82,13 +88,13 @@ export default function Cart() {
         (total, cartItem) =>
           total +
           (cartItem.discountedPrice ?? cartItem.price) *
-            (cartMap.get(cartItem.stock.id) ?? 0),
+            (cartMap.get(cartItem.sizeStocks.id) ?? 0),
         0
       )
     );
   }, [cartMap, cartItems]);
 
-  function plusOurderCount(itemStock: ItemStockType) {
+  function plusOurderCount(itemStock: ColorItemSizeStockType) {
     const orderCount = cartMap.get(itemStock.id);
     setStock(itemStock.stock);
     if (!orderCount) {
@@ -97,27 +103,25 @@ export default function Cart() {
       return;
     }
 
-    if (itemStock.stock === orderCount) {
+    if (itemStock.stock <= orderCount) {
       setIsOpenOutOfStockModal(true);
       return;
     }
 
     const stringCart = localStorage.getItem("tamaCart");
-    const parsedCart: LocalStorageCartItemType[] = stringCart
+    const parsedCart: StorageItemType[] = stringCart
       ? JSON.parse(stringCart)
       : null;
 
-    if (itemStock.stock > orderCount) {
-      const foundIndex = parsedCart.findIndex(
-        (cartItem) => cartItem.itemStockId === itemStock.id
-      );
-      ++parsedCart[foundIndex].orderCount;
-      localStorage.setItem("tamaCart", JSON.stringify(parsedCart));
-      syncCartMap();
-    }
+    const foundIndex = parsedCart.findIndex(
+      (cartItem) => cartItem.itemStockId === itemStock.id
+    );
+    ++parsedCart[foundIndex].orderCount;
+    localStorage.setItem("tamaCart", JSON.stringify(parsedCart));
+    syncCartMap();
   }
 
-  function minusOurderCount(itemStock: ItemStockType) {
+  function minusOurderCount(itemStock: ColorItemSizeStockType) {
     const orderCount = cartMap.get(itemStock.id);
     setStock(itemStock.stock);
     if (!orderCount) {
@@ -127,7 +131,7 @@ export default function Cart() {
     }
 
     const stringCart = localStorage.getItem("tamaCart");
-    const parsedCart: LocalStorageCartItemType[] = stringCart
+    const parsedCart: StorageItemType[] = stringCart
       ? JSON.parse(stringCart)
       : null;
 
@@ -141,9 +145,9 @@ export default function Cart() {
     }
   }
 
-  function deleteCartItem(itemStock: ItemStockType) {
+  function deleteCartItem(itemStock: ColorItemSizeStockType) {
     const stringCart = localStorage.getItem("tamaCart");
-    const parsedCart: LocalStorageCartItemType[] = stringCart
+    const parsedCart: StorageItemType[] = stringCart
       ? JSON.parse(stringCart)
       : null;
 
@@ -159,7 +163,7 @@ export default function Cart() {
     }
 
     const cartItemIndex = cartItems.findIndex(
-      (cartItem) => cartItem.stock.id === itemStock.id
+      (cartItem) => cartItem.sizeStocks.id === itemStock.id
     );
 
     if (cartItemIndex !== -1) {
@@ -169,10 +173,28 @@ export default function Cart() {
   }
 
   function orderItem() {
+    /*
     if (!authContext?.isLogined) {
       loginModalContext?.setIsContainOrder(true);
       loginModalContext?.setIsOpenLoginModal(true);
     }
+          const parsedCart: StorageItemType[] = stringCart
+      ? JSON.parse(stringCart)
+      : null;
+      */
+    const stringCart = localStorage.getItem("tamaCart");
+
+    if (!stringCart) return;
+
+    if (cartItems.some((item) => item.sizeStocks.stock === 0)) {
+      simpleModalContext?.setMessage("품절 상품을 제외해주세요");
+      simpleModalContext?.setIsOpenSimpleModal(true);
+      return;
+    }
+
+    localStorage.setItem("tamaOrder", stringCart);
+
+    router.push("/order");
   }
 
   return (
@@ -202,10 +224,10 @@ export default function Cart() {
               <section className="py-3 underline text-[#787878] cursor-pointer">
                 품절상품 삭제
               </section>
-              <section className="flex flex-col xl:grid xl:grid-cols-2">
+              <section className="flex flex-col xl:grid xl:grid-cols-2 gap-3">
                 {cartItems.map((item, index) => (
                   <div
-                    className="border flex gap-x-4 p-2"
+                    className="border flex gap-x-3 p-2"
                     key={`item-${index}`}
                   >
                     <Image
@@ -217,11 +239,11 @@ export default function Cart() {
                     <div className="flex flex-col gap-y-2 flex-1">
                       <div>
                         <div className="text-red-500">
-                          {item.stock.stock === 0 && "품절"}
+                          {item.sizeStocks.stock === 0 && "품절"}
                         </div>
                         <div>{item.name}</div>
                         <div>
-                          {item.color}/{item.stock.size}
+                          {item.color}/{item.sizeStocks.size}
                         </div>
                       </div>
                       <div className="text-sm text-[#aaa]">
@@ -238,18 +260,18 @@ export default function Cart() {
                         <button
                           className="border p-2"
                           onClick={() => {
-                            minusOurderCount(item.stock);
+                            minusOurderCount(item.sizeStocks);
                           }}
                         >
                           -
                         </button>
                         <button className="border p-2 flex-1">
-                          {cartMap.get(item.stock.id)}
+                          {cartMap.get(item.sizeStocks.id)}
                         </button>
                         <button
                           className="border p-2"
                           onClick={() => {
-                            plusOurderCount(item.stock);
+                            plusOurderCount(item.sizeStocks);
                           }}
                         >
                           +
@@ -260,7 +282,7 @@ export default function Cart() {
                     <div>
                       <button
                         onClick={() => {
-                          deleteCartItem(item.stock);
+                          deleteCartItem(item.sizeStocks);
                         }}
                       >
                         <svg
@@ -315,7 +337,7 @@ export default function Cart() {
                 </div>
               </section>
             </>
-          )}  
+          )}
         </article>
       </article>
     </>

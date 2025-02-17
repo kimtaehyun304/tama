@@ -73,12 +73,13 @@ export default function Client({ categories, colors }: Props) {
         cache: "no-store",
       }
     );
-
+    const categoryItems = await categoryItemRes.json();
     if (!categoryItemRes.ok) {
-      return categoryItemRes;
+      alert(categoryItems.message);
+      return;
     }
 
-    setCategoryItems(await categoryItemRes.json());
+    setCategoryItems(categoryItems);
   }
 
   /*검색 필터에 의도하지않은게 들어가서 불편함
@@ -186,7 +187,9 @@ export default function Client({ categories, colors }: Props) {
           <section className="space-y-2">
             <div>가격</div>
             <div className="flex items-center">
-              <label htmlFor="priceMin" className="whitespace-nowrap">최소</label>
+              <label htmlFor="priceMin" className="whitespace-nowrap">
+                최소
+              </label>
               <div className="flex items-center">
                 <input
                   type="text"
@@ -202,7 +205,9 @@ export default function Client({ categories, colors }: Props) {
               </div>
             </div>
             <div className="flex items-center">
-              <label htmlFor="priceMax" className="whitespace-nowrap">최대</label>
+              <label htmlFor="priceMax" className="whitespace-nowrap">
+                최대
+              </label>
               <div className="flex items-center">
                 <input
                   type="text"
