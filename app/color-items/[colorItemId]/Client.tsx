@@ -29,7 +29,7 @@ export default function Client({ colorItem }: Props) {
   const [orderCount, setOrderCount] = useState<number>(1);
   const [isOpenOutOfStockModal, setIsOpenOutOfStockModal] = useState(false);
   //옷 사이즈 바꿀때 사용
-  const [stock, setStock] = useState(colorItem.stocks[0].stock);
+  const [stock, setStock] = useState(colorItem.sizeStocks[0].stock);
   const [sizeIndex, setSizeIndex] = useState(0);
   const simpleModalContext = useContext(SimpleModalContext);
   const params = useParams<{ colorItemId: string }>();
@@ -53,7 +53,7 @@ export default function Client({ colorItem }: Props) {
   function changeItem(index: number) {
     setOrderCount(1);
     setSizeIndex(index);
-    setStock(colorItem.stocks[index].stock);
+    setStock(colorItem.sizeStocks[index].stock);
   }
 
   function handleNavClick(section: string) {
@@ -73,14 +73,12 @@ export default function Client({ colorItem }: Props) {
   }
 
   function plusOurderCount() {
-    if (stock === orderCount) {
+    if (stock <= orderCount) {
       setIsOpenOutOfStockModal(true);
       return;
     }
 
-    if (stock > orderCount) {
-      setOrderCount(orderCount + 1);
-    }
+    setOrderCount(orderCount + 1);
   }
 
   function minusOurderCount() {
@@ -89,7 +87,7 @@ export default function Client({ colorItem }: Props) {
 
   function putItemInShoppingBag() {
     const itemToPut = {
-      itemStockId: colorItem.stocks[sizeIndex].id,
+      colorItemSizeStockId: colorItem.sizeStocks[sizeIndex].id,
       orderCount: orderCount,
     };
 
@@ -98,7 +96,7 @@ export default function Client({ colorItem }: Props) {
     if (jsonString) {
       let jsons: StorageItemType[] = JSON.parse(jsonString);
       const foundIndex = jsons.findIndex(
-        (json) => json.itemStockId === itemToPut.itemStockId
+        (json) => json.colorItemSizeStockId === itemToPut.colorItemSizeStockId
       );
       foundIndex === -1
         ? jsons.push(itemToPut)
@@ -341,7 +339,7 @@ export default function Client({ colorItem }: Props) {
                 <div className="font-semibold">옵션</div>
                 <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
                   <div className="flex gap-x-3 overflow-x-auto">
-                    {colorItem.stocks.map((size, index) => (
+                    {colorItem.sizeStocks.map((size, index) => (
                       <button
                         key={`option-${index}`}
                         className={

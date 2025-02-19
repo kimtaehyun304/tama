@@ -5,7 +5,7 @@ type Props = {
   isOpenAddressModal: boolean;
   setIsOpenAddressModal: Dispatch<SetStateAction<boolean>>;
   setZoneCode: Dispatch<SetStateAction<number | undefined>>;
-  setAddress: Dispatch<SetStateAction<string>>;
+  setStreetAddress: Dispatch<SetStateAction<string>>;
   setIsDisabled: Dispatch<SetStateAction<boolean>>;
 };
 
@@ -13,7 +13,7 @@ export default function AddressModal({
   isOpenAddressModal,
   setIsOpenAddressModal,
   setZoneCode,
-  setAddress,
+  setStreetAddress,
   setIsDisabled,
 }: Props) {
   const closeModal = () => {
@@ -33,7 +33,7 @@ export default function AddressModal({
           extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
       }
       fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-      setAddress(fullAddress);
+      setStreetAddress(fullAddress);
       setZoneCode(Number(data.zonecode));
     }
     setIsDisabled(true);

@@ -17,7 +17,7 @@ export default function LoginButton() {
     if (accessToken) authContext?.setIsLogined(true);
   }, []);
 
-  // typeof !== "undefined" 필요할 것 같았는데 에러 안나네 뭐지
+  // typeof !== "undefined" 필요할 것 같았는데 에러 안나네 뭐지 -> onClick function이라 그런듯
   function logout() {
     authContext?.setIsLogined(false);
     localStorage.removeItem("tamaAccessToken");

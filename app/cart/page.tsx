@@ -41,7 +41,7 @@ export default function Cart() {
         const parsedCart: StorageItemType[] = JSON.parse(jsonStrCart);
         let itemStocks: number[] = [];
         parsedCart?.forEach((item) => {
-          itemStocks.push(item.itemStockId);
+          itemStocks.push(item.colorItemSizeStockId);
         });
         if (itemStocks.length > 0) {
           const res = await fetch(
@@ -74,7 +74,7 @@ export default function Cart() {
     const parsedCart: StorageItemType[] = stringCart && JSON.parse(stringCart);
     const newCartMap = new Map();
     parsedCart?.forEach((cartItem) => {
-      newCartMap?.set(cartItem.itemStockId, cartItem.orderCount);
+      newCartMap?.set(cartItem.colorItemSizeStockId, cartItem.orderCount);
     });
     setCartMap(newCartMap);
   }
@@ -88,7 +88,7 @@ export default function Cart() {
         (total, cartItem) =>
           total +
           (cartItem.discountedPrice ?? cartItem.price) *
-            (cartMap.get(cartItem.sizeStocks.id) ?? 0),
+            (cartMap.get(cartItem.sizeStock.id) ?? 0),
         0
       )
     );
@@ -114,7 +114,7 @@ export default function Cart() {
       : null;
 
     const foundIndex = parsedCart.findIndex(
-      (cartItem) => cartItem.itemStockId === itemStock.id
+      (cartItem) => cartItem.colorItemSizeStockId === itemStock.id
     );
     ++parsedCart[foundIndex].orderCount;
     localStorage.setItem("tamaCart", JSON.stringify(parsedCart));
@@ -137,7 +137,7 @@ export default function Cart() {
 
     if (orderCount > 1) {
       const foundIndex = parsedCart.findIndex(
-        (cartItem) => cartItem.itemStockId === itemStock.id
+        (cartItem) => cartItem.colorItemSizeStockId === itemStock.id
       );
       --parsedCart[foundIndex].orderCount;
       localStorage.setItem("tamaCart", JSON.stringify(parsedCart));
@@ -153,7 +153,7 @@ export default function Cart() {
 
     const localStorageCartItemIndex = parsedCart.findIndex(
       (localStorageCartItem) =>
-        localStorageCartItem.itemStockId === itemStock.id
+        localStorageCartItem.colorItemSizeStockId === itemStock.id
     );
 
     if (localStorageCartItemIndex !== -1) {
@@ -163,7 +163,7 @@ export default function Cart() {
     }
 
     const cartItemIndex = cartItems.findIndex(
-      (cartItem) => cartItem.sizeStocks.id === itemStock.id
+      (cartItem) => cartItem.sizeStock.id === itemStock.id
     );
 
     if (cartItemIndex !== -1) {
@@ -186,7 +186,7 @@ export default function Cart() {
 
     if (!stringCart) return;
 
-    if (cartItems.some((item) => item.sizeStocks.stock === 0)) {
+    if (cartItems.some((item) => item.sizeStock.stock === 0)) {
       simpleModalContext?.setMessage("품절 상품을 제외해주세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
       return;
@@ -239,11 +239,11 @@ export default function Cart() {
                     <div className="flex flex-col gap-y-2 flex-1">
                       <div>
                         <div className="text-red-500">
-                          {item.sizeStocks.stock === 0 && "품절"}
+                          {item.sizeStock.stock === 0 && "품절"}
                         </div>
                         <div>{item.name}</div>
                         <div>
-                          {item.color}/{item.sizeStocks.size}
+                          {item.color}/{item.sizeStock.size}
                         </div>
                       </div>
                       <div className="text-sm text-[#aaa]">
@@ -260,18 +260,18 @@ export default function Cart() {
                         <button
                           className="border p-2"
                           onClick={() => {
-                            minusOurderCount(item.sizeStocks);
+                            minusOurderCount(item.sizeStock);
                           }}
                         >
                           -
                         </button>
                         <button className="border p-2 flex-1">
-                          {cartMap.get(item.sizeStocks.id)}
+                          {cartMap.get(item.sizeStock.id)}
                         </button>
                         <button
                           className="border p-2"
                           onClick={() => {
-                            plusOurderCount(item.sizeStocks);
+                            plusOurderCount(item.sizeStock);
                           }}
                         >
                           +
@@ -282,7 +282,7 @@ export default function Cart() {
                     <div>
                       <button
                         onClick={() => {
-                          deleteCartItem(item.sizeStocks);
+                          deleteCartItem(item.sizeStock);
                         }}
                       >
                         <svg

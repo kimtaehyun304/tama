@@ -10,7 +10,7 @@ type ColorItemSizeStockType = {
 };
 
 type StorageItemType = {
-  itemStockId: number;
+  colorItemSizeStockId: number;
   orderCount: number;
 };
 
@@ -18,7 +18,7 @@ type StorageItemType = {
 type StorageItemDetailType = {
   price: number;
   discountedPrice: number;
-  sizeStocks: ColorItemSizeStockType;
+  sizeStock: ColorItemSizeStockType;
   colorItemId: number;
   color: string;
   name: string;
@@ -28,13 +28,12 @@ type StorageItemDetailType = {
 type OrderItemType = {
   price: number;
   discountedPrice: number;
-  sizeStocks: ColorItemSizeStockType;
+  sizeStock: ColorItemSizeStockType;
   colorItemId: number;
   color: string;
   name: string;
   image: string;
 };
-
 
 type CommonInfoType = {
   id: number;
@@ -63,7 +62,7 @@ type ColorItemType = {
   price: number;
   discountedPrice: number;
   common: CommonInfoType;
-  stocks: ColorItemSizeStockType[];
+  sizeStocks: ColorItemSizeStockType[];
   relatedColorItems: RelatedColorItemType[];
 };
 
