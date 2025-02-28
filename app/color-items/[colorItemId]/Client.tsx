@@ -13,7 +13,8 @@ import StarRating from "@/components/StarRating";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+
 import { useState, useEffect, useRef, useContext } from "react";
 
 type Props = {
@@ -46,7 +47,7 @@ export default function Client({ colorItem }: Props) {
   const [display, setDisplay] = useState<string>("none");
   //아이템 개수
   const pageSize = 10;
-
+  const router = useRouter();
   const loginModalContext = useContext(LoginModalContext);
   const authContext = useContext(AuthContext);
 
@@ -128,10 +129,18 @@ export default function Client({ colorItem }: Props) {
   }
 
   function orderItem() {
-    if (!authContext?.isLogined) {
-      loginModalContext?.setIsContainOrder(true);
-      loginModalContext?.setIsOpenLoginModal(true);
+    function putItemInOrder() {
+      //쇼핑백을 통해 주문하면 배열이라 통일하려고 여기도 배열 씀
+      const itemToPut = [
+        {
+          colorItemSizeStockId: colorItem.sizeStocks[sizeIndex].id,
+          orderCount: orderCount,
+        },
+      ];
+      localStorage.setItem("tamaOrder", JSON.stringify(itemToPut));
     }
+    putItemInOrder();
+    router.push("/order");
   }
 
   useEffect(() => {
@@ -153,6 +162,11 @@ export default function Client({ colorItem }: Props) {
     switchSort();
   }, [sortProperty, sortDirection]);
 
+  useEffect(()=> {
+    console.log(authContext?.isLogined)
+  }, [authContext?.isLogined])
+
+  
   if (!reviews) return <LoadingScreen />;
 
   return (

@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import LoginButton from "./LoginButton";
-import ClientHeader from "./ClientHeader";
 import MyError from "../MyError";
+import MenuNav from "./MenuNav";
+import MyPageButton from "./MyPageButton";
 
 export default async function Header() {
   let categories: CateogoryType[] = [];
@@ -48,17 +49,7 @@ export default async function Header() {
               </div>
             </div>
             <div className="flex justify-center gap-x-3">
-              <Link href={"/"} className="">
-                <div className="grid justify-items-center">
-                  <Image
-                    src="/icon/icon-person.png"
-                    alt="mypae"
-                    width={30}
-                    height={30}
-                  />
-                  <div className="">마이페이지</div>
-                </div>
-              </Link>
+              <MyPageButton />
 
               <Link href={"/"} className="">
                 <div className="grid justify-items-center">
@@ -116,7 +107,7 @@ export default async function Header() {
         </div>
       </nav>
 
-      <ClientHeader categories={categories} />
+      <MenuNav categories={categories} />
     </header>
   );
 }

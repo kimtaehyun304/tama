@@ -20,7 +20,8 @@ import { useRouter } from "next/navigation";
 // 사이즈 삭제 됐을때 예외처리 필요
 export default function Cart() {
   const [isLoading, setIsLoading] = useState(true);
-  // 로컬스트리지에서 가져옴
+
+  // 로컬스트리지에서 가져옴. key: cartItem.colorItemSizeStockId, value: cartItem.orderCount
   const [cartMap, setCartMap] = useState<Map<number, number>>(new Map());
   const [itemTotalPrice, setItemTotalPrice] = useState<number>(0);
   const shippingFee = itemTotalPrice >= 40000 ? 0 : 3000;
@@ -43,6 +44,7 @@ export default function Cart() {
         parsedCart?.forEach((item) => {
           itemStocks.push(item.colorItemSizeStockId);
         });
+
         if (itemStocks.length > 0) {
           const res = await fetch(
             `${
@@ -68,7 +70,7 @@ export default function Cart() {
     syncCartMap();
   }, []);
 
-  //로컬스토리지와 동기화
+  //로컬스토리지와 동기화. 장바구니에서 뺴거나 수량 변경할 때 필요. 주문 가격 계산시 필요
   function syncCartMap() {
     const stringCart = localStorage.getItem("tamaCart");
     const parsedCart: StorageItemType[] = stringCart && JSON.parse(stringCart);
@@ -172,29 +174,54 @@ export default function Cart() {
     }
   }
 
-  function orderItem() {
-    /*
-    if (!authContext?.isLogined) {
-      loginModalContext?.setIsContainOrder(true);
-      loginModalContext?.setIsOpenLoginModal(true);
-    }
-          const parsedCart: StorageItemType[] = stringCart
-      ? JSON.parse(stringCart)
-      : null;
-      */
-    const stringCart = localStorage.getItem("tamaCart");
-
-    if (!stringCart) return;
-
+  //주문하기 (일괄 구매)
+  function orderItems() {
     if (cartItems.some((item) => item.sizeStock.stock === 0)) {
       simpleModalContext?.setMessage("품절 상품을 제외해주세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
       return;
     }
 
-    localStorage.setItem("tamaOrder", stringCart);
+    if (
+      cartItems.some(
+        (item) => item.sizeStock.stock < cartMap.get(item.sizeStock.id)!
+      )
+    ) {
+      simpleModalContext?.setMessage(`재고가 부족합니다.`);
+      simpleModalContext?.setIsOpenSimpleModal(true);
+      return;
+    }
 
-    router.push("/order");
+    const tamaCart = localStorage.getItem("tamaCart");
+    if (tamaCart) localStorage.setItem("tamaOrder", tamaCart);
+
+    router.push("/order?inCart=true");
+  }
+
+  //바로구매 (단품 구매)
+  function orderItem(itemSizeStockId: number) {
+    const item = cartItems.find(
+      (item) => item.sizeStock.id === itemSizeStockId
+    );
+
+    //재고 부족하면 바로 구매 버튼 안보이게 해놨지만, 혹시 몰라서 해놈
+    if (item?.sizeStock.stock! < cartMap.get(itemSizeStockId)!) {
+      simpleModalContext?.setMessage("재고가 부족합니다");
+      simpleModalContext?.setIsOpenSimpleModal(true);
+      return;
+    }
+
+    const stringCart = localStorage.getItem("tamaCart");
+
+    let tamaCart: StorageItemType[] = [];
+    if (stringCart) tamaCart = JSON.parse(stringCart);
+
+    const storageItem = tamaCart.find(
+      (item) => item.colorItemSizeStockId === itemSizeStockId
+    );
+
+    localStorage.setItem("tamaOrder", JSON.stringify(Array.of(storageItem)));
+    router.push("/order?inCart=true");
   }
 
   return (
@@ -238,9 +265,21 @@ export default function Cart() {
                     />
                     <div className="flex flex-col gap-y-2 flex-1">
                       <div>
-                        <div className="text-red-500">
-                          {item.sizeStock.stock === 0 && "품절"}
+                        <div>
+                          {item.sizeStock.stock === 0 ? (
+                            <span className="text-red-500">품절</span>
+                          ) : (
+                            <span className="text-gray-400">
+                              남은 재고 {item.sizeStock.stock}
+                            </span>
+                          )}
                         </div>
+                        <div className="text-red-500 font-bold">
+                          {item.sizeStock.stock <
+                            cartMap.get(item.sizeStock.id)! &&
+                            "재고가 부족합니다"}
+                        </div>
+
                         <div>{item.name}</div>
                         <div>
                           {item.color}/{item.sizeStock.size}
@@ -248,13 +287,19 @@ export default function Cart() {
                       </div>
                       <div className="text-sm text-[#aaa]">
                         {item.discountedPrice &&
-                          `${item.price.toLocaleString("ko-KR")}원`}
+                          `${(
+                            item.price * cartMap.get(item.sizeStock.id)!
+                          ).toLocaleString("ko-kr")}원`}
                       </div>
                       <div className="text-2xl font-semibold">
                         {item.discountedPrice
-                          ? item.discountedPrice.toLocaleString("ko-KR")
-                          : item.price.toLocaleString("ko-KR")}
-                        원
+                          ? `${(
+                              item.discountedPrice *
+                              cartMap.get(item.sizeStock.id)!
+                            ).toLocaleString("ko-kr")}원`
+                          : `${(
+                              item.price * cartMap.get(item.sizeStock.id)!
+                            ).toLocaleString("ko-kr")}원`}
                       </div>
                       <div className="flex">
                         <button
@@ -277,7 +322,17 @@ export default function Cart() {
                           +
                         </button>
                       </div>
-                      <button className="border p-2">바로 구매</button>
+                      {item.sizeStock.stock >=
+                        cartMap.get(item.sizeStock.id)! && (
+                        <button
+                          className="border p-2"
+                          onClick={() => {
+                            orderItem(item.sizeStock.id);
+                          }}
+                        >
+                          바로 구매
+                        </button>
+                      )}
                     </div>
                     <div>
                       <button
@@ -329,7 +384,7 @@ export default function Cart() {
                   <div>
                     <button
                       className="bg-[#131922] text-[#fff] border p-4 w-full"
-                      onClick={orderItem}
+                      onClick={orderItems}
                     >
                       주문하기
                     </button>
