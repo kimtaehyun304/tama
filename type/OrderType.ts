@@ -1,0 +1,42 @@
+// OrderResponse Type
+type OrderResponse = {
+  content: ContentOrderResponse[];
+  page: PageType;
+};
+
+type ContentOrderResponse = {
+  id: number; // orderId
+  orderDate: string;
+  status: OrderStatus;
+  delivery: DeliveryResponse;
+  orderItems: OrderItemResponse[];
+};
+
+// OrderItemResponse Type
+type OrderItemResponse = {
+  name: string;
+  color: string;
+  size: string;
+  orderPrice: number;
+  count: number;
+  imageSrc: string; // 대표 이미지
+};
+
+// OrderStatus Enum → 유니온 타입
+type OrderStatus =
+  | "PAYMENT"
+  | "CHECK"
+  | "DELIVERY"
+  | "COMPLETE"
+  | "CANCEL"
+  | "REFUND";
+
+// DeliveryResponse Type
+type DeliveryResponse = {
+  zipCode: string; // 우편번호
+  street: string; // 도로명 주소
+  detail: string; // 상세 주소
+  message: string;
+  receiverNickname: string;
+  receiverPhone: string;
+};

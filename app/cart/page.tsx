@@ -237,10 +237,17 @@ export default function Cart() {
             <div className="text-2xl font-bold text-center border-b-2 border-black py-5">
               쇼핑백
             </div>
-            <div className="text-center bg-[#f8f8f8] py-6">
-              <span className="font-semibold underline">로그인</span>하시면, 더
-              많은 혜택을 받으실 수 있습니다.
-            </div>
+            {!authContext?.isLogined && (
+              <div className="text-center bg-[#f8f8f8] py-6">
+                <span
+                  className="font-semibold underline cursor-pointer"
+                  onClick={() => loginModalContext?.setIsOpenLoginModal(true)}
+                >
+                  로그인
+                </span>
+                하시면, 더 많은 혜택을 받으실 수 있습니다.
+              </div>
+            )}
           </section>
           {isLoading ? (
             <LoadingScreen />
@@ -275,8 +282,9 @@ export default function Cart() {
                           )}
                         </div>
                         <div className="text-red-500 font-bold">
-                          {item.sizeStock.stock <
-                            cartMap.get(item.sizeStock.id)! &&
+                          {item.sizeStock.stock != 0 &&
+                            item.sizeStock.stock <
+                              cartMap.get(item.sizeStock.id)! &&
                             "재고가 부족합니다"}
                         </div>
 

@@ -128,7 +128,10 @@ export default () => {
   async function requestPayment(
     payMethod: payMethodEnum,
     itemTotalPrice: number,
-    orderName: string
+    orderName: string,
+    fullName: string,
+    phoneNumber: string,
+    email: string
   ) {
     //유효성 검사
     if (!authContext?.isLogined) {
@@ -266,7 +269,6 @@ export default () => {
 
     const notified = await fetch(fetchUrl, {
       method: "POST",
-      //코드 복잡해서 비로그인 경우에도 인증 헤더 냅뒀음
       headers: fetchHeader,
       // paymentId와 주문 정보를 서버에 전달합니다
       body: JSON.stringify(fetchBody),
@@ -295,12 +297,12 @@ export default () => {
       }
 
       localStorage.removeItem("tamaOrder");
-      router.push("/myPage");
+      router.push("/myPage/order");
       return;
     }
   }
 
-  //fetchOrderItem(), syncOrderMap(), fetchMember()
+  //fetchOrderItem(), syncOrderMap(), 
   useEffect(() => {
     async function fetchOrderItem() {
       const jsonStrOrder = localStorage.getItem("tamaOrder");
@@ -368,9 +370,10 @@ export default () => {
           },
         }
       );
-      const member: SimpleMemberType = await res.json();
+      const member: MemberPayemntSetUpType = await res.json();
       setSenderNickname(member.nickname);
       setSenderPhone(member.phone);
+      setSenderEmail(member.email)
     }
     if (authContext?.isLogined) fetchMember();
   }, [authContext?.isLogined]);
@@ -498,6 +501,7 @@ export default () => {
               </div>
             </section>
           )}
+          
           {/*받는고객 */}
           <section>
             <div className="font-bold text-2xl p-[1%] border-b">받는고객</div>
@@ -605,7 +609,7 @@ export default () => {
                 />
               </div>
 
-              <div className="flex items-center gap-y-3">
+              <div className="flex items-center flex-wrap gap-y-3">
                 <label htmlFor="" className="w-32 whitespace-nowrap">
                   배송 메시지 선택
                 </label>
@@ -660,6 +664,7 @@ export default () => {
               </div>
             </div>
           </section>
+
           {/*결제수단 */}
           <section>
             <div className="font-bold text-2xl p-[1%] border-b">결제수단</div>
@@ -758,7 +763,10 @@ export default () => {
                           itemTotalPrice,
                           orderItems.length === 1
                             ? orderItems[0].name
-                            : orderItems[0].name + " 등 " + orderItems.length
+                            : orderItems[0].name + " 등 " + orderItems.length,
+                          senderNickname,
+                          senderPhone,
+                          senderEmail
                         )
                       }
                     >

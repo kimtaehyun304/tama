@@ -47,8 +47,9 @@ export default ({ categories }: Props) => {
         </div>
       </nav>
 
+      {/*하위 카테고리 수에 따라 height가 바뀌길래 제일 긴걸로 고정 */}
       {isVisible && (
-        <div className="xl:mx-standard border-r border-b">
+        <div className="xl:mx-standard border-r border-b h-[240px]">
           <div className="flex">
             <ul className="bg-[#F5F5F5]">
               {categories.map((category, index) => (

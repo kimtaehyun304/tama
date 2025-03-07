@@ -1,6 +1,27 @@
-type SimpleMemberType = {
+type MemberPayemntSetUpType = {
   id: number;
   nickname: string;
   email: string;
   phone: string;
+};
+
+//개인정보
+type MemberInformationType = {
+  email: string;
+  phone: string;
+  nickname: string;
+  gender: "MALE" | "FEMALE";
+  height?: number;
+  weight?: number;
+};
+
+type AddressResponse = {
+  id: number;
+  name: string; // 우편번호
+  zipCode: string; // 우편번호
+  street: string; // 도로명 주소
+  detail: string; // 상세 주소
+  receiverNickname: string;
+  receiverPhone: string;
+  isDefault: boolean;
 };

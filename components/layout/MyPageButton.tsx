@@ -10,12 +10,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { SimpleModalContext } from "../context/SimpleModalContex";
 import { useRouter } from "next/navigation";
 
-const Button = (
-  <div className="grid justify-items-center">
-    <Image src="/icon/icon-person.png" alt="mypae" width={30} height={30} />
-    <div className="">마이페이지</div>
-  </div>
-);
 
 export default () => {
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
@@ -25,7 +19,7 @@ export default () => {
 
   function handleClick() {
     if (authContext?.isLogined) {
-      router.push("/myPage");
+      router.push("/myPage/order");
     } else {
       loginModalContext?.setIsOpenLoginModal(true);
     }
