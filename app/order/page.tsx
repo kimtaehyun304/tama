@@ -84,7 +84,7 @@ export default () => {
   const [selectedPayMethod, setSelectedPayMethod] = useState<payMethodEnum>(
     payMethodEnum.CARD
   );
-  const [orderItems, setOrderItems] = useState<OrderItemType[]>([]);
+  const [orderItems, setOrderItems] = useState<StorageItemDetailType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [itemTotalPrice, setItemTotalPrice] = useState<number>(0);
@@ -161,7 +161,7 @@ export default () => {
 
       if (!/^\d+$/.test(String(senderPhone))) {
         senderPhoneRef.current?.focus();
-        simpleModalContext?.setMessage("전화번호를 입력해주세요");
+        simpleModalContext?.setMessage("주문자 전화번호를 입력해주세요");
         simpleModalContext?.setIsOpenSimpleModal(true);
         return;
       }
@@ -220,9 +220,10 @@ export default () => {
       channelKey: TOSS_PAYMENTS_CHANNEL_KEY,
       payMethod: payMethod,
       redirectUrl: `${process.env.NEXT_PUBLIC_ClIENT_URL}`,
+      //oauth 계정은 휴대폰 번호가 없음
       customer: {
         fullName: senderNickname,
-        phoneNumber: senderPhone,
+        ...(senderPhone && { phoneNumber: senderPhone }),
         email: senderEmail,
       },
     });
@@ -267,6 +268,9 @@ export default () => {
       }),
     };
 
+    simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
+    simpleModalContext?.setIsOpenSimpleModal(true);
+
     const notified = await fetch(fetchUrl, {
       method: "POST",
       headers: fetchHeader,
@@ -276,7 +280,6 @@ export default () => {
 
     const notifiedJson: SimpleResponseType = await notified.json();
     simpleModalContext?.setMessage(notifiedJson.message);
-    simpleModalContext?.setIsOpenSimpleModal(true);
 
     if (notified.ok) {
       const stringCart = localStorage.getItem("tamaCart");
@@ -297,12 +300,16 @@ export default () => {
       }
 
       localStorage.removeItem("tamaOrder");
-      router.push("/myPage/order");
+
+      authContext?.isLogined
+        ? router.push("/myPage/order")
+        : router.push("/guest");
+
       return;
     }
   }
 
-  //fetchOrderItem(), syncOrderMap(), 
+  //fetchOrderItem(), syncOrderMap(),
   useEffect(() => {
     async function fetchOrderItem() {
       const jsonStrOrder = localStorage.getItem("tamaOrder");
@@ -373,7 +380,7 @@ export default () => {
       const member: MemberPayemntSetUpType = await res.json();
       setSenderNickname(member.nickname);
       setSenderPhone(member.phone);
-      setSenderEmail(member.email)
+      setSenderEmail(member.email);
     }
     if (authContext?.isLogined) fetchMember();
   }, [authContext?.isLogined]);
@@ -490,7 +497,10 @@ export default () => {
                     className="border p-3 grow"
                     placeholder="숫자만 입력하세요"
                     value={senderPhone}
-                    onChange={(event) => setSenderPhone(event.target.value)}
+                    onChange={(event) => {
+                      const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                      setSenderPhone(value);
+                    }}
                     ref={senderPhoneRef}
                   />
                 </div>
@@ -501,7 +511,7 @@ export default () => {
               </div>
             </section>
           )}
-          
+
           {/*받는고객 */}
           <section>
             <div className="font-bold text-2xl p-[1%] border-b">받는고객</div>
@@ -534,7 +544,10 @@ export default () => {
                   className="border p-3 grow"
                   placeholder="숫자만 입력하세요"
                   value={receiverPhone}
-                  onChange={(event) => setReceiverPhone(event.target.value)}
+                  onChange={(event) => {
+                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                    setReceiverPhone(value);
+                  }}
                   ref={receiverPhoneRef}
                 />
               </div>
@@ -695,7 +708,7 @@ export default () => {
               {orderItems.map((item, index) => (
                 <div className="border flex gap-x-4 p-2" key={`item-${index}`}>
                   <Image
-                    src={item.image}
+                    src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${item.uploadFile.storedFileName}`}
                     alt={item.name}
                     width={100}
                     height={100}

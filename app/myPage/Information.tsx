@@ -27,9 +27,6 @@ export default () => {
     );
   };
 
-  useEffect(() => {
-    console.log("변경된 memberInfo:", memberInfo);
-  }, [memberInfo]);
 
   useEffect(() => {
     async function fetchMemberInfo() {

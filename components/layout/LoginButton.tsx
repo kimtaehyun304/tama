@@ -9,7 +9,6 @@ import { AuthContext } from "../context/AuthContext";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { SimpleModalContext } from "../context/SimpleModalContex";
 
-
 export default function LoginButton() {
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
   const simpleModalContext = useContext(SimpleModalContext); // 모달 상태 관리
@@ -32,10 +31,11 @@ export default function LoginButton() {
         alert("로그인 만료");
         localStorage.removeItem("tamaAccessToken");
         loginModalContext?.setIsOpenLoginModal(true);
+        return;
       }
+      
+      authContext?.setIsLogined(true);
     }
-
-    if (accessToken) authContext?.setIsLogined(true);
   }, []);
 
   // typeof !== "undefined" 필요할 것 같았는데 에러 안나네 뭐지 -> onClick function이라 그런듯

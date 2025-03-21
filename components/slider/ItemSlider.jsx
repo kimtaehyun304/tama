@@ -50,7 +50,7 @@ const xlHiddenArrowSettings = {
   prevArrow: <XlHiddenPrevArrow />,
 };
 
-export default function ItemSlider({ images, itemName }) {
+export default function ItemSlider({ uploadFiles }) {
   const [nav1, setNav1] = useState();
   const [nav2, setNav2] = useState();
   const sliderRef1 = useRef();
@@ -65,16 +65,21 @@ export default function ItemSlider({ images, itemName }) {
   return (
     <section className="">
       <Slider asNavFor={nav2} ref={sliderRef1} {...hiddenArrowSettings}>
-        {images.map((src, index) => (
+        {uploadFiles.map((uploadFile, index) => (
           <div
             className="relative w-full h-[400px] xl:h-[600px]"
             key={`item-${index}`}
           >
-            <Image src={src} alt={itemName} fill />
+            <Image
+              src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${uploadFile.storedFileName}`}
+              alt={uploadFile.originalFileName}
+              fill
+            />
           </div>
         ))}
       </Slider>
 
+      {/*slidesToShow모다 이미지 수가 작으면 출력 안되는 버그 있어서 infinite 껐음 */}
       <Slider
         asNavFor={nav1}
         ref={sliderRef2}
@@ -82,13 +87,13 @@ export default function ItemSlider({ images, itemName }) {
         swipeToSlide={true}
         focusOnSelect={true}
         beforeChange={(current, next) => setActiveIndex(next)}
-        //infinite={false}
+        infinite={false}
       >
-        {images.map((src, index) => (
+        {uploadFiles.map((uploadFile, index) => (
           <div className="pr-1" key={`item-detail-${index}`}>
             <Image
-              src={src}
-              alt={itemName}
+              src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${uploadFile.storedFileName}`}
+              alt={uploadFile.originalFileName}
               width={100}
               height={100}
               className={`${

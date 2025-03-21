@@ -1,7 +1,30 @@
 // OrderResponse Type
+
+type AdminOrderResponse = {
+  content: ContentAdminOrderResponse[];
+  page: PageType;
+};
+
+type ContentAdminOrderResponse = {
+  id: number; // orderId
+  orderDate: string;
+  buyerName: string;
+  status: OrderStatus;
+  delivery: DeliveryResponse;
+  orderItems: OrderItemResponse[];
+};
+
 type OrderResponse = {
   content: ContentOrderResponse[];
   page: PageType;
+};
+
+type GuestOrderResponse = {
+  id: number; // orderId
+  orderDate: string;
+  status: OrderStatus;
+  delivery: DeliveryResponse;
+  orderItems: OrderItemResponse[];
 };
 
 type ContentOrderResponse = {
@@ -19,7 +42,7 @@ type OrderItemResponse = {
   size: string;
   orderPrice: number;
   count: number;
-  imageSrc: string; // 대표 이미지
+  uploadFile: UploadFileType;
 };
 
 // OrderStatus Enum → 유니온 타입

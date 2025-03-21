@@ -1,10 +1,8 @@
-type CateogoryType = {
-  id: number;
-  name: string;
-  children: ChildCateogoryType[];
+type FamilyCateogoryType = BaseCateogoryType &  {
+  children: BaseCateogoryType[];
 };
 
-type ChildCateogoryType = {
+type BaseCateogoryType = {
   id: number;
   name: string;
 };

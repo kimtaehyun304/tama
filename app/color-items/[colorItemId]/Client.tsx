@@ -129,6 +129,13 @@ export default function Client({ colorItem }: Props) {
   }
 
   function orderItem() {
+
+    if(stock < orderCount){
+      setIsOpenOutOfStockModal(true);
+      return;
+    }
+
+    
     function putItemInOrder() {
       //쇼핑백을 통해 주문하면 배열이라 통일하려고 여기도 배열 씀
       const itemToPut = [
@@ -161,11 +168,6 @@ export default function Client({ colorItem }: Props) {
     }
     switchSort();
   }, [sortProperty, sortDirection]);
-
-  useEffect(()=> {
-    console.log(authContext?.isLogined)
-  }, [authContext?.isLogined])
-
   
   if (!reviews) return <LoadingScreen />;
 
@@ -182,8 +184,7 @@ export default function Client({ colorItem }: Props) {
         {/*(좌) 상품 이미지 및 리뷰 */}
         <div className="">
           <ItemSlider
-            images={colorItem.images}
-            itemName={colorItem.common.name}
+            uploadFiles={colorItem.uploadFiles}
           />
 
           <div className="flex justify-between border-y py-4">
@@ -333,7 +334,7 @@ export default function Client({ colorItem }: Props) {
                         key={`relatedItem-${index}`}
                       >
                         <Image
-                          src={related.imageSrc}
+                          src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${related.uploadFile.storedFileName}`}
                           alt={related.color}
                           width={50}
                           height={50}

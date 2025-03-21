@@ -6,7 +6,7 @@ import BannerSlider from "@/components/slider/BannerSlider";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
 
 const images: BannerImageType[] = [
@@ -15,120 +15,22 @@ const images: BannerImageType[] = [
   { src: "/banner3.jpg", alt: "Banner 3" },
 ];
 
-const items = [
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: null,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-  {
-    id: 2411929109,
-    src: "/woman-pants.jpg",
-    alt: "woman-pants",
-    name: "여 코듀로이 와이드 팬츠",
-    price: 49900,
-    discountedPrice: 39900,
-    starRatingAvg: 4.9,
-    comments: 19,
-  },
-];
-
 export default function Home() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const tempToken = searchParams.get("tempToken");
   const authContext = useContext(AuthContext);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    number | undefined
+  >();
+  const [categoryBestItems, setCategoryBestItems] =
+    useState<CategoryBestItemType[]>();
 
-  //tempToken파라미터가 사라지기전에 새로고침하면 alert 발생 
+  //tempToken파라미터가 사라지기전에 새로고침하면 alert 발생
   useEffect(() => {
     if (tempToken) {
-      router.replace(pathname)
+      router.replace(pathname);
       async function fetchAccessToken() {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/api/auth/access-token`,
@@ -140,7 +42,7 @@ export default function Home() {
             body: JSON.stringify({ tempToken: tempToken }),
           }
         );
-        const data:AccessTokenType = await res.json();
+        const data: AccessTokenType = await res.json();
         if (res.status !== 200) {
           alert(data.message);
           return;
@@ -152,6 +54,35 @@ export default function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    fetchCategoryBestItem(selectedCategoryId);
+  }, [selectedCategoryId]);
+
+  async function fetchCategoryBestItem(categoryId: number | undefined) {
+    const params = new URLSearchParams();
+    if (categoryId) params.append("categoryId", String(categoryId));
+    params.append("page", String(1));
+    params.append("size", String(10));
+
+    const categoryBestItemRes = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_SERVER_URL
+      }/api/items/best?${params.toString()}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    const categoryBestItems = await categoryBestItemRes.json();
+    if (!categoryBestItemRes.ok) {
+      alert(categoryBestItems.message);
+      return;
+    }
+    setCategoryBestItems(categoryBestItems);
+  }
+
+  if (!categoryBestItems) return;
+
   return (
     <article className="xl:mx-standard">
       <BannerSlider images={images} />
@@ -161,9 +92,11 @@ export default function Home() {
         <nav className="flex justify-between items-end border-b pb-6 px-3 xl:px-0 text">
           <div className="flex justify-start items-end gap-x-4">
             <span className="font-extrabold text-3xl">카테고리 베스트</span>
+            {/* 주문 데이터가 부족해서 전일 적용 안함
             <span className="hidden xl:inline text-[#999]  text-sm">
               전일기준의 상품 매출, 판매 수량, 조회 수를 반영하여 선정됩니다.
             </span>
+            */}
           </div>
           <Link href={"/"} className="text-end text-[#777]">
             더보기 &#10095;
@@ -172,18 +105,76 @@ export default function Home() {
 
         <nav className="">
           <div className="flex gap-x-2 text-sm justify-center xl:justify-start py-4">
-            <Link href={"/"} className="">
-              <div className="grid justify-items-center">
-                <Image
-                  src="/icon/icon-hamburger.png"
-                  alt="mypae"
-                  width={60}
-                  height={60}
-                />
-                <div className="">전체</div>
-              </div>
-            </Link>
+            <button
+              onClick={() => {
+                setSelectedCategoryId(undefined);
+              }}
+              className="grid justify-items-center"
+            >
+              <Image
+                src="/icon/icon-hamburger.png"
+                alt="전체"
+                width={60}
+                height={60}
+              />
+              <span className="">전체</span>
+            </button>
 
+            <button
+              onClick={() => {
+                setSelectedCategoryId(1);
+              }}
+              className="grid justify-items-center"
+            >
+              <Image
+                className={`border p-1 rounded-lg bg-gray-200 ${
+                  selectedCategoryId == 1 && `border-black`
+                }`}
+                src="/icon/icon-jacket.png"
+                alt="아우터"
+                width={60}
+                height={60}
+              />
+              <span className="">아우터</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedCategoryId(6);
+              }}
+              className="grid justify-items-center"
+            >
+              <Image
+                className={`border p-1 rounded-lg bg-gray-200 ${
+                  selectedCategoryId == 6 && `border-black`
+                }`}
+                src="/icon/icon-casual-t-shirt.png"
+                alt="상의"
+                width={60}
+                height={60}
+              />
+              <span className="">상의</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedCategoryId(12);
+              }}
+              className="grid justify-items-center"
+            >
+              <Image
+                className={`border p-1 rounded-lg bg-gray-200 ${
+                  selectedCategoryId == 12 && `border-black`
+                }`}
+                src="/icon/icon-pants.png"
+                alt="하의"
+                width={60}
+                height={60}
+              />
+              <span className="">하의</span>
+            </button>
+
+            {/*
             <Link href={"/"} className="">
               <div className="grid justify-items-center">
                 <Image
@@ -243,52 +234,53 @@ export default function Home() {
                 <div className="">패션잡화</div>
               </div>
             </Link>
+              */}
           </div>
           <div className="grid px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6 justify-items-center xl:justify-items-start">
-            {items.map((item, index) => (
+            {categoryBestItems.map((item, index) => (
               <Link
-                href={`/color-items/${item.id}`}
+                href={`/color-items/${item.colorItemId}`}
                 key={`categoryBestimages-${index}`}
               >
                 <ul className="relative max-w-[232px]">
-                <li >
-                  <Image
-                    src={item.src}
-                    alt={item.alt}
-                    width={232}
-                    height={232}
-                  />
-                  <div className="absolute top-2 left-2 bg-[#ffffff] p-1">
-                    {index + 1}위
-                  </div>
-                  <div className="">
-                    <div className="py-1">{item.name}</div>
-                    <div className="flex items-center gap-x-2 py-1">
-                      <span>
-                        <span className="font-semibold">
-                          {item.discountedPrice
-                            ? item.discountedPrice.toLocaleString("ko-KR")
-                            : item.price.toLocaleString("ko-KR")}
+                  <li>
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${item.uploadFile.storedFileName}`}
+                      alt={item.name}
+                      width={232}
+                      height={232}
+                    />
+                    <div className="absolute top-2 left-2 bg-[#ffffff] p-1">
+                      {index + 1}위
+                    </div>
+                    <div className="">
+                      <div className="py-1">{item.name}</div>
+                      <div className="flex items-center gap-x-2 py-1">
+                        <span>
+                          <span className="font-semibold">
+                            {item.discountedPrice
+                              ? item.discountedPrice.toLocaleString("ko-KR")
+                              : item.price.toLocaleString("ko-KR")}
+                          </span>
+                          원
                         </span>
-                        원
-                      </span>
-                      <span className="text-sm text-[#aaa]">
-                        {item.discountedPrice &&
-                          `${item.price.toLocaleString("ko-KR")}원`}
-                      </span>
+                        <span className="text-sm text-[#aaa]">
+                          {item.discountedPrice &&
+                            `${item.price.toLocaleString("ko-KR")}원`}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-x-1 text-sm text-[#aaa]">
+                        <Image
+                          src="/icon/icon-star.png"
+                          alt={item.name}
+                          width={16}
+                          height={16}
+                        />
+                        {item.avgRating}
+                        <span>({item.reviewCount})</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-x-1 text-sm text-[#aaa]">
-                      <Image
-                        src="/icon/icon-star.png"
-                        alt={item.alt}
-                        width={16}
-                        height={16}
-                      />
-                      {item.starRatingAvg}
-                      <span>({item.comments})</span>
-                    </div>
-                  </div>
-                </li>
+                  </li>
                 </ul>
               </Link>
             ))}

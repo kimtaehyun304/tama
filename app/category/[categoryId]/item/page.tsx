@@ -16,12 +16,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useRef, useContext } from "react";
 import ReactPaginate from "react-paginate";
 
-type Props = {
-  categories: CateogoryType[];
-  colors: ColorType[];
-};
-
-export default function Client({ categories, colors }: Props) {
+export default () => {
   const params = useParams<{ categoryId: string }>();
   const categoryId = parseInt(params.categoryId);
   const [categoryItems, setCategoryItems] = useState<CategoryItemType>();
@@ -29,7 +24,7 @@ export default function Client({ categories, colors }: Props) {
   const pagePrams = Number(searchParams.get("page")) || 1;
 
   //아이템 개수
-  const pageSize = 2;
+  const pageSize = 10;
 
   //배열을 만들고 아이템 개수만큼 selectedColorItemIndex를 할당한다. 초기값은 0
   //EX) pageSize 1 가정. 이 아이템 색상은 빨강, 파랑이다. 파랑 클릭하면 selectedColorItemIndex는 [0] -> [1] 바뀜
@@ -51,6 +46,9 @@ export default function Client({ categories, colors }: Props) {
   const [isContainSoldOut, setIsContainSoldOut] = useState<boolean>(false);
   //정렬 open close
   const [display, setDisplay] = useState<string>("none");
+
+  const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
+  const [colors, setColors] = useState<BaseColorType[]>([]);
 
   //필터 적용 버튼에 필요해서 useEffect에서 분리
   async function fetchCategoryItems() {
@@ -113,6 +111,51 @@ export default function Client({ categories, colors }: Props) {
   */
 
   useEffect(() => {
+    async function fetchCategories() {
+      const categoriesRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const categoriesJson = await categoriesRes.json();
+      if (!categoriesRes.ok) {
+        alert(categoriesJson.message);
+        return;
+      }
+
+      setCategories(categoriesJson);
+      document.title = categoriesJson
+        .flatMap((c: { children: BaseColorType[] }) => [
+          c,
+          ...(c.children || []),
+        ])
+        .find((c: { id: number }) => c.id == categoryId)?.name;
+    }
+    fetchCategories();
+
+    async function fetchColors() {
+      const colorsRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/colors/parent`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const colorsJson = await colorsRes.json();
+
+      if (!colorsRes.ok) {
+        alert(colorsJson.message);
+        return;
+      }
+
+      setColors(colorsJson);
+    }
+    fetchColors();
+  }, []);
+
+  useEffect(() => {
     fetchCategoryItems();
   }, [pagePrams, sortProperty, sortDirection]);
 
@@ -159,7 +202,7 @@ export default function Client({ categories, colors }: Props) {
                   category.id === categoryId ? "font-nanumGothicBold " : ""
                 }
               >
-                <Link href={`/category/${category.id}`}>{category.name}</Link>
+                <Link href={`/category/${category.id}/item`}>{category.name}</Link>
               </li>
               {(category.id === categoryId ||
                 category.children
@@ -173,7 +216,7 @@ export default function Client({ categories, colors }: Props) {
                       }`}
                       key={`categorychild${categoryChildindex}`}
                     >
-                      <Link href={`/category/${child.id}`}>{child.name}</Link>
+                      <Link href={`/category/${child.id}/item`}>{child.name}</Link>
                     </li>
                   ))}
                 </ul>
@@ -369,11 +412,11 @@ export default function Client({ categories, colors }: Props) {
                 }`}
               >
                 <Image
-                  src={
+                  src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${
                     item.relatedColorItems[
                       selectedColorItemIndex[categoryItemindex]
-                    ].imageSrc
-                  }
+                    ].uploadFile.storedFileName
+                  }`}
                   width={232}
                   height={232}
                   alt={item.name}
@@ -434,4 +477,4 @@ export default function Client({ categories, colors }: Props) {
       </section>
     </article>
   );
-}
+};

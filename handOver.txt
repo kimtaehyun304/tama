@@ -1,7 +1,0 @@
-주문 페이지: cart/oder, order로 두개
-ㄴ장바구니에서 주문하면 cart/order. 아이템 상세 페이지에서 주문하면 order
-ㄴtamaCart, tamaOrder 로컬스토리지 존재
-ㄴ장바구니에서 바로구매하면 tamaCart에서 바로구매한 아이템을 지워야해서 페이지를 두개로 구분함
-ㄴ쿼리 파라미터로 바꿔도 무방
-
-

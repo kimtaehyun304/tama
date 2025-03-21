@@ -27,7 +27,7 @@ Configure how the request should interact with Next.js Data Cache.
 프로덕션 환경 (production):
 빌드 시 한 번 데이터를 가져오고, 정적으로 미리 렌더링됨(SSG, Static Site Generation).
 하지만 해당 경로(route)에 Dynamic API가 포함되어 있다면, 매 요청마다 데이터를 다시 가져옴.
-☆fetch 옵션 headers를 쓰면 캐싱X. EX)인증헤더
+Dynamic API ex) fetch 옵션 headers를 쓰면 캐싱X. EX)인증헤더
 ☆searchParams prop 캐싱X
 
 클라이언트에서 호출 -> 캐싱X
@@ -50,3 +50,11 @@ CSR vs SSR
 이런 이유로 CSR 선호. 
 
 useEffect에서 if(!authContext.isLogined) alert("로그인 해주세요") -> 의존성 배열 땜에 alert 두번 발생 -> return LoginScreen
+
+space-x, before
+ㄴflex-gap과 같이 쓰기 좋은건 before    
+
+w-fit, h-fit
+ㄴdiv나 flex에서 원래 크기로 줄여줌
+
+max-w, grow를 쓰면 pc와 모바일 화면을 동시에 설정 가능

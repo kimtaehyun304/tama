@@ -6,6 +6,8 @@ import { LoginModalContext } from "../context/LoginModalContext";
 import { SimpleModalContext } from "../context/SimpleModalContex";
 import SimpleModal from "./SimpleModal";
 import { AuthContext } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
+
 
 type props = {
   isContainOrder: boolean;
@@ -18,6 +20,7 @@ export default function LoginModal() {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [message, setMessage] = useState<string>();
+  const router = useRouter();
 
   const closeModal = () => {
     loginModalContext?.setIsOpenLoginModal(false);
@@ -190,9 +193,15 @@ export default function LoginModal() {
                   <span className="text-[#e0e0e0]">｜</span>
                 </>
               )}
-              <Link href={"/"} className="underline text-[#787878]">
+              <button
+                onClick={() => {
+                  loginModalContext.setIsOpenLoginModal(false);
+                  router.push("/guest");
+                }}
+                className="underline text-[#787878]"
+              >
                 비회원 주문조회
-              </Link>
+              </button>
             </div>
           </div>
         </div>

@@ -6,15 +6,6 @@ import MenuNav from "./MenuNav";
 import MyPageButton from "./MyPageButton";
 
 export default async function Header() {
-  let categories: CateogoryType[] = [];
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
-    {
-      cache: "no-store",
-    }
-  );
-  categories = await res.json();
 
   return (
     <header className="sticky top-0 z-10 bg-white">
@@ -107,7 +98,7 @@ export default async function Header() {
         </div>
       </nav>
 
-      <MenuNav categories={categories} />
+      <MenuNav />
     </header>
   );
 }

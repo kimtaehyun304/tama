@@ -22,9 +22,10 @@ type StorageItemDetailType = {
   colorItemId: number;
   color: string;
   name: string;
-  image: string;
+  uploadFile: UploadFileType;
 };
 
+/*
 type OrderItemType = {
   price: number;
   discountedPrice: number;
@@ -34,6 +35,7 @@ type OrderItemType = {
   name: string;
   image: string;
 };
+*/
 
 type CommonInfoType = {
   id: number;
@@ -52,11 +54,11 @@ type CommonInfoType = {
 type RelatedColorItemType = {
   id: number;
   color: string;
-  imageSrc: string;
+  uploadFile: UploadFileType;
 };
 
 type ColorItemType = {
-  images: string[];
+  uploadFiles: UploadFileType[];
   id: number;
   color: string;
   price: number;
@@ -97,4 +99,19 @@ type PageType = {
   //totalElements: number;
   pageCount: number;
   rowCount: number;
+};
+
+type GenderType = "MALE" | "FEMALE" | "BOTH";
+
+//type ColorItems = SaveColorItemRequest[]; // Equivalent to your List<SaveColorItemRequest> in Java
+
+type SaveColorItemRequest = {
+  colorId: number;
+  files: File[]; // Assuming you're handling the file uploads as `File` objects in TypeScript
+  sizeStocks: SaveSizeStockRequest[];
+};
+
+type SaveSizeStockRequest = {
+  size: string;
+  stock: number;
 };

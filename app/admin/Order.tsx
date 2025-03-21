@@ -10,9 +10,10 @@ import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import MyPagination from "@/components/MyPagination";
+import ForbiddenScreen from "@/components/ForbiddenScreen";
 
 export default () => {
-  const [orders, setOrders] = useState<OrderResponse>();
+  const [orders, setOrders] = useState<AdminOrderResponse>();
   const authContext = useContext(AuthContext);
   const loginModalContext = useContext(LoginModalContext);
   const simpleModalContext = useContext(SimpleModalContext);
@@ -24,7 +25,7 @@ export default () => {
     async function fetchOrder() {
       if (authContext?.isLogined) {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/member?page=${pagePrams}&size=${pageSize}`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders?page=${pagePrams}&size=${pageSize}`,
           {
             method: "GET",
             headers: {
@@ -34,7 +35,10 @@ export default () => {
             },
           }
         );
-        const ordersJson: OrderResponse = await res.json();
+        const ordersJson = await res.json();
+        if (!res.ok) {
+          return;
+        }
         setOrders(ordersJson);
       }
     }
@@ -63,7 +67,7 @@ export default () => {
   }
 
   if (!orders) {
-    return <LoginScreen />;
+    return <ForbiddenScreen />;
   }
 
   return (
@@ -76,6 +80,7 @@ export default () => {
               <div className="font-bold">{order.orderDate}</div>
               <div>{order.status}</div>
             </div>
+            <div>{order.buyerName}</div>
             <div>
               ({order.delivery.zipCode}) {order.delivery.street}{" "}
               {order.delivery.detail}
@@ -122,10 +127,7 @@ export default () => {
           </div>
         </section>
       ))}
-     <MyPagination
-        pageCount={orders.page.pageCount}
-        pageRangeDisplayed={5}
-      />
+      <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
     </section>
   );
 };
