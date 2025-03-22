@@ -41,9 +41,7 @@ export default () => {
 
   const [categoryMap, setCategoryMap] = useState<Map<number, string>>();
   const [colorMap, setColorMap] = useState<Map<number, string>>();
-
-  // 초기 상태 설정: 색상별 재고
-  // const [colorItems, setColorItems] = useState<SaveColorItemRequest[]>([]);
+  const [files, setFiles] = useState<File[][]>([]);
   const [stocks, setStocks] = useState<number[][]>([]);
 
   useEffect(() => {
@@ -130,11 +128,15 @@ export default () => {
   }, [stocks]);
   */
 
+  useEffect(() => {
+    console.log(files);
+  }, [files]);
+
   async function saveItem() {
     const colorItems = selectedColorIds.map((selectedColorId, index) => {
       return {
         colorId: selectedColorId,
-        files: [], // 파일을 처리할 경우 적절히 배열을 채워야 합니다.
+        files: files[index],
         sizeStocks: sizes.map((size, sizeIndex) => ({
           size,
           stock: stocks[index]?.[sizeIndex] || 0, // stocks는 각 색상 및 사이즈에 대한 재고 정보를 담고 있어야 합니다.
@@ -142,9 +144,8 @@ export default () => {
       };
     });
 
+    console.log(colorItems)
 
-    
-    
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/new`,
       {
@@ -170,7 +171,6 @@ export default () => {
       }
     );
     const simpleRes: SimpleResponseType = await response.json();
-    
   }
 
   function changeIsActiveColorUls(index: number) {
@@ -186,6 +186,31 @@ export default () => {
       const newSelectedColorIds = [...prev];
       newSelectedColorIds[index] = colorId; // 해당 인덱스에 값 설정
       return newSelectedColorIds;
+    });
+  }
+
+  function changeFile(
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) {
+    const selectedFiles = event.target.files; // 파일 목록 가져오기
+    if (!selectedFiles) return; // 파일이 선택되지 않았으면 리턴
+
+    // selectedFiles는 FileList이기 때문에 Array로 변환
+    const newFiles = Array.from(selectedFiles);
+
+    setFiles((prevFiles) => {
+      const updatedFiles = [...prevFiles]; // 기존 files 배열 복사
+
+      // 현재 색상(index)에 해당하는 파일 배열이 없으면 빈 배열로 초기화
+      if (!updatedFiles[index]) {
+        updatedFiles[index] = [];
+      }
+
+      // 새로 선택된 파일들을 해당 색상의 파일 배열에 추가
+      updatedFiles[index] = newFiles;
+
+      return updatedFiles; // 업데이트된 배열 반환
     });
   }
 
@@ -507,7 +532,12 @@ export default () => {
                     <label htmlFor="gender" className="w-32 whitespace-nowrap">
                       상품 이미지
                     </label>
-                    <input type="file" accept="image/*" multiple />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(event) => changeFile(event, index)}
+                    />
                   </div>
                 </div>
               </div>
@@ -595,7 +625,10 @@ export default () => {
           ))}
 
           <div className="text-center">
-            <button onClick={saveItem} className="bg bg-black text-white border p-3">
+            <button
+              onClick={saveItem}
+              className="bg bg-black text-white border p-3"
+            >
               상품 등록
             </button>
           </div>
