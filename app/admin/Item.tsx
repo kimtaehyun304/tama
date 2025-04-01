@@ -122,21 +122,119 @@ export default () => {
     fetchColors();
   }, []);
 
-  /*
-  useEffect(() => {
-    console.log(stocks);
-  }, [stocks]);
-  */
+  function validateForm() {
+    // itemName이 비어있으면 경고
+    if (!itemName) {
+      alert("상품명을 입력해주세요.");
+      return false;
+    }
 
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
+    // price가 없거나 0 이하이면 경고
+    if (!price || price <= 0) {
+      alert("가격을 올바르게 입력해주세요.");
+      return false;
+    }
+
+    // discountedPrice가 있을 때, 0 이상이어야 함
+    if (discountedPrice !== undefined && discountedPrice < 0) {
+      alert("할인 가격은 0 이상이어야 합니다.");
+      return false;
+    }
+
+    // gender가 올바른 값인지 확인
+    if (!["BOTH", "MALE", "FEMALE"].includes(gender)) {
+      alert("성별을 올바르게 선택해주세요.");
+      return false;
+    }
+
+    // yearSeason이 비어있으면 경고
+    if (!yearSeason) {
+      alert("연도/시즌을 입력해주세요.");
+      return false;
+    }
+
+    // description이 비어있으면 경고
+    if (!description) {
+      alert("설명을 입력해주세요.");
+      return false;
+    }
+
+    // dateOfManufacture가 비어있으면 경고
+    if (!dateOfManufacture) {
+      alert("제조일자를 입력해주세요.");
+      return false;
+    }
+
+    // countryOfManufacture가 비어있으면 경고
+    if (!countryOfManufacture) {
+      alert("제조국을 입력해주세요.");
+      return false;
+    }
+
+    // manufacturer가 비어있으면 경고
+    if (!manufacturer) {
+      alert("제조사를 입력해주세요.");
+      return false;
+    }
+
+    // selectedCategoryId가 없으면 경고
+    if (!selectedCategoryId) {
+      alert("카테고리를 선택해주세요.");
+      return false;
+    }
+
+    // 선택된 색상이 없으면 경고
+    if (!selectedColorIds || selectedColorIds.includes(undefined)) {
+      alert("색상을 선택해주세요.");
+      return false;
+    }
+
+    // 사이즈가 비어있으면 경고
+    if (!sizes.length || sizes.some((size) => !size)) {
+      alert("사이즈를 입력해주세요.");
+      return false;
+    }
+
+    // textile이 비어있으면 경고
+    if (!textile) {
+      alert("원단 정보를 입력해주세요.");
+      return false;
+    }
+
+    // precaution이 비어있으면 경고
+    if (!precaution) {
+      alert("주의사항을 입력해주세요.");
+      return false;
+    }
+
+    // 파일이 비어있으면 경고
+    if (!files.length || files.some((fileArr) => fileArr.length === 0)) {
+      alert("이미지 파일을 선택해주세요.");
+      return false;
+    }
+
+    // 재고가 비어있거나 숫자가 아닌 값이 있으면 경고
+    if (
+      !stocks.length ||
+      stocks.some((stockArr) =>
+        stockArr.some((stock) => isNaN(stock) || stock < 0)
+      )
+    ) {
+      alert("재고 정보를 올바르게 입력해주세요. (0 이상의 숫자만 허용)");
+      return false;
+    }
+
+    // 모든 검사를 통과하면 true 반환
+    return true;
+  }
 
   async function saveItem() {
+    if (!validateForm()) return;
+
     const colorItems = selectedColorIds.map((selectedColorId, index) => {
       return {
         colorId: selectedColorId,
-        files: files[index],
+        //files: files[index],
         sizeStocks: sizes.map((size, sizeIndex) => ({
           size,
           stock: stocks[index]?.[sizeIndex] || 0, // stocks는 각 색상 및 사이즈에 대한 재고 정보를 담고 있어야 합니다.
@@ -144,14 +242,13 @@ export default () => {
       };
     });
 
-    console.log(colorItems)
-
-    const response = await fetch(
+    const savedItemRes = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/new`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
         },
         body: JSON.stringify({
           name: itemName,
@@ -170,7 +267,40 @@ export default () => {
         }),
       }
     );
-    const simpleRes: SimpleResponseType = await response.json();
+
+    if (savedItemRes.ok) {
+      const savedColorItemIds: SavedColorItemIdResponse =
+        await savedItemRes.json();
+
+      const formData = new FormData();
+
+      selectedColorIds.forEach((selectedColorId, index) => {
+        if (selectedColorId)
+          formData.append(
+            `requests[${index}].colorItemId`,
+            selectedColorId?.toString()
+          );
+
+        files[index]?.forEach((file) => {
+          formData.append(`requests[${index}].files`, file);
+        });
+      });
+
+      const savedImageRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/images/new`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
+          },
+          body: formData,
+        }
+      );
+
+      const savedImageJson: SimpleResponseType = await savedImageRes.json();
+      simpleModalContext?.setMessage(savedImageJson.message);
+      simpleModalContext?.setIsOpenSimpleModal(true);
+    }
   }
 
   function changeIsActiveColorUls(index: number) {
@@ -193,11 +323,19 @@ export default () => {
     event: React.ChangeEvent<HTMLInputElement>,
     index: number
   ) {
-    const selectedFiles = event.target.files; // 파일 목록 가져오기
-    if (!selectedFiles) return; // 파일이 선택되지 않았으면 리턴
+    const selectedFiles = event.target.files;
+    if (!selectedFiles) return;
 
-    // selectedFiles는 FileList이기 때문에 Array로 변환
-    const newFiles = Array.from(selectedFiles);
+    let newFiles = Array.from(selectedFiles);
+
+    // 이미지가 아닌 파일이 하나라도 있으면, 바로 리턴
+    for (let file of newFiles) {
+      if (!file.type.startsWith("image/")) {
+        alert("이미지 파일만 선택할 수 있습니다.");
+        event.target.value = "";
+        newFiles = [];
+      }
+    }
 
     setFiles((prevFiles) => {
       const updatedFiles = [...prevFiles]; // 기존 files 배열 복사
@@ -207,7 +345,7 @@ export default () => {
         updatedFiles[index] = [];
       }
 
-      // 새로 선택된 파일들을 해당 색상의 파일 배열에 추가
+      // 새로 선택된 이미지 파일들을 해당 색상의 파일 배열에 추가
       updatedFiles[index] = newFiles;
 
       return updatedFiles; // 업데이트된 배열 반환
@@ -218,12 +356,12 @@ export default () => {
     <article className="grow">
       <div className="font-bold text-xl text-center p-3">상품 등록</div>
 
-      <section className="divide-y-2">
-        <section className="grid grid-cols-2 gap-x-10">
+      <section className="">
+        <section className="flex flex-wrap gap-x-10">
           {/* 상품 정보 */}
           <section className="grow ">
-            <div className="font-bold text-2xl p-[1%] border-b">상품 정보</div>
-            <div className="p-[2%] space-y-3 max-w-[50rem]">
+            <div className="font-bold text-2xl p-[1%]">상품 정보</div>
+            <div className="p-[2%] space-y-3">
               <div className="flex items-center">
                 <label htmlFor="itemName" className="w-32 whitespace-nowrap">
                   상품명
@@ -242,7 +380,7 @@ export default () => {
                 <label htmlFor="category" className="w-32 whitespace-nowrap">
                   카테고리
                 </label>
-                <span className="flex flex-col bg-white grow">
+                <span className="relative flex flex-col bg-white grow">
                   <button
                     className="p-3 border text-left"
                     onClick={() => setIsActiveCategoryUl(!isActiveCategoryUl)}
@@ -253,11 +391,12 @@ export default () => {
                   </button>
 
                   {isActiveCategoryUl && (
-                    <ul className="border space-y-1 relative z-1 bg-white px-4 whitespace-nowrap divide-y-2 cursor-pointer">
+                    <ul className="border space-y-1 absolute w-full z-1 bg-white p-3 whitespace-nowrap divide-y-2 cursor-pointer">
                       {categories.map((category, index) => (
                         <li
                           onClick={(event) => {
                             setSelectedCategoryId(category.id);
+                            setIsActiveCategoryUl(false);
                           }}
                           key={`category-${index}`}
                         >
@@ -268,6 +407,7 @@ export default () => {
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   setSelectedCategoryId(child.id);
+                                  setIsActiveCategoryUl(false);
                                 }}
                                 className="text-right"
                                 key={`child-${index}`}
@@ -356,7 +496,7 @@ export default () => {
 
           {/* 상품 상세정보 */}
           <section className="grow ">
-            <div className="font-bold text-2xl p-[1%] border-b">
+            <div className="font-bold text-2xl p-[1%]">
               상품 상세정보
             </div>
             <div className="p-[2%] space-y-3 max-w-[50rem]">
@@ -463,10 +603,10 @@ export default () => {
           </section>
         </section>
 
-        <section className="grid grid-cols-2 gap-x-10">
+        <section className="flex flex-wrap gap-x-10">
           {/* 색상 & 이미지*/}
           <section>
-            <div className="font-bold text-2xl p-[1%] border-b">
+            <div className="font-bold text-2xl p-[1%]">
               색상 & 이미지
             </div>
             <button
@@ -486,7 +626,7 @@ export default () => {
                   <label htmlFor="" className="w-32 whitespace-nowrap">
                     색상{index + 1}
                   </label>
-                  <span className="flex flex-col bg-white grow">
+                  <span className="relative flex flex-col bg-white grow">
                     <button
                       className="p-3 border text-left"
                       onClick={() => changeIsActiveColorUls(index)}
@@ -497,7 +637,7 @@ export default () => {
                     </button>
 
                     {isActiveColorUls[index] && (
-                      <ul className="border space-y-1 relative z-1 bg-white px-4 whitespace-nowrap divide-y-2 cursor-pointer">
+                      <ul className="border space-y-1 absolute w-full z-10 bg-white p-3 whitespace-nowrap divide-y-2 cursor-pointer">
                         {colors.map((color, selfIndex) => (
                           <li
                             key={`parentColor${selfIndex}`}
@@ -528,7 +668,7 @@ export default () => {
                     )}
                   </span>
 
-                  <div className="flex items-center">
+                  <div className="flex flex-wrap items-center">
                     <label htmlFor="gender" className="w-32 whitespace-nowrap">
                       상품 이미지
                     </label>
@@ -546,7 +686,7 @@ export default () => {
 
           {/* 사이즈 */}
           <section>
-            <div className="font-bold text-2xl p-[1%] border-b">사이즈</div>
+            <div className="font-bold text-2xl p-[1%] ">사이즈</div>
             <button
               onClick={() => {
                 setSizes((prev) => [...prev, ""]);
@@ -585,7 +725,7 @@ export default () => {
 
         {/*재고 */}
         <section>
-          <div className="font-bold text-2xl p-[1%] border-b">재고</div>
+          <div className="font-bold text-2xl p-[1%] ">재고</div>
 
           {selectedColorIds.map((selectedColorId, index) => (
             <div className="border-b p-3" key={`selectedColorIds-${index}`}>
@@ -601,7 +741,7 @@ export default () => {
                         {size ? size : "사이즈 미정"}
                       </label>
                       <input
-                        type="text"
+                        type="number"
                         className="border p-3"
                         placeholder={size ? `${size} 재고` : `재고`}
                         onChange={(event) => {

@@ -3,6 +3,9 @@
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
+import ColorFilterModal from "@/components/modal/filter/ColorFilterModal";
+import EtcFilterModal from "@/components/modal/filter/EtcFilterModal";
+import PriceFilterModal from "@/components/modal/filter/PriceFilterModal";
 import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
 import MyPagination from "@/components/MyPagination";
@@ -50,10 +53,18 @@ export default () => {
   const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
   const [colors, setColors] = useState<BaseColorType[]>([]);
 
+  //검색 필터 모달(모바일용)
+  const [isOpenPriceFilterModal, setIsOpenPriceFilterModal] =
+    useState<boolean>(false);
+  const [isOpenColorFilterModal, setIsOpenColorFilterModal] =
+    useState<boolean>(false);
+  const [isOpenEtcFilterModal, setIsOpenEtcFilterModal] =
+    useState<boolean>(false);
+
   //필터 적용 버튼에 필요해서 useEffect에서 분리
   async function fetchCategoryItems() {
     const params = new URLSearchParams();
-    params.append("categoryId", String(categoryId));
+    if (categoryId != 0) params.append("categoryId", String(categoryId));
     params.append("page", String(pagePrams));
     params.append("size", String(pageSize));
     params.append("sort", `${sortProperty},${sortDirection}`);
@@ -80,7 +91,7 @@ export default () => {
     setCategoryItems(categoryItems);
   }
 
-  /*검색 필터에 의도하지않은게 들어가서 불편함
+  /*최소값, 최대값 보여주기 - 검색 필터에 의도하지않은게 들어가서 기능 유기
   async function fetchMinMaxPrice() {
     const params = new URLSearchParams();
     params.append("categoryId", String(categoryId));
@@ -195,6 +206,13 @@ export default () => {
       {/* 카테고리, 검색 필터*/}
       <aside className="hidden xl:block ">
         <section>
+          <li
+            className={`list-none ${
+              categoryId === 0 ? "font-nanumGothicBold" : ""
+            }`}
+          >
+            <Link href={`/category/0/item`}>전체</Link>
+          </li>
           {categories.map((category, index) => (
             <ul className="py-1" key={`category${index}`}>
               <li
@@ -202,7 +220,9 @@ export default () => {
                   category.id === categoryId ? "font-nanumGothicBold " : ""
                 }
               >
-                <Link href={`/category/${category.id}/item`}>{category.name}</Link>
+                <Link href={`/category/${category.id}/item`}>
+                  {category.name}
+                </Link>
               </li>
               {(category.id === categoryId ||
                 category.children
@@ -216,7 +236,9 @@ export default () => {
                       }`}
                       key={`categorychild${categoryChildindex}`}
                     >
-                      <Link href={`/category/${child.id}/item`}>{child.name}</Link>
+                      <Link href={`/category/${child.id}/item`}>
+                        {child.name}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -339,7 +361,6 @@ export default () => {
           적용
         </button>
       </aside>
-
       {/*상품 리스트 */}
       <section className="grow mx-[1%] lg:mx-0">
         <div className="space-x-4">
@@ -401,6 +422,58 @@ export default () => {
           </span>
         </div>
 
+        <div className="xl:hidden">
+          <div className="flex gap-x-3 my-3 ">
+            <button
+              onClick={() => setIsOpenPriceFilterModal(true)}
+              className="border p-3"
+            >
+              가격
+            </button>
+            <button
+              onClick={() => setIsOpenColorFilterModal(true)}
+              className="border p-3"
+            >
+              색상
+            </button>
+            <button
+              onClick={() => setIsOpenEtcFilterModal(true)}
+              className="border p-3"
+            >
+              기타
+            </button>
+            <button
+              onClick={fetchCategoryItems}
+              className="border p-3 bg-black text-white"
+            >
+              적용
+            </button>
+          </div>
+          <PriceFilterModal
+            isOpenModal={isOpenPriceFilterModal}
+            setIsOpenModal={setIsOpenPriceFilterModal}
+            minPrice={minPrice}
+            setMinPrice={setMinPrice}
+            maxPrice={maxPrice}
+            setMaxPrice={setMaxPrice}
+          />
+          <ColorFilterModal
+            isOpenModal={isOpenColorFilterModal}
+            setIsOpenModal={setIsOpenColorFilterModal}
+            colors={colors}
+            setColors={setColors}
+            colorIds={colorIds}
+            setColorIds={setColorIds}
+          />
+          <EtcFilterModal
+            isOpenModal={isOpenEtcFilterModal}
+            setIsOpenModal={setIsOpenEtcFilterModal}
+            genders={genders}
+            setGenders={setGenders}
+            isContainSoldOut={isContainSoldOut}
+            setIsContainSoldOut={setIsContainSoldOut}
+          />
+        </div>
         <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-5 gap-x-1 pb-6">
           {categoryItems.content.map((item, categoryItemindex) => (
             <li key={`color-items${categoryItemindex}`}>
@@ -412,7 +485,9 @@ export default () => {
                 }`}
               >
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${
+                  src={`${
+                    process.env.NEXT_PUBLIC_SERVER_URL
+                  }/api/images/items/${
                     item.relatedColorItems[
                       selectedColorItemIndex[categoryItemindex]
                     ].uploadFile.storedFileName

@@ -27,6 +27,10 @@ export default function Home() {
   const [categoryBestItems, setCategoryBestItems] =
     useState<CategoryBestItemType[]>();
 
+  const [parentCategories, setParentCategories] = useState<BaseCateogoryType[]>(
+    []
+  );
+
   //tempToken파라미터가 사라지기전에 새로고침하면 alert 발생
   useEffect(() => {
     if (tempToken) {
@@ -55,6 +59,24 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    async function fetchParentCategory() {
+      const parentCategoryRes = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category/parent`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const parentCategoryJson = await parentCategoryRes.json();
+      if (!parentCategoryRes.ok) {
+        alert(parentCategoryJson.message);
+        return;
+      }
+
+      setParentCategories(parentCategoryJson);
+    }
+    fetchParentCategory();
+
     fetchCategoryBestItem(selectedCategoryId);
   }, [selectedCategoryId]);
 
@@ -107,11 +129,14 @@ export default function Home() {
           <div className="flex gap-x-2 text-sm justify-center xl:justify-start py-4">
             <button
               onClick={() => {
-                setSelectedCategoryId(undefined);
+                setSelectedCategoryId(0);
               }}
               className="grid justify-items-center"
             >
               <Image
+                className={`border p-1 rounded-lg bg-gray-200 ${
+                  selectedCategoryId == 0 && `border-black`
+                }`}
                 src="/icon/icon-hamburger.png"
                 alt="전체"
                 width={60}
@@ -120,59 +145,27 @@ export default function Home() {
               <span className="">전체</span>
             </button>
 
-            <button
-              onClick={() => {
-                setSelectedCategoryId(1);
-              }}
-              className="grid justify-items-center"
-            >
-              <Image
-                className={`border p-1 rounded-lg bg-gray-200 ${
-                  selectedCategoryId == 1 && `border-black`
-                }`}
-                src="/icon/icon-jacket.png"
-                alt="아우터"
-                width={60}
-                height={60}
-              />
-              <span className="">아우터</span>
-            </button>
+            {parentCategories.map((parentCategory, index) => (
+              <button
+                onClick={() => {
+                  setSelectedCategoryId(parentCategory.id);
+                }}
+                className="grid justify-items-center"
+                key={`parentCategory${index}`}
+              >
+                <Image
+                  className={`border p-1 rounded-lg bg-gray-200 ${
+                    selectedCategoryId == parentCategory.id && `border-black`
+                  }`}
+                  src={`/icon/icon-${parentCategory.name}.png`}
+                  alt={parentCategory.name}
+                  width={60}
+                  height={60}
+                />
+                <span className="">{parentCategory.name}</span>
+              </button>
+            ))}
 
-            <button
-              onClick={() => {
-                setSelectedCategoryId(6);
-              }}
-              className="grid justify-items-center"
-            >
-              <Image
-                className={`border p-1 rounded-lg bg-gray-200 ${
-                  selectedCategoryId == 6 && `border-black`
-                }`}
-                src="/icon/icon-casual-t-shirt.png"
-                alt="상의"
-                width={60}
-                height={60}
-              />
-              <span className="">상의</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setSelectedCategoryId(12);
-              }}
-              className="grid justify-items-center"
-            >
-              <Image
-                className={`border p-1 rounded-lg bg-gray-200 ${
-                  selectedCategoryId == 12 && `border-black`
-                }`}
-                src="/icon/icon-pants.png"
-                alt="하의"
-                width={60}
-                height={60}
-              />
-              <span className="">하의</span>
-            </button>
 
             {/*
             <Link href={"/"} className="">

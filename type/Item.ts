@@ -115,3 +115,7 @@ type SaveSizeStockRequest = {
   size: string;
   stock: number;
 };
+
+type SavedColorItemIdResponse = {
+  savedColorItemIds: number[];
+};

@@ -53,12 +53,15 @@ export default () => {
                 <div className="py-2">전체 카테고리</div>
               </div>
             </button>
+  
             <Link href={"/"} className="">
               <div className="px-4 xl:px-0">홈</div>
             </Link>
+            {/*
             <Link href={"/"} className="">
               <div className="">베스트</div>
             </Link>
+            */}
           </div>
         </div>
       </nav>

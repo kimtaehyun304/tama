@@ -5,6 +5,14 @@ type MemberPayemntSetUpType = {
   phone: string;
 };
 
+type MemberOrderSetUpType = {
+  id: number;
+  nickname: string;
+  email: string;
+  phone: string;
+  addresses: AddressResponse[];
+};
+
 //개인정보
 type MemberInformationType = {
   email: string;

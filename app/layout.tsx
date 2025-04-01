@@ -30,7 +30,7 @@ const nanumGothicBold = localFont({
 export const metadata: Metadata = {
   title: {
     template: "TAMA %s",
-    default: "쇼핑몰", // 템플릿을 설정할때 default는 필수 요소입니다.
+    default: "TAMA", // 템플릿을 설정할때 default는 필수 요소입니다.
   },
 };
 

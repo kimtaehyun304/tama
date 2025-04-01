@@ -16,6 +16,7 @@ import {
 import { useState, useEffect, useContext, useRef } from "react";
 import * as PortOne from "@portone/browser-sdk/v2";
 import { LoginModalContext } from "@/components/context/LoginModalContext";
+import MemberAddressModal from "@/components/modal/MemberAddressModal";
 
 const enum payMethodEnum {
   EASY_PAY = "EASY_PAY",
@@ -67,6 +68,8 @@ export default () => {
   );
 
   const [isOpenAddressModal, setIsOpenAddressModal] = useState<boolean>(false);
+  const [isOpenMemberAddressModal, setIsOpenMemberAddressModal] =
+    useState<boolean>(false);
 
   const [senderNickname, setSenderNickname] = useState<string>("");
   const [senderEmail, setSenderEmail] = useState<string>("");
@@ -91,6 +94,9 @@ export default () => {
   const shippingFee = itemTotalPrice >= 40000 ? 0 : 3000;
 
   const [orderMap, setOrderMap] = useState<Map<number, number>>(new Map());
+  const [hasAddress, setHasAddress] = useState<boolean>(false);
+  const [addressName, setAddressName] = useState<string>("");
+  const [memberAddresses, setMemberAddresses] = useState<AddressResponse[]>([]);
 
   //focus 용도
   const senderNicknameRef = useRef<HTMLInputElement>(null);
@@ -268,6 +274,7 @@ export default () => {
       }),
     };
 
+    //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요
     simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
     simpleModalContext?.setIsOpenSimpleModal(true);
 
@@ -368,7 +375,7 @@ export default () => {
   useEffect(() => {
     async function fetchMember() {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/payment-setup`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/order-setup`,
         {
           method: "GET",
           headers: {
@@ -377,10 +384,28 @@ export default () => {
           },
         }
       );
-      const member: MemberPayemntSetUpType = await res.json();
-      setSenderNickname(member.nickname);
-      setSenderPhone(member.phone);
-      setSenderEmail(member.email);
+
+      if (res.ok) {
+        const member: MemberOrderSetUpType = await res.json();
+        setMemberAddresses(member.addresses);
+        //포트원 결제 기록 첨부(주문한 사람 자동으로 기입)
+        setSenderNickname(member.nickname);
+        setSenderPhone(member.phone);
+        setSenderEmail(member.email);
+
+        const defaultAddress: AddressResponse | undefined =
+          member.addresses.find((address) => address.isDefault == true);
+
+        if (defaultAddress) {
+          setHasAddress(true);
+          setReceiverNickname(defaultAddress.receiverNickname);
+          setReceiverPhone(defaultAddress.receiverPhone);
+          setZoneCode(Number(defaultAddress.zipCode));
+          setStreetAddress(defaultAddress.street);
+          setDetailAddress(defaultAddress.detail);
+          setAddressName(defaultAddress.name);
+        }
+      }
     }
     if (authContext?.isLogined) fetchMember();
   }, [authContext?.isLogined]);
@@ -513,170 +538,274 @@ export default () => {
           )}
 
           {/*받는고객 */}
-          <section>
-            <div className="font-bold text-2xl p-[1%] border-b">받는고객</div>
-            <div className="p-[2%] space-y-3 max-w-[50rem]">
-              <div className="flex items-center">
-                <label
-                  htmlFor="receiverNickname"
-                  className="w-32 whitespace-nowrap"
-                >
-                  이름
-                </label>
-                <input
-                  id="receiverNickname"
-                  type="text"
-                  className="border p-3 grow"
-                  placeholder="받으시는 분"
-                  value={receiverNickname}
-                  onChange={(event) => setReceiverNickname(event.target.value)}
-                  ref={receiverNicknameRef}
-                />
-              </div>
 
-              <div className="flex items-center">
-                <label htmlFor="receiverPhone" className="w-32">
-                  휴대폰 번호
-                </label>
-                <input
-                  id="receiverPhone"
-                  type="text"
-                  className="border p-3 grow"
-                  placeholder="숫자만 입력하세요"
-                  value={receiverPhone}
-                  onChange={(event) => {
-                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-                    setReceiverPhone(value);
-                  }}
-                  ref={receiverPhoneRef}
-                />
-              </div>
-
-              <div className="flex items-center flex-wrap gap-y-3">
-                <label htmlFor="zoneCode" className="w-32 whitespace-nowrap">
-                  우편번호
-                </label>
-                <input
-                  id="zoneCode"
-                  type="text"
-                  className="border p-3 grow"
-                  placeholder="우편번호"
-                  value={zoneCode ?? ""}
-                  onChange={(event) => {
-                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-                    setZoneCode(value == "" ? undefined : Number(value));
-                  }}
-                  disabled={isDisabled}
-                  ref={zoneCodeRef}
-                />
-                <button
-                  className="border p-3 ml-auto"
-                  onClick={() => {
-                    setIsOpenAddressModal(true);
-                  }}
-                >
-                  우편번호 찾기
-                </button>
-              </div>
-
-              <AddressModal
-                isOpenAddressModal={isOpenAddressModal}
-                setIsOpenAddressModal={setIsOpenAddressModal}
-                setZoneCode={setZoneCode}
-                setStreetAddress={setStreetAddress}
-                setIsDisabled={setIsDisabled}
-              />
-              <div className="flex items-center flex-wrap gap-y-3">
-                <label
-                  htmlFor="streetAddress"
-                  className="w-32 whitespace-nowrap"
-                >
-                  도로명주소
-                </label>
-                <input
-                  id="streetAddress"
-                  type="text"
-                  className="border p-3 grow"
-                  placeholder="도로명주소"
-                  value={streetAddress}
-                  onChange={(event) => setStreetAddress(event.target.value)}
-                  disabled={isDisabled}
-                  ref={streetAddressRef}
-                />
-              </div>
-              <div className="flex items-center flex-wrap gap-y-3">
-                <label
-                  htmlFor="detailAddress"
-                  className="w-32 whitespace-nowrap"
-                >
-                  상세주소
-                </label>
-                <input
-                  id="detailAddress"
-                  type="text"
-                  className="border p-3 grow"
-                  placeholder="상세주소"
-                  value={detailAddress}
-                  onChange={(event) => setDetailAddress(event.target.value)}
-                  ref={detailAddressRef}
-                />
-              </div>
-
-              <div className="flex items-center flex-wrap gap-y-3">
-                <label htmlFor="" className="w-32 whitespace-nowrap">
-                  배송 메시지 선택
-                </label>
-                {/* 정렬 리스트 */}
-                <span className="flex flex-col bg-white grow">
+          {authContext?.isLogined && hasAddress ? (
+            <section>
+              <div className="font-bold text-2xl p-[1%] border-b">배송지</div>
+              <div className="p-[2%] space-y-3 max-w-[50rem]">
+                <div className="flex items-center gap-x-3">
+                  <div>{receiverNickname}</div>
+                  <div>{addressName}</div>
                   <button
-                    className="p-3 border text-left"
-                    onClick={() => setIsActiveUl(!isActiveUl)}
+                    onClick={() => setIsOpenMemberAddressModal(true)}
+                    className="border p-3"
                   >
-                    {isActiveSelfInput ? "직접입력" : deliveryMessage}∨
+                    변경
                   </button>
+                  <MemberAddressModal
+                    addresses={memberAddresses}
+                    setAddressName={setAddressName}
+                    setStreetAddress={setStreetAddress}
+                    setDetailAddress={setDetailAddress}
+                    setZoneCode={setZoneCode}
+                    setReceiverNickname={setReceiverNickname}
+                    setReceiverPhone={setReceiverPhone}
+                    setIsOpenMemberAddressModal={setIsOpenMemberAddressModal}
+                    isOpenMemberAddresskModal={isOpenMemberAddressModal}
+                    setHasAddress={setHasAddress}
+                  />
+                </div>
+                <div className="flex gap-x-1">
+                  <div>{streetAddress}</div>
+                  <div>{detailAddress}</div>
+                  <div>({zoneCode})</div>
+                </div>
+                {receiverPhone}
 
-                  {isActiveUl && (
-                    <ul className="border space-y-4 relative z-1  bg-white px-4 whitespace-nowrap">
-                      {deliveryMessages.map((message, index) => (
-                        <li key={`deliveryMessage${index}`}>
+                <div className="relative flex items-center flex-wrap gap-y-3">
+                  <label className=" w-32 whitespace-nowrap">
+                    배송 메시지 선택
+                  </label>
+                  {/* 정렬 리스트 */}
+                  <span className="flex flex-col bg-white grow">
+                    <button
+                      className="p-3 border text-left"
+                      onClick={() => setIsActiveUl(!isActiveUl)}
+                    >
+                      {isActiveSelfInput ? "직접입력" : deliveryMessage}∨
+                    </button>
+
+                    {isActiveUl && (
+                      <div className="border space-y-4 absolute z-1 bg-white px-3 whitespace-nowrap w-full">
+                        <ul className="space-y-5 my-3">
+                          {deliveryMessages.map((message, index) => (
+                            <li
+                              key={`deliveryMessage${index}`}
+                              className="w-full"
+                            >
+                              <button
+                                className="w-full text-left"
+                                onClick={() => {
+                                  setIsActiveUl(false);
+                                  setIsActiveSelfInput(false);
+                                  setDeliveryMessage(message);
+                                }}
+                              >
+                                {message}
+                              </button>
+                            </li>
+                          ))}
+                          <li className="w-full">
+                            <button
+                              className="w-full text-left"
+                              onClick={() => {
+                                setIsActiveUl(false);
+                                setIsActiveSelfInput(true);
+                                setDeliveryMessage("");
+                              }}
+                            >
+                              직접입력
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </span>
+
+                  {isActiveSelfInput && (
+                    <input
+                      id="deliveryMessage"
+                      type="text"
+                      className="border p-3 grow"
+                      placeholder="베송메시지를 입력하세요"
+                      onChange={(event) =>
+                        setDeliveryMessage(event.target.value)
+                      }
+                    />
+                  )}
+                </div>
+              </div>
+            </section>
+          ) : (
+            <section>
+              <div className="font-bold text-2xl p-[1%] border-b">받는고객</div>
+              <div className="p-[2%] space-y-3 max-w-[50rem]">
+                <div className="flex items-center">
+                  <label
+                    htmlFor="receiverNickname"
+                    className="w-32 whitespace-nowrap"
+                  >
+                    이름
+                  </label>
+                  <input
+                    id="receiverNickname"
+                    type="text"
+                    className="border p-3 grow"
+                    placeholder="받으시는 분"
+                    value={receiverNickname}
+                    onChange={(event) =>
+                      setReceiverNickname(event.target.value)
+                    }
+                    ref={receiverNicknameRef}
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <label htmlFor="receiverPhone" className="w-32">
+                    휴대폰 번호
+                  </label>
+                  <input
+                    id="receiverPhone"
+                    type="text"
+                    className="border p-3 grow"
+                    placeholder="숫자만 입력하세요"
+                    value={receiverPhone}
+                    onChange={(event) => {
+                      const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                      setReceiverPhone(value);
+                    }}
+                    ref={receiverPhoneRef}
+                  />
+                </div>
+
+                <div className="flex items-center flex-wrap gap-y-3">
+                  <label htmlFor="zoneCode" className="w-32 whitespace-nowrap">
+                    우편번호
+                  </label>
+                  <input
+                    id="zoneCode"
+                    type="text"
+                    className="border p-3 grow"
+                    placeholder="우편번호"
+                    value={zoneCode ?? ""}
+                    onChange={(event) => {
+                      const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                      setZoneCode(value == "" ? undefined : Number(value));
+                    }}
+                    disabled={isDisabled}
+                    ref={zoneCodeRef}
+                  />
+                  <button
+                    className="border p-3 ml-auto"
+                    onClick={() => {
+                      setIsOpenAddressModal(true);
+                    }}
+                  >
+                    우편번호 찾기
+                  </button>
+                </div>
+
+                <AddressModal
+                  isOpenAddressModal={isOpenAddressModal}
+                  setIsOpenAddressModal={setIsOpenAddressModal}
+                  setZoneCode={setZoneCode}
+                  setStreetAddress={setStreetAddress}
+                  setIsDisabled={setIsDisabled}
+                />
+                <div className="flex items-center flex-wrap gap-y-3">
+                  <label
+                    htmlFor="streetAddress"
+                    className="w-32 whitespace-nowrap"
+                  >
+                    도로명주소
+                  </label>
+                  <input
+                    id="streetAddress"
+                    type="text"
+                    className="border p-3 grow"
+                    placeholder="도로명주소"
+                    value={streetAddress}
+                    onChange={(event) => setStreetAddress(event.target.value)}
+                    disabled={isDisabled}
+                    ref={streetAddressRef}
+                  />
+                </div>
+                <div className="flex items-center flex-wrap gap-y-3">
+                  <label
+                    htmlFor="detailAddress"
+                    className="w-32 whitespace-nowrap"
+                  >
+                    상세주소
+                  </label>
+                  <input
+                    id="detailAddress"
+                    type="text"
+                    className="border p-3 grow"
+                    placeholder="상세주소"
+                    value={detailAddress}
+                    onChange={(event) => setDetailAddress(event.target.value)}
+                    ref={detailAddressRef}
+                  />
+                </div>
+
+                <div className="flex items-center flex-wrap gap-y-3">
+                  <label htmlFor="" className="w-32 whitespace-nowrap">
+                    배송 메시지 선택
+                  </label>
+                  {/* 정렬 리스트 */}
+                  <span className="relative flex flex-col bg-white grow ">
+                    <button
+                      className="p-3 border text-left"
+                      onClick={() => setIsActiveUl(!isActiveUl)}
+                    >
+                      {isActiveSelfInput ? "직접입력" : deliveryMessage}∨
+                    </button>
+
+                    {isActiveUl && (
+                      <ul className="border space-y-4 z-1 absolute w-full bg-white p-3 whitespace-nowrap ">
+                        {deliveryMessages.map((message, index) => (
+                          <li key={`deliveryMessage${index}`}>
+                            <button
+                              onClick={() => {
+                                setIsActiveUl(false);
+                                setIsActiveSelfInput(false);
+                                setDeliveryMessage(message);
+                              }}
+                            >
+                              {message}
+                            </button>
+                          </li>
+                        ))}
+                        <li>
                           <button
                             onClick={() => {
                               setIsActiveUl(false);
-                              setIsActiveSelfInput(false);
-                              setDeliveryMessage(message);
+                              setIsActiveSelfInput(true);
+                              setDeliveryMessage("");
                             }}
                           >
-                            {message}
+                            직접입력
                           </button>
                         </li>
-                      ))}
-                      <li>
-                        <button
-                          onClick={() => {
-                            setIsActiveUl(false);
-                            setIsActiveSelfInput(true);
-                            setDeliveryMessage("");
-                          }}
-                        >
-                          직접입력
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </span>
+                      </ul>
+                    )}
+                  </span>
 
-                {isActiveSelfInput && (
-                  <input
-                    id="deliveryMessage"
-                    type="text"
-                    className="border p-3 grow"
-                    placeholder="베송메시지를 입력하세요"
-                    onChange={(event) => setDeliveryMessage(event.target.value)}
-                  />
-                )}
+                  {isActiveSelfInput && (
+                    <input
+                      id="deliveryMessage"
+                      type="text"
+                      className="border p-3 grow"
+                      placeholder="베송메시지를 입력하세요"
+                      onChange={(event) =>
+                        setDeliveryMessage(event.target.value)
+                      }
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/*결제수단 */}
           <section>

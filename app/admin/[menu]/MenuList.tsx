@@ -32,7 +32,7 @@ export default () => {
   const params = useParams<{ menu: string }>();
   const paramsMenu = params.menu;
   return (
-    <aside className="hidden xl:block border p-4">
+    <aside className=" border p-4">
       <div className="font-bold text-3xl py-3">관리자 페이지</div>
       <ul className="">
         {menus.map((menu, index) => (
