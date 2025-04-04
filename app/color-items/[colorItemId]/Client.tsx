@@ -7,7 +7,8 @@ import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
 import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
-import Review from "@/components/Review";
+import ReviewList from "@/components/ReviewList";
+
 import ItemSlider from "@/components/slider/ItemSlider";
 import StarRating from "@/components/StarRating";
 
@@ -334,7 +335,7 @@ export default function Client({ colorItem }: Props) {
                         key={`relatedItem-${index}`}
                       >
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${related.uploadFile.storedFileName}`}
+                          src={`${process.env.NEXT_PUBLIC_S3_URL}/${related.uploadFile.storedFileName}`}
                           alt={related.color}
                           width={50}
                           height={50}
@@ -556,7 +557,7 @@ export default function Client({ colorItem }: Props) {
               </li>
             </ul>
           </span>
-          <Review review={reviews} />
+          <ReviewList review={reviews} />
         </div>
 
         {/* 배송/상품/교환안내 */}

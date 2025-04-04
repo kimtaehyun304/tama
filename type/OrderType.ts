@@ -37,12 +37,14 @@ type ContentOrderResponse = {
 
 // OrderItemResponse Type
 type OrderItemResponse = {
+  orderItemId: number;
   name: string;
   color: string;
   size: string;
   orderPrice: number;
   count: number;
   uploadFile: UploadFileType;
+  isReviewWritten: boolean;
 };
 
 // OrderStatus Enum → 유니온 타입

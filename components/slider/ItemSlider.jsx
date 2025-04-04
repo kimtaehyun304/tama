@@ -71,7 +71,7 @@ export default function ItemSlider({ uploadFiles }) {
             key={`item-${index}`}
           >
             <Image
-              src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${uploadFile.storedFileName}`}
+              src={`${process.env.NEXT_PUBLIC_S3_URL}/${uploadFile.storedFileName}`}
               alt={uploadFile.originalFileName}
               fill
             />
@@ -92,7 +92,7 @@ export default function ItemSlider({ uploadFiles }) {
         {uploadFiles.map((uploadFile, index) => (
           <div className="pr-1" key={`item-detail-${index}`}>
             <Image
-              src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${uploadFile.storedFileName}`}
+              src={`${process.env.NEXT_PUBLIC_S3_URL}/${uploadFile.storedFileName}`}
               alt={uploadFile.originalFileName}
               width={100}
               height={100}

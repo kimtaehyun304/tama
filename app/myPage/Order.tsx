@@ -10,6 +10,8 @@ import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import MyPagination from "@/components/MyPagination";
+import ReviewFormModal from "@/components/modal/ReviewFormModal";
+import Item from "../admin/Item";
 
 export default () => {
   const [orders, setOrders] = useState<OrderResponse>();
@@ -19,6 +21,12 @@ export default () => {
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
   const pageSize = 10;
+  const [isOpenReviewFormModal, setIsOpenReviewFormModal] =
+    useState<boolean>(false);
+  const [memberInformation, setMemberInformation] =
+    useState<MemberInformationType>();
+  const [orderItemName, setOrderItemName] = useState<string>("");
+  const [orderItemId, setOrderItemId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -40,6 +48,34 @@ export default () => {
     }
     fetchOrder();
   }, [authContext?.isLogined, pagePrams]);
+
+  useEffect(() => {
+    async function fetchMember() {
+      if (authContext?.isLogined) {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/information`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Bearer " + localStorage.getItem("tamaAccessToken"),
+            },
+          }
+        );
+
+        if (!res.ok) {
+          const memberInformationJson: SimpleResponseType = await res.json();
+          alert(memberInformationJson.message);
+          return;
+        }
+
+        const memberInformationJson: MemberInformationType = await res.json();
+        setMemberInformation(memberInformationJson);
+      }
+    }
+    fetchMember();
+  }, [authContext?.isLogined]);
 
   async function cancelOrder(orderId: number) {
     if (authContext?.isLogined) {
@@ -66,6 +102,8 @@ export default () => {
     return <LoginScreen />;
   }
 
+  if (!memberInformation) return;
+
   return (
     <section className="space-y-4 grow">
       <div className="font-bold text-xl">주문/배송 조회</div>
@@ -83,14 +121,16 @@ export default () => {
             <div>{order.delivery.message}</div>
           </section>
 
-          {(order.status == "PAYMENT" || order.status == "CHECK") && (
-            <button
-              onClick={() => cancelOrder(order.id)}
-              className="border bg-black text-white p-2"
-            >
-              주문 취소
-            </button>
-          )}
+          <div className="flex gap-x-3">
+            {(order.status == "PAYMENT" || order.status == "CHECK") && (
+              <button
+                onClick={() => cancelOrder(order.id)}
+                className="border bg-black text-white p-2"
+              >
+                주문 취소
+              </button>
+            )}
+          </div>
 
           <div className=" grid xl:grid-cols-2 gap-3">
             {order.orderItems.map((item, index) => (
@@ -99,7 +139,7 @@ export default () => {
                 key={`orderItems-${index}`}
               >
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${item.uploadFile.storedFileName}`}
+                  src={`${process.env.NEXT_PUBLIC_S3_URL}/${item.uploadFile.storedFileName}`}
                   alt={item.name}
                   width={100}
                   height={100}
@@ -117,15 +157,54 @@ export default () => {
                     {item.orderPrice.toLocaleString("ko-kr")}원
                   </div>
                 </div>
+
+                {item.isReviewWritten == false && (
+                  <button
+                    onClick={() => {
+                      setOrderItemId(item.orderItemId);
+                      setOrderItemName(
+                        `${item.name}/${item.color}/${item.size}`
+                      );
+                      setIsOpenReviewFormModal(true);
+                    }}
+                    className="border p-2"
+                  >
+                    리뷰 작성
+                  </button>
+                )}
               </div>
             ))}
           </div>
         </section>
       ))}
-     <MyPagination
-        pageCount={orders.page.pageCount}
-        pageRangeDisplayed={5}
+
+      <ReviewFormModal
+        isOpenModal={isOpenReviewFormModal}
+        setIsOpenModal={setIsOpenReviewFormModal}
+        orderItemName={orderItemName}
+        memberInformation={memberInformation}
+        orderItemId={orderItemId}
+        onReviewSuccess={() => {
+          // orders 상태 업데이트 (isReviewWritten을 true로 변경)
+          setOrders((prevOrders) => {
+            if (!prevOrders) return prevOrders; // prevOrders가 undefined면 그대로 반환
+
+            return {
+              ...prevOrders,
+              content: prevOrders.content.map((order) => ({
+                ...order,
+                orderItems: order.orderItems.map((item) =>
+                  item.orderItemId === orderItemId
+                    ? { ...item, isReviewWritten: true }
+                    : item
+                ),
+              })),
+            };
+          });
+        }}
       />
+
+      <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
     </section>
   );
 };

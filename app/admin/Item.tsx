@@ -268,17 +268,29 @@ export default () => {
       }
     );
 
+    //이미지 업로드
     if (savedItemRes.ok) {
-      const savedColorItemIds: SavedColorItemIdResponse =
-        await savedItemRes.json();
+      const savedColorItemIdJson: SavedColorItemIdResponse = await savedItemRes.json();
 
       const formData = new FormData();
-
+      /*
       selectedColorIds.forEach((selectedColorId, index) => {
         if (selectedColorId)
           formData.append(
             `requests[${index}].colorItemId`,
             selectedColorId?.toString()
+          );
+
+        files[index]?.forEach((file) => {
+          formData.append(`requests[${index}].files`, file);
+        });
+      });
+      */
+      savedColorItemIdJson.savedColorItemIds.forEach((savedColorItemId, index) => {
+        if (savedColorItemId)
+          formData.append(
+            `requests[${index}].colorItemId`,
+            savedColorItemId?.toString()
           );
 
         files[index]?.forEach((file) => {
@@ -496,9 +508,7 @@ export default () => {
 
           {/* 상품 상세정보 */}
           <section className="grow ">
-            <div className="font-bold text-2xl p-[1%]">
-              상품 상세정보
-            </div>
+            <div className="font-bold text-2xl p-[1%]">상품 상세정보</div>
             <div className="p-[2%] space-y-3 max-w-[50rem]">
               <div className="flex items-center">
                 <label htmlFor="description" className="w-32">
@@ -606,9 +616,7 @@ export default () => {
         <section className="flex flex-wrap gap-x-10">
           {/* 색상 & 이미지*/}
           <section>
-            <div className="font-bold text-2xl p-[1%]">
-              색상 & 이미지
-            </div>
+            <div className="font-bold text-2xl p-[1%]">색상 & 이미지</div>
             <button
               onClick={() => {
                 setSelectedColorIds((prev) => [...prev, undefined]);

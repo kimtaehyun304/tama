@@ -9,7 +9,6 @@ import PriceFilterModal from "@/components/modal/filter/PriceFilterModal";
 import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
 import MyPagination from "@/components/MyPagination";
-import Review from "@/components/Review";
 import ItemSlider from "@/components/slider/ItemSlider";
 import StarRating from "@/components/StarRating";
 
@@ -45,7 +44,7 @@ export default () => {
   const [minPrice, setMinPrice] = useState<number>();
   const [maxPrice, setMaxPrice] = useState<number>();
   const [colorIds, setColorIds] = useState<number[]>([]);
-  const [genders, setGenders] = useState<string[]>([]);
+  const [genders, setGenders] = useState<GenderType[]>([]);
   const [isContainSoldOut, setIsContainSoldOut] = useState<boolean>(false);
   //정렬 open close
   const [display, setDisplay] = useState<string>("none");
@@ -137,12 +136,13 @@ export default () => {
       }
 
       setCategories(categoriesJson);
-      document.title = categoriesJson
-        .flatMap((c: { children: BaseColorType[] }) => [
-          c,
-          ...(c.children || []),
-        ])
-        .find((c: { id: number }) => c.id == categoryId)?.name;
+      document.title =
+        categoriesJson
+          .flatMap((c: { children: BaseColorType[] }) => [
+            c,
+            ...(c.children || []),
+          ])
+          .find((c: { id: number }) => c.id == categoryId)?.name ?? "전체";
     }
     fetchCategories();
 
@@ -192,7 +192,7 @@ export default () => {
   if (!categoryItems) return <LoadingScreen />;
 
   //필터 성별 체크박스
-  function checkGender(gender: string) {
+  function checkGender(gender: GenderType) {
     let newArr = [...genders];
     const index = newArr.indexOf(gender);
     // color.id가 이미 배열에 있으면 해당 인덱스에서 제거
@@ -485,9 +485,7 @@ export default () => {
                 }`}
               >
                 <Image
-                  src={`${
-                    process.env.NEXT_PUBLIC_SERVER_URL
-                  }/api/images/items/${
+                  src={`${process.env.NEXT_PUBLIC_S3_URL}/${
                     item.relatedColorItems[
                       selectedColorItemIndex[categoryItemindex]
                     ].uploadFile.storedFileName

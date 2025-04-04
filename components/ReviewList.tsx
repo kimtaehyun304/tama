@@ -6,7 +6,7 @@ type props = {
   review: ReviewType;
 };
 
-export default function Review({ review }: props) {
+export default function ({ review }: props) {
   return (
     <>
       <section>

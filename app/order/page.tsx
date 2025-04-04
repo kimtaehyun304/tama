@@ -837,7 +837,7 @@ export default () => {
               {orderItems.map((item, index) => (
                 <div className="border flex gap-x-4 p-2" key={`item-${index}`}>
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_SERVER_URL}/api/images/items/${item.uploadFile.storedFileName}`}
+                    src={`${process.env.NEXT_PUBLIC_S3_URL}/${item.uploadFile.storedFileName}`}
                     alt={item.name}
                     width={100}
                     height={100}

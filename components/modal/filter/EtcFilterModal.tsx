@@ -7,7 +7,7 @@ type Props = {
   isOpenModal: boolean;
   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
   genders: GenderType[];
-  setGenders: Dispatch<SetStateAction<string[]>>;
+  setGenders: Dispatch<SetStateAction<GenderType[]>>;
   isContainSoldOut: boolean;
   setIsContainSoldOut: Dispatch<SetStateAction<boolean>>;
 };
