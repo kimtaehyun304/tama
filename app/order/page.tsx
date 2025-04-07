@@ -1,22 +1,14 @@
 "use client";
 
 import { AuthContext } from "@/components/context/AuthContext";
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import LoadingScreen from "@/components/LoadingScreen";
-import AddressModal from "@/components/modal/AddressModal";
-import BannerSlider from "@/components/slider/BannerSlider";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  redirect,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import { useState, useEffect, useContext, useRef } from "react";
-import * as PortOne from "@portone/browser-sdk/v2";
 import { LoginModalContext } from "@/components/context/LoginModalContext";
+import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import AddressModal from "@/components/modal/AddressModal";
 import MemberAddressModal from "@/components/modal/MemberAddressModal";
+import * as PortOne from "@portone/browser-sdk/v2";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useContext, useEffect, useRef, useState } from "react";
 
 const enum payMethodEnum {
   EASY_PAY = "EASY_PAY",
@@ -118,7 +110,7 @@ export default () => {
     if (index === 0)
       setIsChecked(Array(agreements.length).fill(event.target.checked));
     else {
-      let newArr = [...isChecked];
+      const newArr = [...isChecked];
       newArr[index] = event.target.checked;
       setIsChecked(newArr);
     }
@@ -134,10 +126,7 @@ export default () => {
   async function requestPayment(
     payMethod: payMethodEnum,
     itemTotalPrice: number,
-    orderName: string,
-    fullName: string,
-    phoneNumber: string,
-    email: string
+    orderName: string
   ) {
     //유효성 검사
     if (!authContext?.isLogined) {
@@ -258,7 +247,7 @@ export default () => {
     };
 
     //객체 단축 표기법
-    const fetchBody: Record<string | number, any> = {
+    const fetchBody: Record<string | number, string | number | undefined> = {
       paymentId,
       receiverNickname,
       receiverPhone,
@@ -294,8 +283,8 @@ export default () => {
 
       //order한거 cart에서 지움 (바로구매 or 일괄구매)
       if (inCart && stringCart && stringOrder) {
-        let parsedCart: StorageItemType[] = JSON.parse(stringCart);
-        let parsedOrder: StorageItemType[] = JSON.parse(stringOrder);
+        const parsedCart: StorageItemType[] = JSON.parse(stringCart);
+        const parsedOrder: StorageItemType[] = JSON.parse(stringOrder);
         const orderSizeStockIds = parsedOrder.map(
           (item) => item.colorItemSizeStockId
         );
@@ -308,9 +297,8 @@ export default () => {
 
       localStorage.removeItem("tamaOrder");
 
-      authContext?.isLogined
-        ? router.push("/myPage/order")
-        : router.push("/guest");
+      if (authContext?.isLogined) router.push("/myPage/order");
+      else router.push("/guest");
 
       return;
     }
@@ -330,7 +318,7 @@ export default () => {
         return;
       }
 
-      let itemStocks: number[] = [];
+      const itemStocks: number[] = [];
       parsedOrder?.forEach((item) => {
         itemStocks.push(item.colorItemSizeStockId);
       });
@@ -905,10 +893,7 @@ export default () => {
                           itemTotalPrice,
                           orderItems.length === 1
                             ? orderItems[0].name
-                            : orderItems[0].name + " 등 " + orderItems.length,
-                          senderNickname,
-                          senderPhone,
-                          senderEmail
+                            : orderItems[0].name + " 등 " + orderItems.length
                         )
                       }
                     >

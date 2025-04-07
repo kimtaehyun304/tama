@@ -1,22 +1,17 @@
 "use client";
 
 import { AuthContext } from "@/components/context/AuthContext";
-
-import { useContext, useState } from "react";
-import { useEffect } from "react";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
-import LoginScreen from "@/components/LoginScreen";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import { useSearchParams } from "next/navigation";
-import Image from "next/image";
-import MyPagination from "@/components/MyPagination";
+import LoginScreen from "@/components/LoginScreen";
 import ReviewFormModal from "@/components/modal/ReviewFormModal";
-import Item from "../admin/Item";
+import MyPagination from "@/components/MyPagination";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 
 export default () => {
   const [orders, setOrders] = useState<OrderResponse>();
   const authContext = useContext(AuthContext);
-  const loginModalContext = useContext(LoginModalContext);
   const simpleModalContext = useContext(SimpleModalContext);
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;

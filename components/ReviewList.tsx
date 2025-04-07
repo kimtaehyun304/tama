@@ -1,12 +1,11 @@
-import React from "react";
-import StarRating from "./StarRating";
 import MyPagination from "./MyPagination";
+import StarRating from "./StarRating";
 
 type props = {
   review: ReviewType;
 };
 
-export default function ({ review }: props) {
+export default ({ review }: props) => {
   return (
     <>
       <section>
@@ -38,10 +37,7 @@ export default function ({ review }: props) {
           </div>
         ))}
       </section>
-      <MyPagination
-        pageCount={review.page.pageCount}
-        pageRangeDisplayed={5}
-      />
+      <MyPagination pageCount={review.page.pageCount} pageRangeDisplayed={5} />
     </>
   );
-}
+};

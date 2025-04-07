@@ -1,13 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   isOpenModal: boolean;
   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
   colors: BaseColorType[];
-  setColors: Dispatch<SetStateAction<BaseColorType[]>>;
   colorIds: number[];
   setColorIds: Dispatch<SetStateAction<number[]>>;
 };
@@ -16,11 +12,9 @@ export default function ({
   isOpenModal,
   setIsOpenModal,
   colors,
-  setColors,
   colorIds,
   setColorIds,
 }: Props) {
-  const router = useRouter();
 
   const closeModal = () => {
     setIsOpenModal(false); // 모달 닫기
@@ -67,7 +61,7 @@ export default function ({
                   className="w-[18px] h-[18px]"
                   id={`color${index}`}
                   onChange={() => {
-                    let newArr = [...colorIds];
+                    const newArr = [...colorIds];
                     const idx = newArr.indexOf(color.id);
                     if (idx !== -1) newArr.splice(idx, 1);
                     else newArr.push(color.id);

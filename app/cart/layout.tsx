@@ -1,4 +1,3 @@
-import AuthProvider from "@/components/context/AuthContext";
 
 export const metadata = {
   title: "쇼핑백 ",

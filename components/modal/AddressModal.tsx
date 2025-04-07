@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
-import DaumPostcode, { DaumPostcodeEmbed } from "react-daum-postcode";
+import { DaumPostcodeEmbed } from "react-daum-postcode";
 type Props = {
   isOpenAddressModal: boolean;
   setIsOpenAddressModal: Dispatch<SetStateAction<boolean>>;

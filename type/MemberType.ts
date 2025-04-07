@@ -21,6 +21,7 @@ type MemberInformationType = {
   gender: "MALE" | "FEMALE";
   height?: number;
   weight?: number;
+  authority: AuthorityType;
 };
 
 type AddressResponse = {
@@ -33,3 +34,5 @@ type AddressResponse = {
   receiverPhone: string;
   isDefault: boolean;
 };
+
+type AuthorityType = "MEMBER" | "ADMIN";

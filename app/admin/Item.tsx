@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect, useContext, useRef } from "react";
-import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
+import { useContext, useEffect, useState } from "react";
 
 export default () => {
-  const authContext = useContext(AuthContext);
+
   const simpleModalContext = useContext(SimpleModalContext);
-  const loginModalContext = useContext(LoginModalContext);
+
 
   //fetch
   const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
@@ -341,7 +339,7 @@ export default () => {
     let newFiles = Array.from(selectedFiles);
 
     // 이미지가 아닌 파일이 하나라도 있으면, 바로 리턴
-    for (let file of newFiles) {
+    for (const file of newFiles) {
       if (!file.type.startsWith("image/")) {
         alert("이미지 파일만 선택할 수 있습니다.");
         event.target.value = "";
@@ -406,7 +404,7 @@ export default () => {
                     <ul className="border space-y-1 absolute w-full z-1 bg-white p-3 whitespace-nowrap divide-y-2 cursor-pointer">
                       {categories.map((category, index) => (
                         <li
-                          onClick={(event) => {
+                          onClick={() => {
                             setSelectedCategoryId(category.id);
                             setIsActiveCategoryUl(false);
                           }}

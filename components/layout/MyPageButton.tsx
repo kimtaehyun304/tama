@@ -1,19 +1,14 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
-import { tree } from "next/dist/build/templates/app-page";
-import { LoginModalContext } from "../context/LoginModalContext";
-import { AuthContext } from "../context/AuthContext";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { SimpleModalContext } from "../context/SimpleModalContex";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "../context/AuthContext";
+import { LoginModalContext } from "../context/LoginModalContext";
 
 
 export default () => {
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
-  const simpleModalContext = useContext(SimpleModalContext); // 모달 상태 관리
   const authContext = useContext(AuthContext);
   const router = useRouter(); // 페이지 이동을 위한 useRouter
 

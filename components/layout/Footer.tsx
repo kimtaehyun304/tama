@@ -1,7 +1,4 @@
-import { Box, Container, Grid2, ListItem, Typography } from "@mui/material";
-import Image from "next/image";
 import Link from "next/link";
-import CategoryModal from "../modal/CategoryModal";
 import MobileFooter from "./MobileFooter";
 
 export default function Footer() {

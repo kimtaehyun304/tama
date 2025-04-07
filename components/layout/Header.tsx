@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import LoginButton from "./LoginButton";
-import MyError from "../MyError";
 import MenuNav from "./MenuNav";
 import MyPageButton from "./MyPageButton";
 

@@ -1,7 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   isOpenModal: boolean;
@@ -20,34 +17,9 @@ export default function ({
   maxPrice,
   setMaxPrice,
 }: Props) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
-  const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
-  const router = useRouter();
-
   const closeModal = () => {
     setIsOpenModal(false); // 모달 닫기
   };
-
-  useEffect(() => {
-    async function fetchCategories() {
-      const categoriesRes = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
-        {
-          cache: "no-store",
-        }
-      );
-
-      if (!categoriesRes.ok) {
-        const categoriesJson: SimpleResponseType = await categoriesRes.json();
-        alert(categoriesJson.message);
-        return;
-      }
-
-      const categoriesJson: FamilyCateogoryType[] = await categoriesRes.json();
-      setCategories(categoriesJson);
-    }
-    fetchCategories();
-  }, []);
 
   if (!isOpenModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
 

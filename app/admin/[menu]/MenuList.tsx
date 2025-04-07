@@ -1,22 +1,8 @@
 "use client";
 
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import ItemRetrunGuide from "@/components/ItemReturnGuide";
-import LoadingScreen from "@/components/LoadingScreen";
-import LoginModal from "@/components/modal/LoginModal";
-import OutOfStockModal from "@/components/modal/OutOfStockModal";
-import MyPagination from "@/components/MyPagination";
-import Review from "@/components/Review";
-import ItemSlider from "@/components/slider/ItemSlider";
-import StarRating from "@/components/StarRating";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef, useContext } from "react";
-import ReactPaginate from "react-paginate";
-import { AuthContext } from "@/components/context/AuthContext";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
+import { useParams } from "next/navigation";
 
 const menus = ["주문/배송 조회", "상품 등록"];
 //const menuList = ["주문/배송 조회", "개인정보/배송지 수정", "포인트", "쿠폰"];

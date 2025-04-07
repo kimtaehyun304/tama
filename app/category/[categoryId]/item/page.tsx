@@ -1,22 +1,15 @@
 "use client";
 
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
 import ColorFilterModal from "@/components/modal/filter/ColorFilterModal";
 import EtcFilterModal from "@/components/modal/filter/EtcFilterModal";
 import PriceFilterModal from "@/components/modal/filter/PriceFilterModal";
-import LoginModal from "@/components/modal/LoginModal";
-import OutOfStockModal from "@/components/modal/OutOfStockModal";
 import MyPagination from "@/components/MyPagination";
-import ItemSlider from "@/components/slider/ItemSlider";
-import StarRating from "@/components/StarRating";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef, useContext } from "react";
-import ReactPaginate from "react-paginate";
+import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default () => {
   const params = useParams<{ categoryId: string }>();
@@ -193,7 +186,7 @@ export default () => {
 
   //필터 성별 체크박스
   function checkGender(gender: GenderType) {
-    let newArr = [...genders];
+    const newArr = [...genders];
     const index = newArr.indexOf(gender);
     // color.id가 이미 배열에 있으면 해당 인덱스에서 제거
     if (index !== -1) newArr.splice(index, 1);
@@ -298,7 +291,7 @@ export default () => {
                     className="w-[18px] h-[18px]"
                     id={`color${index}`}
                     onChange={() => {
-                      let newArr = [...colorIds];
+                      const newArr = [...colorIds];
                       const index = newArr.indexOf(color.id);
                       // color.id가 이미 배열에 있으면 해당 인덱스에서 제거
                       if (index !== -1) newArr.splice(index, 1);
@@ -461,7 +454,6 @@ export default () => {
             isOpenModal={isOpenColorFilterModal}
             setIsOpenModal={setIsOpenColorFilterModal}
             colors={colors}
-            setColors={setColors}
             colorIds={colorIds}
             setColorIds={setColorIds}
           />
@@ -531,7 +523,7 @@ export default () => {
                       data-tooltip={related.color}
                       key={`relatdColrItem${relatdIndex}`}
                       onClick={() => {
-                        let newArr = [...selectedColorItemIndex];
+                        const newArr = [...selectedColorItemIndex];
                         newArr[categoryItemindex] = relatdIndex;
                         setSelectedColorItemIndex(newArr);
                       }}

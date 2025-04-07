@@ -2,16 +2,13 @@
 
 import { AuthContext } from "@/components/context/AuthContext";
 
-import { useContext, useState } from "react";
-import { useEffect } from "react";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
-import LoginScreen from "@/components/LoginScreen";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import LoginScreen from "@/components/LoginScreen";
+import { useContext, useEffect, useState } from "react";
 
 export default () => {
   const [memberInfo, setMemberInfo] = useState<MemberInformationType>();
   const authContext = useContext(AuthContext);
-  const loginModalContext = useContext(LoginModalContext);
   const simpleModalContext = useContext(SimpleModalContext);
 
   const changeMemberInfo = (

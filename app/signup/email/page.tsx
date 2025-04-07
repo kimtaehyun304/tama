@@ -1,8 +1,7 @@
 "use client";
 
 import { LoginModalContext } from "@/components/context/LoginModalContext";
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import { useState, useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 
 export default function SignUpEmail() {
   const agreements = ["모두 동의", "이용약관", "개인정보 수집 및 이용동의"];
@@ -27,7 +26,6 @@ export default function SignUpEmail() {
   const pwRef = useRef<HTMLInputElement>(null);
   const pw2Ref = useRef<HTMLInputElement>(null);
 
-  const simpleModalContext = useContext(SimpleModalContext);
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
 
   // 폼 검증 or 안내 메시지
@@ -44,7 +42,7 @@ export default function SignUpEmail() {
     if (index === 0)
       setIsChecked(Array(agreements.length).fill(event.target.checked));
     else {
-      let newArr = [...isChecked];
+      const newArr = [...isChecked];
       newArr[index] = event.target.checked;
       setIsChecked(newArr);
     }

@@ -1,22 +1,13 @@
 "use client";
 
-import { AuthContext } from "@/components/context/AuthContext";
 
-import { useContext, useState } from "react";
-import { useEffect } from "react";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
-import LoginScreen from "@/components/LoginScreen";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import MyPagination from "@/components/MyPagination";
+import { useContext, useState } from "react";
 
 export default () => {
   const [order, setOrder] = useState<GuestOrderResponse>();
-  const authContext = useContext(AuthContext);
-  const loginModalContext = useContext(LoginModalContext);
   const simpleModalContext = useContext(SimpleModalContext);
-  const searchParams = useSearchParams();
   const [orderId, setOrderId] = useState<number>();
   const [buyerName, setBuyerName] = useState<string>();
 
@@ -125,7 +116,7 @@ export default () => {
                 key={`orderItems-${index}`}
               >
                 <Image
-                  src={item.imageSrc}
+                  src={item.uploadFile.storedFileName}
                   alt={item.name}
                   width={100}
                   height={100}

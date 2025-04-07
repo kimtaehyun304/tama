@@ -1,21 +1,13 @@
 "use client";
 
-import CloseSvg from "@/components/CloseSvg";
 import { AuthContext } from "@/components/context/AuthContext";
 import { LoginModalContext } from "@/components/context/LoginModalContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import LoadingScreen from "@/components/LoadingScreen";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
-import BannerSlider from "@/components/slider/BannerSlider";
-import { error } from "console";
-import { Metadata } from "next";
-import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect, useContext, SetStateAction } from "react";
-import Loading from "../loading";
-import router from "next/router";
 import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 
 // 사이즈 삭제 됐을때 예외처리 필요
 export default function Cart() {
@@ -40,7 +32,7 @@ export default function Cart() {
       const jsonStrCart = localStorage.getItem("tamaCart");
       if (jsonStrCart) {
         const parsedCart: StorageItemType[] = JSON.parse(jsonStrCart);
-        let itemStocks: number[] = [];
+        const itemStocks: number[] = [];
         parsedCart?.forEach((item) => {
           itemStocks.push(item.colorItemSizeStockId);
         });
@@ -204,8 +196,13 @@ export default function Cart() {
       (item) => item.sizeStock.id === itemSizeStockId
     );
 
+    if (!item) {
+      alert("에러 발생");
+      return;
+    }
+
     //재고 부족하면 바로 구매 버튼 안보이게 해놨지만, 혹시 몰라서 해놈
-    if (item?.sizeStock.stock! < cartMap.get(itemSizeStockId)!) {
+    if (item.sizeStock.stock! < cartMap.get(itemSizeStockId)!) {
       simpleModalContext?.setMessage("재고가 부족합니다");
       simpleModalContext?.setIsOpenSimpleModal(true);
       return;

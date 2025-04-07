@@ -1,7 +1,5 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
-import React, { use, useContext, useState } from "react";
+import { useContext } from "react";
 import { SimpleModalContext } from "../context/SimpleModalContex";
 
 export default function SimpleModal() {

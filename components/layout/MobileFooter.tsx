@@ -1,9 +1,8 @@
 "use client";
-import { Box, Container, Grid2, ListItem, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import CategoryModal from "../modal/CategoryModal";
 import { useState } from "react";
+import CategoryModal from "../modal/CategoryModal";
 
 export default function () {
   const [isOpenCategoryModal, setIsOpenCategoryModal] =

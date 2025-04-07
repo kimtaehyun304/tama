@@ -1,7 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   isOpenModal: boolean;
@@ -20,7 +17,6 @@ export default function ({
   isContainSoldOut,
   setIsContainSoldOut,
 }: Props) {
-  const router = useRouter();
 
   const closeModal = () => {
     setIsOpenModal(false); // 모달 닫기
@@ -28,7 +24,7 @@ export default function ({
 
   //필터 성별 체크박스
   function checkGender(gender: GenderType) {
-    let newArr = [...genders];
+    const newArr = [...genders];
     const index = newArr.indexOf(gender);
     // color.id가 이미 배열에 있으면 해당 인덱스에서 제거
     if (index !== -1) newArr.splice(index, 1);

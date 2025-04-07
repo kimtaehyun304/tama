@@ -1,14 +1,10 @@
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, {
+import {
   Dispatch,
   SetStateAction,
   useContext,
   useEffect,
   useState,
 } from "react";
-import StarRating from "../StarRating";
 import { AuthContext } from "../context/AuthContext";
 import InputStarRating from "../InputStarRating";
 
@@ -31,7 +27,6 @@ export default function ({
 }: Props) {
   const [height, setHeight] = useState<number>();
   const [weight, setWeight] = useState<number>();
-  const router = useRouter();
   const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD 형식
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState<string>("");

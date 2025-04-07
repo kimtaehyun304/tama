@@ -1,17 +1,12 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
 import { useContext, useEffect } from "react";
 
-import { tree } from "next/dist/build/templates/app-page";
-import { LoginModalContext } from "../context/LoginModalContext";
-import { AuthContext } from "../context/AuthContext";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { SimpleModalContext } from "../context/SimpleModalContex";
+import { AuthContext } from "../context/AuthContext";
+import { LoginModalContext } from "../context/LoginModalContext";
 
 export default function LoginButton() {
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
-  const simpleModalContext = useContext(SimpleModalContext); // 모달 상태 관리
   const authContext = useContext(AuthContext);
 
   // 새로고침하면 전역상태 사라져서 재설정

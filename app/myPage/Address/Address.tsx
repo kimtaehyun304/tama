@@ -1,37 +1,13 @@
 "use client";
 
-import { AuthContext } from "@/components/context/AuthContext";
-
-import { useContext, useState } from "react";
-import { useEffect } from "react";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
-import LoginScreen from "@/components/LoginScreen";
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import { useState } from "react";
 import AddressForm from "./AddressForm";
 import AddressList from "./AddressList";
 
-
 export default () => {
-  const [memberInfo, setMemberInfo] = useState<MemberInformationType>();
-  const authContext = useContext(AuthContext);
-  const loginModalContext = useContext(LoginModalContext);
-  const simpleModalContext = useContext(SimpleModalContext);
   const buttons = ["배송지 추가", "배송지 목록"];
   const [activeButton, setActiveButton] = useState<string>(buttons[0]);
-  const changeMemberInfo = (
-    key: keyof MemberInformationType,
-    value: string | number
-  ) => {
-    setMemberInfo(
-      (prev) =>
-        prev && {
-          ...prev,
-          [key]: value,
-        }
-    );
-  };
 
-  
   function getComponent(activeButton: string) {
     switch (activeButton) {
       case "배송지 추가":
@@ -65,12 +41,8 @@ export default () => {
           </button>
         ))}
       </div>
-      
-      {getComponent(activeButton)}
-        
 
+      {getComponent(activeButton)}
     </section>
   );
-
-
 };

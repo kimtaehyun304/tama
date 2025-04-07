@@ -1,13 +1,11 @@
 "use client";
 
 import { AuthContext } from "@/components/context/AuthContext";
-import LoadingScreen from "@/components/LoadingScreen";
 import BannerSlider from "@/components/slider/BannerSlider";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useContext } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 
 const images: BannerImageType[] = [
   { src: "/banner1.jpg", alt: "Banner 1" },

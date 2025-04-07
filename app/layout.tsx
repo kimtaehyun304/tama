@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import LoginModal from "@/components/modal/LoginModal";
 import AuthProvider from "@/components/context/AuthContext";
 import LoginModalProvider from "@/components/context/LoginModalContext";
 import SimpleModalProvider from "@/components/context/SimpleModalContex";
-import SimpleModal from "@/components/modal/SimpleModal";
-import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-
+import Header from "@/components/layout/Header";
+import LoginModal from "@/components/modal/LoginModal";
+import SimpleModal from "@/components/modal/SimpleModal";
+/*
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-
+*/
 const nanumGothic = localFont({
   src: "./fonts/NanumGothic.woff2",
   variable: "--font-nanum-gothic",

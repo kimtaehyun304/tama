@@ -1,16 +1,10 @@
 "use client";
 
-import { AuthContext } from "@/components/context/AuthContext";
 
-import { useContext, useState } from "react";
-import { useEffect } from "react";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
-import LoginScreen from "@/components/LoginScreen";
-import MenuList from "./MenuList";
 import { useParams } from "next/navigation";
-import Order from "../Order";
-import Address from "../Address/Address";
 import Item from "../Item";
+import Order from "../Order";
+import MenuList from "./MenuList";
 
 export default () => {
   const params = useParams<{ menu: string }>();

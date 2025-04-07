@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 type Props = {
   rating?: number; // 기본 평점 (0 ~ 5 사이의 값)

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Client from "./Client";
 
 type Props = {
-  params: { colorItemId: number };
+  params: Promise<{ colorItemId: number }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

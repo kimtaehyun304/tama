@@ -1,22 +1,15 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { use, useContext, useState } from "react";
-import { LoginModalContext } from "../context/LoginModalContext";
-import { SimpleModalContext } from "../context/SimpleModalContex";
-import SimpleModal from "./SimpleModal";
-import { AuthContext } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { LoginModalContext } from "../context/LoginModalContext";
 
-
-type props = {
-  isContainOrder: boolean;
-};
 
 export default function LoginModal() {
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
   const authContext = useContext(AuthContext);
-  const simpleModalContext = useContext(SimpleModalContext);
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [message, setMessage] = useState<string>();

@@ -2,12 +2,9 @@
 
 import { AuthContext } from "@/components/context/AuthContext";
 
-import { useContext, useRef, useState } from "react";
-import { useEffect } from "react";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
-import LoginScreen from "@/components/LoginScreen";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import AddressModal from "@/components/modal/AddressModal";
+import { useContext, useRef, useState } from "react";
 
 export default () => {
   const authContext = useContext(AuthContext);

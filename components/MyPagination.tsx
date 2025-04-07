@@ -1,5 +1,4 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { Dispatch, SetStateAction } from "react";
 import ReactPaginate from "react-paginate";
 import { styled } from "styled-components";
 

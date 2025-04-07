@@ -1,29 +1,25 @@
 "use client";
 
-import { AuthContext } from "@/components/context/AuthContext";
-import { LoginModalContext } from "@/components/context/LoginModalContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
-import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
 import ReviewList from "@/components/ReviewList";
-
 import ItemSlider from "@/components/slider/ItemSlider";
+
 import StarRating from "@/components/StarRating";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
-import { useState, useEffect, useRef, useContext } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 type Props = {
   colorItem: ColorItemType;
 };
 
 export default function Client({ colorItem }: Props) {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const itemDetailRef = useRef<HTMLDivElement>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
   const itemReturnGuideRef = useRef<HTMLDivElement>(null);
@@ -49,8 +45,6 @@ export default function Client({ colorItem }: Props) {
   //아이템 개수
   const pageSize = 10;
   const router = useRouter();
-  const loginModalContext = useContext(LoginModalContext);
-  const authContext = useContext(AuthContext);
 
   function changeItem(index: number) {
     setOrderCount(1);
@@ -96,13 +90,14 @@ export default function Client({ colorItem }: Props) {
     const jsonString = localStorage.getItem("tamaCart");
 
     if (jsonString) {
-      let jsons: StorageItemType[] = JSON.parse(jsonString);
+      const jsons: StorageItemType[] = JSON.parse(jsonString);
       const foundIndex = jsons.findIndex(
         (json) => json.colorItemSizeStockId === itemToPut.colorItemSizeStockId
       );
-      foundIndex === -1
-        ? jsons.push(itemToPut)
-        : (jsons[foundIndex] = itemToPut);
+
+      if (foundIndex === -1) jsons.push(itemToPut);
+      else jsons[foundIndex] = itemToPut;
+
       localStorage.setItem("tamaCart", JSON.stringify(jsons));
     } else localStorage.setItem("tamaCart", JSON.stringify(Array(itemToPut)));
 
@@ -130,13 +125,11 @@ export default function Client({ colorItem }: Props) {
   }
 
   function orderItem() {
-
-    if(stock < orderCount){
+    if (stock < orderCount) {
       setIsOpenOutOfStockModal(true);
       return;
     }
 
-    
     function putItemInOrder() {
       //쇼핑백을 통해 주문하면 배열이라 통일하려고 여기도 배열 씀
       const itemToPut = [
@@ -169,7 +162,7 @@ export default function Client({ colorItem }: Props) {
     }
     switchSort();
   }, [sortProperty, sortDirection]);
-  
+
   if (!reviews) return <LoadingScreen />;
 
   return (
@@ -184,9 +177,7 @@ export default function Client({ colorItem }: Props) {
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-x-20 mx-[2%] ">
         {/*(좌) 상품 이미지 및 리뷰 */}
         <div className="">
-          <ItemSlider
-            uploadFiles={colorItem.uploadFiles}
-          />
+          <ItemSlider uploadFiles={colorItem.uploadFiles} />
 
           <div className="flex justify-between border-y py-4">
             <StarRating rating={reviews?.avgRating} />

@@ -35,7 +35,9 @@ export default () => {
           (address) => address.isDefault
         );
 
-        defaultAddress && setSelectedAddressId(defaultAddress.id);
+        if (defaultAddress) 
+          setSelectedAddressId(defaultAddress.id);
+        
       }
     }
     fetchAddress();
