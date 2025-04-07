@@ -66,3 +66,9 @@ position:absolute인 요소의 width:100%는 무엇의 100%일까?
 카카오페이 css cors 강력 새로고침 하니까 해결됨. iframe말고 새탭으로 열기 한 곳에서 해야함. 이윤 모르겠음
 
 flex justify-center 정렬 이쁘게 안되면 아이템 각각에 flex-1 적용
+
+nohup &는 안되길래 pm2 사용
+Next.js는 기본적으로 npm start나 next start로 실행되기 때문에, pm2가 가장 확실하고 깔끔하게 작동합니다.
+pm2 start npm --name "next-app" -- start
+pm2 startup
+pm2 save
