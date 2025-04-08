@@ -64,7 +64,7 @@ export default () => {
   };
 
   return (
-    <section className="flex justify-center">
+    <section className="flex justify-center grow">
 
       <div className="p-10 pb-0">
         <h5 className="text-4xl font-bold text-center py-3">로그인</h5>

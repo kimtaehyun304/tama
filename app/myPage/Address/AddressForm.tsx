@@ -51,6 +51,8 @@ export default () => {
       const simpleRes: SimpleResponseType = await res.json();
       simpleModalContext?.setMessage(simpleRes.message);
       simpleModalContext?.setIsOpenSimpleModal(true);
+    } else {
+      alert("로그인 해주세요");
     }
   }
 

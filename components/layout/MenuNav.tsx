@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import LoginButton from "./LoginButton";
 
 export default () => {
   const params = useParams<{ categoryId: string }>();
@@ -53,10 +54,17 @@ export default () => {
                 <div className="py-2">전체 카테고리</div>
               </div>
             </button>
-  
+
             <Link href={"/"} className="">
               <div className="px-4 xl:px-0">홈</div>
             </Link>
+
+            <div className="xl:hidden">
+              <LoginButton />
+            </div>
+
+            <div className="px-4 xl:px-0 xl:hidden">고객센터</div>
+
             {/*
             <Link href={"/"} className="">
               <div className="">베스트</div>
@@ -81,7 +89,9 @@ export default () => {
                   key={`category${index}`}
                   onMouseOver={() => setCategoryIndex(index)}
                 >
-                  <Link href={`/category/${category.id}/item`}>{category.name}</Link>
+                  <Link href={`/category/${category.id}/item`}>
+                    {category.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -91,7 +101,9 @@ export default () => {
                   className="px-8 py-3 hover:text-[#ff5432] hover:font-bold bg-[#ffffff]"
                   key={`category${index}`}
                 >
-                  <Link href={`/category/${category.id}/item`}>{category.name}</Link>
+                  <Link href={`/category/${category.id}/item`}>
+                    {category.name}
+                  </Link>
                 </li>
               ))}
             </ul>

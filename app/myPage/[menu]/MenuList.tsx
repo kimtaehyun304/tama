@@ -1,6 +1,4 @@
 "use client";
-
-
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -19,7 +17,7 @@ export default () => {
   const params = useParams<{ menu: string }>();
   const paramsMenu = params.menu;
   return (
-    <aside className="border p-4">
+    <aside className="border p-4 go">
       <div className="font-bold text-3xl py-3">마이페이지</div>
       <ul className="">
         {menus.map((menu, index) => (

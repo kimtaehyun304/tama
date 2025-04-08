@@ -171,7 +171,7 @@ export default function LoginModal() {
                 <button className="p-4 w-full">회원가입</button>
               </div>
             </Link>
-            <div className="flex justify-center gap-x-5 py-5">
+            <div className="flex justify-center gap-x-1 py-5">
               {loginModalContext.isContainOrder && (
                 <>
                   <Link

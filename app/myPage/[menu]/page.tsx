@@ -54,7 +54,7 @@ export default () => {
 
   return (
     <article className="xl:mx-32 m-[2%] flex flex-wrap gap-x-16 gap-y-4 justify-center xl:justify-start">
-      <MenuList />
+       {authContext?.isLogined && <MenuList />}
       {getMenuComponent(paramsMenu)}
     </article>
   );

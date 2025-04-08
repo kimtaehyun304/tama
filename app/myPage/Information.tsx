@@ -69,7 +69,7 @@ export default () => {
     simpleModalContext?.setIsOpenSimpleModal(true);
   }
 
-  if (!memberInfo) {
+  if (!memberInfo && !authContext?.isLogined) {
     return <LoginScreen />;
   }
 

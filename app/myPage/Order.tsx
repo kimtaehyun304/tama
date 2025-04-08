@@ -93,7 +93,7 @@ export default () => {
     }
   }
 
-  if (!orders) {
+  if (!orders || !authContext?.isLogined) {
     return <LoginScreen />;
   }
 

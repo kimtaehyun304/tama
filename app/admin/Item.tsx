@@ -1,12 +1,12 @@
 "use client";
 
+import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import ForbiddenScreen from "@/components/ForbiddenScreen";
 import { useContext, useEffect, useState } from "react";
 
 export default () => {
-
   const simpleModalContext = useContext(SimpleModalContext);
-
 
   //fetch
   const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
@@ -41,6 +41,7 @@ export default () => {
   const [colorMap, setColorMap] = useState<Map<number, string>>();
   const [files, setFiles] = useState<File[][]>([]);
   const [stocks, setStocks] = useState<number[][]>([]);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -268,7 +269,8 @@ export default () => {
 
     //이미지 업로드
     if (savedItemRes.ok) {
-      const savedColorItemIdJson: SavedColorItemIdResponse = await savedItemRes.json();
+      const savedColorItemIdJson: SavedColorItemIdResponse =
+        await savedItemRes.json();
 
       const formData = new FormData();
       /*
@@ -284,17 +286,19 @@ export default () => {
         });
       });
       */
-      savedColorItemIdJson.savedColorItemIds.forEach((savedColorItemId, index) => {
-        if (savedColorItemId)
-          formData.append(
-            `requests[${index}].colorItemId`,
-            savedColorItemId?.toString()
-          );
+      savedColorItemIdJson.savedColorItemIds.forEach(
+        (savedColorItemId, index) => {
+          if (savedColorItemId)
+            formData.append(
+              `requests[${index}].colorItemId`,
+              savedColorItemId?.toString()
+            );
 
-        files[index]?.forEach((file) => {
-          formData.append(`requests[${index}].files`, file);
-        });
-      });
+          files[index]?.forEach((file) => {
+            formData.append(`requests[${index}].files`, file);
+          });
+        }
+      );
 
       const savedImageRes = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/images/new`,
@@ -361,6 +365,8 @@ export default () => {
       return updatedFiles; // 업데이트된 배열 반환
     });
   }
+
+  if (!authContext?.isLogined) return <ForbiddenScreen />;
 
   return (
     <article className="grow">

@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AddressForm from "./AddressForm";
 import AddressList from "./AddressList";
+import { AuthContext } from "@/components/context/AuthContext";
+import LoginScreen from "@/components/LoginScreen";
 
 export default () => {
   const buttons = ["배송지 추가", "배송지 목록"];
   const [activeButton, setActiveButton] = useState<string>(buttons[0]);
+  const authContext = useContext(AuthContext);
 
   function getComponent(activeButton: string) {
     switch (activeButton) {
@@ -17,12 +20,9 @@ export default () => {
     }
   }
 
-  /*
-  if (!memberInfo) {
-  
+  if (!authContext?.isLogined) {
     return <LoginScreen />;
   }
-    */
 
   return (
     <section className="space-y-4 grow">
