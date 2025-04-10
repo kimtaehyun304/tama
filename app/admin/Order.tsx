@@ -12,7 +12,7 @@ import { useContext, useEffect, useState } from "react";
 export default () => {
   const [orders, setOrders] = useState<AdminOrderResponse>();
   const authContext = useContext(AuthContext);
-
+  const [cancelOrderDisable, setCancelOrderDisable] = useState<boolean>(false);
   const simpleModalContext = useContext(SimpleModalContext);
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
@@ -44,6 +44,9 @@ export default () => {
 
   async function cancelOrder(orderId: number) {
     if (authContext?.isLogined) {
+      setCancelOrderDisable(true);
+      simpleModalContext?.setMessage("결제 취소중.. 나가지 마세요");
+      simpleModalContext?.setIsOpenSimpleModal(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/member/cancel`,
         {
@@ -59,7 +62,21 @@ export default () => {
       );
       const ordersJson: SimpleResponseType = await res.json();
       simpleModalContext?.setMessage(ordersJson.message);
-      simpleModalContext?.setIsOpenSimpleModal(true);
+
+      //화면에 주문취소 반영
+      if (res.ok) {
+        setOrders((prevOrders) => {
+          if (!prevOrders) return prevOrders; // prevOrders가 undefined면 그대로 반환
+
+          return {
+            ...prevOrders,
+            content: prevOrders.content.map((order) =>
+              order.id === orderId ? { ...order, status: "CANCEL" } : order
+            ),
+          };
+        });
+      }
+      setCancelOrderDisable(false);
     }
   }
 
@@ -89,6 +106,7 @@ export default () => {
             <button
               onClick={() => cancelOrder(order.id)}
               className="border bg-black text-white p-2"
+              disabled={cancelOrderDisable}
             >
               주문 취소
             </button>
@@ -101,7 +119,7 @@ export default () => {
                 key={`orderItems-${index}`}
               >
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_S3_URL}/${item.uploadFile.storedFileName}`}
+                  src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
                   alt={item.name}
                   width={100}
                   height={100}

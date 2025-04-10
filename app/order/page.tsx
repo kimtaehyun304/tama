@@ -65,7 +65,7 @@ export default () => {
 
   const [senderNickname, setSenderNickname] = useState<string>("");
   const [senderEmail, setSenderEmail] = useState<string>("");
-  const [senderPhone, setSenderPhone] = useState<string>("");
+  //const [senderPhone, setSenderPhone] = useState<string>("");
 
   const [receiverNickname, setReceiverNickname] = useState<string>("");
   const [receiverPhone, setReceiverPhone] = useState<string>("");
@@ -93,7 +93,7 @@ export default () => {
   //focus 용도
   const senderNicknameRef = useRef<HTMLInputElement>(null);
   const senderEmailRef = useRef<HTMLInputElement>(null);
-  const senderPhoneRef = useRef<HTMLInputElement>(null);
+  //const senderPhoneRef = useRef<HTMLInputElement>(null);
   const receiverNicknameRef = useRef<HTMLInputElement>(null);
   const receiverPhoneRef = useRef<HTMLInputElement>(null);
   const zoneCodeRef = useRef<HTMLInputElement>(null);
@@ -105,6 +105,8 @@ export default () => {
 
   //쇼핑백에서 구매하면 url 파라미터가 붙어서옴
   const inCart = searchParams.get("inCart");
+
+
 
   function check(event: React.ChangeEvent<HTMLInputElement>, index: number) {
     if (index === 0)
@@ -153,13 +155,14 @@ export default () => {
         simpleModalContext?.setIsOpenSimpleModal(true);
         return;
       }
-
+      /*
       if (!/^\d+$/.test(String(senderPhone))) {
         senderPhoneRef.current?.focus();
         simpleModalContext?.setMessage("주문자 전화번호를 입력해주세요");
         simpleModalContext?.setIsOpenSimpleModal(true);
         return;
       }
+        */
     }
 
     if (!receiverNickname) {
@@ -206,6 +209,27 @@ export default () => {
 
     //1단계-PG사 결제
     const paymentId = `payment-${crypto.randomUUID()}`;
+    //2단계-주문 API 호출
+    const tamaOrder = localStorage.getItem("tamaOrder");
+    let parsedTamaOrder: StorageItemType[] = [];
+    if (tamaOrder) parsedTamaOrder = JSON.parse(tamaOrder);
+
+    const customData = {
+      paymentId,
+      senderNickname,
+      senderEmail,
+      receiverNickname,
+      receiverPhone,
+      zipCode: zoneCode,
+      streetAddress,
+      detailAddress,
+      deliveryMessage,
+      orderItems: parsedTamaOrder,
+    };
+
+    let redirectUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/order/mobile?paymentId=${paymentId}`;
+    if (inCart) redirectUrl += "&inCart=true";
+
     const response = await PortOne.requestPayment({
       storeId: "store-f9c6de63-d746-420d-88c6-0a6815d4352b",
       paymentId: paymentId,
@@ -214,13 +238,14 @@ export default () => {
       currency: "CURRENCY_KRW",
       channelKey: TOSS_PAYMENTS_CHANNEL_KEY,
       payMethod: payMethod,
-      redirectUrl: `${process.env.NEXT_PUBLIC_ClIENT_URL}`,
+      redirectUrl: redirectUrl,
       //oauth 계정은 휴대폰 번호가 없음
       customer: {
         fullName: senderNickname,
-        ...(senderPhone && { phoneNumber: senderPhone }),
+        //...(senderPhone && { phoneNumber: senderPhone }),
         email: senderEmail,
       },
+      customData,
     });
 
     if (response?.code !== undefined) {
@@ -228,79 +253,61 @@ export default () => {
       alert(response.message);
       return;
     }
+    //모바일 결제는 redirectUrl
+    orderOnPc();
 
-    //2단계-주문 API 호출
-    const tamaOrder = localStorage.getItem("tamaOrder");
-    let parsedTamaOrder;
-    if (tamaOrder) parsedTamaOrder = JSON.parse(tamaOrder);
+    async function orderOnPc() {
+      //2단계-주문 API 호출
+      const fetchUrl =
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/` +
+        (authContext?.isLogined ? "member" : "guest") +
+        `?paymentId=${paymentId}`;
 
-    const fetchUrl =
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/` +
-      (authContext?.isLogined ? "member" : "guest");
+      const token = localStorage.getItem("tamaAccessToken");
 
-    const token = localStorage.getItem("tamaAccessToken");
+      const fetchHeader: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(authContext?.isLogined &&
+          token && { Authorization: `Bearer ${token}` }),
+      };
 
-    const fetchHeader: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...(authContext?.isLogined &&
-        token && { Authorization: `Bearer ${token}` }),
-    };
+      //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요
+      simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
+      simpleModalContext?.setIsOpenSimpleModal(true);
 
-    //객체 단축 표기법
-    const fetchBody: Record<string | number, string | number | undefined> = {
-      paymentId,
-      receiverNickname,
-      receiverPhone,
-      zipCode: zoneCode,
-      streetAddress,
-      detailAddress,
-      deliveryMessage,
-      orderItems: parsedTamaOrder,
-      ...(!authContext?.isLogined && {
-        senderNickname,
-        senderPhone,
-        senderEmail,
-      }),
-    };
+      const notifiedRes = await fetch(fetchUrl, {
+        method: "POST",
+        headers: fetchHeader,
+      });
 
-    //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요
-    simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
-    simpleModalContext?.setIsOpenSimpleModal(true);
+      const notifiedJson: SimpleResponseType = await notifiedRes.json();
+      simpleModalContext?.setMessage(notifiedJson.message);
 
-    const notified = await fetch(fetchUrl, {
-      method: "POST",
-      headers: fetchHeader,
-      // paymentId와 주문 정보를 서버에 전달합니다
-      body: JSON.stringify(fetchBody),
-    });
+      if (notifiedRes.status === 201) {
+        const stringCart = localStorage.getItem("tamaCart");
+        const stringOrder = localStorage.getItem("tamaOrder");
 
-    const notifiedJson: SimpleResponseType = await notified.json();
-    simpleModalContext?.setMessage(notifiedJson.message);
+        //order한거 cart에서 지움 (바로구매 or 일괄구매)
+        if (inCart && stringCart && stringOrder) {
+          const parsedCart: StorageItemType[] = JSON.parse(stringCart);
+          const parsedOrder: StorageItemType[] = JSON.parse(stringOrder);
+          const orderSizeStockIds = parsedOrder.map(
+            (item) => item.colorItemSizeStockId
+          );
+          //order한거 지운 cart.
+          const updatedCart = parsedCart.filter(
+            (cart) => !orderSizeStockIds.includes(cart.colorItemSizeStockId)
+          );
+          localStorage.setItem("tamaCart", JSON.stringify(updatedCart));
+        }
 
-    if (notified.ok) {
-      const stringCart = localStorage.getItem("tamaCart");
-      const stringOrder = localStorage.getItem("tamaOrder");
+        localStorage.removeItem("tamaOrder");
 
-      //order한거 cart에서 지움 (바로구매 or 일괄구매)
-      if (inCart && stringCart && stringOrder) {
-        const parsedCart: StorageItemType[] = JSON.parse(stringCart);
-        const parsedOrder: StorageItemType[] = JSON.parse(stringOrder);
-        const orderSizeStockIds = parsedOrder.map(
-          (item) => item.colorItemSizeStockId
-        );
-        //order한거 지운 cart.
-        const updatedCart = parsedCart.filter(
-          (cart) => !orderSizeStockIds.includes(cart.colorItemSizeStockId)
-        );
-        localStorage.setItem("tamaCart", JSON.stringify(updatedCart));
+        if (authContext?.isLogined) router.push("/myPage/order");
+        else router.push("/guest");
+
+        return;
       }
-
-      localStorage.removeItem("tamaOrder");
-
-      if (authContext?.isLogined) router.push("/myPage/order");
-      else router.push("/guest");
-
-      return;
     }
   }
 
@@ -378,7 +385,7 @@ export default () => {
         setMemberAddresses(member.addresses);
         //포트원 결제 기록 첨부(주문한 사람 자동으로 기입)
         setSenderNickname(member.nickname);
-        setSenderPhone(member.phone);
+        //setSenderPhone(member.phone);
         setSenderEmail(member.email);
 
         const defaultAddress: AddressResponse | undefined =
@@ -499,7 +506,7 @@ export default () => {
                     ref={senderEmailRef}
                   />
                 </div>
-
+                {/*
                 <div className="flex items-center">
                   <label htmlFor="senderPhone" className="w-32">
                     휴대폰 번호
@@ -517,6 +524,7 @@ export default () => {
                     ref={senderPhoneRef}
                   />
                 </div>
+                */}
                 <div className="text-[#787878] py-3">
                   주문고객님의 정보로 주문정보(주문완료, 배송상태 등)를 안내해
                   드립니다.
@@ -553,12 +561,12 @@ export default () => {
                     setHasAddress={setHasAddress}
                   />
                 </div>
-                <div className="flex gap-x-1">
+                <div className="flex flex-wrap gap-x-1">
                   <div>{streetAddress}</div>
                   <div>{detailAddress}</div>
                   <div>({zoneCode})</div>
                 </div>
-                {receiverPhone}
+                <div>{receiverPhone}</div>
 
                 <div className="relative flex items-center flex-wrap gap-y-3">
                   <label className=" w-32 whitespace-nowrap">
@@ -825,7 +833,7 @@ export default () => {
               {orderItems.map((item, index) => (
                 <div className="border flex gap-x-4 p-2" key={`item-${index}`}>
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_S3_URL}/${item.uploadFile.storedFileName}`}
+                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
                     alt={item.name}
                     width={100}
                     height={100}
@@ -887,15 +895,18 @@ export default () => {
                   <div>
                     <button
                       className="bg-[#131922] text-[#fff] border p-4 w-full"
-                      onClick={() =>
+                      onClick={(event) => {
+                        event.currentTarget.disabled = true;
+                        simpleModalContext?.setMessage("결제창 로딩중..");
+                        simpleModalContext?.setIsOpenSimpleModal(true);
                         requestPayment(
                           selectedPayMethod,
                           itemTotalPrice,
                           orderItems.length === 1
                             ? orderItems[0].name
                             : orderItems[0].name + " 등 " + orderItems.length
-                        )
-                      }
+                        );
+                      }}
                     >
                       결제하기
                     </button>

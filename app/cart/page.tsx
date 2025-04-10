@@ -262,7 +262,7 @@ export default function Cart() {
                     key={`item-${index}`}
                   >
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_S3_URL}/${item.uploadFile.storedFileName}`}
+                      src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
                       alt={item.name}
                       width={100}
                       height={100}

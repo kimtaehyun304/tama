@@ -326,7 +326,7 @@ export default function Client({ colorItem }: Props) {
                         key={`relatedItem-${index}`}
                       >
                         <Image
-                          src={`${process.env.NEXT_PUBLIC_S3_URL}/${related.uploadFile.storedFileName}`}
+                          src={`${process.env.NEXT_PUBLIC_CDN_URL}/${related.uploadFile.storedFileName}`}
                           alt={related.color}
                           width={50}
                           height={50}

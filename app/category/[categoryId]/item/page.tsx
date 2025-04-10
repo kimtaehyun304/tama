@@ -477,7 +477,7 @@ export default () => {
                 }`}
               >
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_S3_URL}/${
+                  src={`${process.env.NEXT_PUBLIC_CDN_URL}/${
                     item.relatedColorItems[
                       selectedColorItemIndex[categoryItemindex]
                     ].uploadFile.storedFileName

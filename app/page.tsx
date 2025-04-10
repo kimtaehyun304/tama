@@ -164,7 +164,6 @@ export default function Home() {
               </button>
             ))}
 
-
             {/*
             <Link href={"/"} className="">
               <div className="grid justify-items-center">
@@ -236,7 +235,7 @@ export default function Home() {
                 <ul className="relative max-w-[232px]">
                   <li>
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_S3_URL}/${item.uploadFile.storedFileName}`}
+                      src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
                       alt={item.name}
                       width={232}
                       height={232}

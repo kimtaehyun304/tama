@@ -1,6 +1,5 @@
 "use client";
 
-
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import Image from "next/image";
 import { useContext, useState } from "react";
@@ -10,6 +9,7 @@ export default () => {
   const simpleModalContext = useContext(SimpleModalContext);
   const [orderId, setOrderId] = useState<number>();
   const [buyerName, setBuyerName] = useState<string>();
+  const [cancelOrderDisable, setCancelOrderDisable] = useState<boolean>(false);
 
   async function fetchOrder() {
     const credentials = btoa(
@@ -36,6 +36,9 @@ export default () => {
   }
 
   async function cancelOrder() {
+    setCancelOrderDisable(true);
+    simpleModalContext?.setMessage("결제 취소중.. 나가지 마세요");
+    simpleModalContext?.setIsOpenSimpleModal(true);
     const credentials = btoa(
       unescape(encodeURIComponent(`${buyerName}:${orderId}`))
     );
@@ -52,6 +55,19 @@ export default () => {
     const ordersJson: SimpleResponseType = await res.json();
     simpleModalContext?.setMessage(ordersJson.message);
     simpleModalContext?.setIsOpenSimpleModal(true);
+
+    //화면에 주문취소 반영
+    if (res.ok) {
+      setOrder((prevOrder) => {
+        if (!prevOrder) return prevOrder; // prevOrders가 undefined면 그대로 반환
+
+        return {
+          ...prevOrder,
+          status: "CANCEL",
+        };
+      });
+    }
+    setCancelOrderDisable(false);
   }
 
   return (
@@ -85,6 +101,8 @@ export default () => {
               조회하기
             </button>
           </div>
+
+          <div className="text-center">이메일을 학인해주세요</div>
         </section>
       ) : (
         <section className="border p-4 space-y-2">
@@ -103,6 +121,7 @@ export default () => {
           {(order.status == "PAYMENT" || order.status == "CHECK") && (
             <button
               onClick={cancelOrder}
+              disabled={cancelOrderDisable}
               className="border bg-black text-white p-2"
             >
               주문 취소
@@ -116,7 +135,7 @@ export default () => {
                 key={`orderItems-${index}`}
               >
                 <Image
-                  src={item.uploadFile.storedFileName}
+                  src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
                   alt={item.name}
                   width={100}
                   height={100}
