@@ -1,21 +1,6 @@
 "use client";
 
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import ItemRetrunGuide from "@/components/ItemReturnGuide";
-import LoadingScreen from "@/components/LoadingScreen";
-import LoginModal from "@/components/modal/LoginModal";
-import OutOfStockModal from "@/components/modal/OutOfStockModal";
-import Review from "@/components/Review";
-import ItemSlider from "@/components/slider/ItemSlider";
-import StarRating from "@/components/StarRating";
-
 import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect, useRef, useContext } from "react";
-
-type Props = {
-  colorItem: ColorItemType;
-};
 
 export default () => {
   return (

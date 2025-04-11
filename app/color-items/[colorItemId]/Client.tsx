@@ -3,125 +3,53 @@
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import ItemRetrunGuide from "@/components/ItemReturnGuide";
 import LoadingScreen from "@/components/LoadingScreen";
-import LoginModal from "@/components/modal/LoginModal";
 import OutOfStockModal from "@/components/modal/OutOfStockModal";
-import Review from "@/components/Review";
+import ReviewList from "@/components/ReviewList";
 import ItemSlider from "@/components/slider/ItemSlider";
+
 import StarRating from "@/components/StarRating";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef, useContext } from "react";
-/*
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
-const item = {
-  id: 2411929109,
-  src: [
-    "/woman-pants.jpg",
-    "/woman-pants-detail.jpg",
-    "/woman-pants-detail2.jpg",
-    "/woman-pants-detail.jpg",
-    "/woman-pants-detail2.jpg",
-    "/woman-pants-detail.jpg",
-    "/woman-pants-detail2.jpg",
-  ],
-  related: [
-    { id: 2411929109, src: "/woman-pants.jpg", color: "화이트" },
-    { id: 2411929110, src: "/woman-pink-pants.jpg", color: "핑크" },
-    { id: 2411929109, src: "/woman-pants.jpg", color: "화이트" },
-    { id: 2411929110, src: "/woman-pink-pants.jpg", color: "핑크" },
-  ],
-  seller: "tama",
-  code: "J124401105",
-  yearSeason: "24 F/W",
-  name: "여 코듀로이 와이드 팬츠",
-  price: 49900,
-  discountedPrice: 39900,
-  color: "아이보리",
-  //stock: 1,
-  sizes: [
-    {
-      size: "S(67CM)",
-      stock: 1,
-    },
-    {
-      size: "M(70CM)",
-      stock: 0,
-    },
-    {
-      size: "L(73CM)",
-      stock: 3,
-    },
-    {
-      size: "XL(76CM)",
-      stock: 4,
-    },
-  ],
-  detail: {
-    content:
-      "무형광 원단입니다. 전 년 상품 자주히트와 동일한 소재이며, 네이밍이변경되었습니다.",
-    dateOfManufacture: "2024-08",
-    countryOfManufacture: "방글라데시",
-    manufacturer: "(주)신세계인터내셔날",
-    category: "이너웨어",
-    textile:
-      "폴리에스터 94%, 폴리우레탄 6% (상표,장식,무늬,자수,밴드,심지,보강재 제외)",
-    precaution:
-      "세제는 중성세제를 사용하고 락스 등의 표백제는 사용을 금합니다. 세탁 시 삶아 빨 경우 섬유의 특성이 소멸되어 수축 및 물빠짐의 우려가 있으므로 미온 세탁하시기 바랍니다.",
-  },
-};
-*/
-
-const reviews: ReviewType = {
-  result: 22,
-  starRatingAvg: 3.5,
-  data: [
-    {
-      rating: 5,
-      email: "berry1234",
-      createdAt: new Date("2024-12-16"),
-      height: 156,
-      weight: 45,
-      item: "베이지/S(90)",
-      content:
-        "S사이즈로 아주 약간 큰 편이지만 키에 거의 딱 맞는거 같아요. 땀듯해서 입기 좋습니다ㅎㅎ",
-    },
-    {
-      rating: 5,
-      email: "berry1234",
-      createdAt: new Date("2024-12-16"),
-      height: 156,
-      weight: 45,
-      item: "베이지/S(90)",
-      content:
-        "S사이즈로 아주 약간 큰 편이지만 키에 거의 딱 맞는거 같아요. 땀듯해서 입기 좋습니다ㅎㅎ",
-    },
-  ],
-};
+import { useContext, useEffect, useRef, useState } from "react";
 
 type Props = {
   colorItem: ColorItemType;
 };
 
 export default function Client({ colorItem }: Props) {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const itemDetailRef = useRef<HTMLDivElement>(null);
   const reviewRef = useRef<HTMLDivElement>(null);
   const itemReturnGuideRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<string>("상품상세정보");
   const [orderCount, setOrderCount] = useState<number>(1);
-  //const [isOutedOfStock, setIsOutedOfStock] = useState(false);
   const [isOpenOutOfStockModal, setIsOpenOutOfStockModal] = useState(false);
   //옷 사이즈 바꿀때 사용
-  const [stock, setStock] = useState(colorItem.stocks[0].stock);
+  const [stock, setStock] = useState(colorItem.sizeStocks[0].stock);
   const [sizeIndex, setSizeIndex] = useState(0);
- 
-  const simpleModalContext = useContext(SimpleModalContext); // 모달 상태 관리
+  const simpleModalContext = useContext(SimpleModalContext);
+  const params = useParams<{ colorItemId: string }>();
+  const colorItemId = parseInt(params.colorItemId);
+  const searchParams = useSearchParams();
+  const [reviews, setReviews] = useState<ReviewType>();
+  const pagePrams = Number(searchParams.get("page")) || 1;
+  //기본값 최신순
+  const [sortProperty, setSortProperty] = useState<string>("createdAt");
+  const [sortDirection, setSortDirection] = useState<string>("desc");
+  //sortProperty,sortDirection로 분류한 sort 이름
+  const [sort, setSort] = useState<string>("최신순");
+  //정렬 open close
+  const [display, setDisplay] = useState<string>("none");
+  //아이템 개수
+  const pageSize = 10;
+  const router = useRouter();
 
   function changeItem(index: number) {
     setOrderCount(1);
     setSizeIndex(index);
-    setStock(colorItem.stocks[index].stock);
+    setStock(colorItem.sizeStocks[index].stock);
   }
 
   function handleNavClick(section: string) {
@@ -141,14 +69,12 @@ export default function Client({ colorItem }: Props) {
   }
 
   function plusOurderCount() {
-    if (stock === orderCount) {
+    if (stock <= orderCount) {
       setIsOpenOutOfStockModal(true);
       return;
     }
 
-    if (stock > orderCount) {
-      setOrderCount(orderCount + 1);
-    }
+    setOrderCount(orderCount + 1);
   }
 
   function minusOurderCount() {
@@ -157,27 +83,87 @@ export default function Client({ colorItem }: Props) {
 
   function putItemInShoppingBag() {
     const itemToPut = {
-      itemStockId: colorItem.stocks[sizeIndex].id,
+      colorItemSizeStockId: colorItem.sizeStocks[sizeIndex].id,
       orderCount: orderCount,
     };
 
     const jsonString = localStorage.getItem("tamaCart");
 
     if (jsonString) {
-      let jsons: LocalStorageCartItemType[] = JSON.parse(jsonString);
+      const jsons: StorageItemType[] = JSON.parse(jsonString);
       const foundIndex = jsons.findIndex(
-        (json) => json.itemStockId === itemToPut.itemStockId
+        (json) => json.colorItemSizeStockId === itemToPut.colorItemSizeStockId
       );
-      foundIndex === -1
-        ? jsons.push(itemToPut)
-        : (jsons[foundIndex] = itemToPut);
+
+      if (foundIndex === -1) jsons.push(itemToPut);
+      else jsons[foundIndex] = itemToPut;
+
       localStorage.setItem("tamaCart", JSON.stringify(jsons));
     } else localStorage.setItem("tamaCart", JSON.stringify(Array(itemToPut)));
 
-    simpleModalContext?.setMessage("쇼핑백에 상품을 담았습니다.")
+    simpleModalContext?.setMessage("쇼핑백에 상품을 담았습니다.");
     simpleModalContext?.setIsOpenSimpleModal(true);
-
   }
+
+  async function fetchReviews() {
+    const params = new URLSearchParams();
+    params.append("colorItemId", String(colorItemId));
+    params.append("page", String(pagePrams));
+    params.append("size", String(pageSize));
+    params.append("sort", `${sortProperty},${sortDirection}`);
+
+    const reviewsRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews?${params.toString()}`
+    );
+    const reivews = await reviewsRes.json();
+    if (!reviewsRes.ok) {
+      alert(reivews.message);
+      return;
+    }
+
+    setReviews(reivews);
+  }
+
+  function orderItem() {
+    if (stock < orderCount) {
+      setIsOpenOutOfStockModal(true);
+      return;
+    }
+
+    function putItemInOrder() {
+      //쇼핑백을 통해 주문하면 배열이라 통일하려고 여기도 배열 씀
+      const itemToPut = [
+        {
+          colorItemSizeStockId: colorItem.sizeStocks[sizeIndex].id,
+          orderCount: orderCount,
+        },
+      ];
+      localStorage.setItem("tamaOrder", JSON.stringify(itemToPut));
+    }
+    putItemInOrder();
+    router.push("/order");
+  }
+
+  useEffect(() => {
+    fetchReviews();
+  }, [pagePrams, sortProperty, sortDirection]);
+
+  useEffect(() => {
+    function switchSort() {
+      const value = `${sortProperty},${sortDirection}`;
+      switch (value) {
+        case "createdAt,desc":
+          setSort("최신순");
+          break;
+        case "createdAt,asc":
+          setSort("오래된순");
+          break;
+      }
+    }
+    switchSort();
+  }, [sortProperty, sortDirection]);
+
+  if (!reviews) return <LoadingScreen />;
 
   return (
     <article className="xl:mx-standard xl:my-[2%]">
@@ -191,20 +177,17 @@ export default function Client({ colorItem }: Props) {
       <section className="grid grid-cols-1 xl:grid-cols-2 gap-x-20 mx-[2%] ">
         {/*(좌) 상품 이미지 및 리뷰 */}
         <div className="">
-          <ItemSlider
-            images={colorItem.images}
-            itemName={colorItem.common.name}
-          />
+          <ItemSlider uploadFiles={colorItem.uploadFiles} />
 
           <div className="flex justify-between border-y py-4">
-            <StarRating rating={reviews.starRatingAvg} />
+            <StarRating rating={reviews?.avgRating} />
             <div
               className="underline cursor-pointer"
               onClick={() => {
                 handleNavClick("리뷰");
               }}
             >
-              상품리뷰 더보기 ({reviews.result})
+              상품리뷰 더보기 ({reviews.page.rowCount})
             </div>
           </div>
         </div>
@@ -238,13 +221,11 @@ export default function Client({ colorItem }: Props) {
             </div>
             <div className="py-2 text-xl">{colorItem.common.name}</div>
             <div className="py-2 flex items-end gap-x-4">
-              {colorItem.stocks[0].discountedPrice && (
+              {colorItem.discountedPrice && (
                 <span className="font-semibold text-3xl text-[#d99c63]">
                   {100 -
                     Math.round(
-                      (colorItem.stocks[0].discountedPrice /
-                        colorItem.stocks[0].price) *
-                        100
+                      (colorItem.discountedPrice / colorItem.price) * 100
                     )}
                   %
                 </span>
@@ -252,19 +233,17 @@ export default function Client({ colorItem }: Props) {
 
               <span className="text-3xl">
                 <span className="font-semibold">
-                  {colorItem.stocks[0].discountedPrice
-                    ? colorItem.stocks[0].discountedPrice.toLocaleString(
-                        "ko-KR"
-                      )
-                    : colorItem.stocks[0].price.toLocaleString("ko-KR")}
+                  {colorItem.discountedPrice
+                    ? colorItem.discountedPrice.toLocaleString("ko-KR")
+                    : colorItem.price.toLocaleString("ko-KR")}
                 </span>
                 원
               </span>
 
-              {colorItem.stocks[0].discountedPrice && (
+              {colorItem.discountedPrice && (
                 <span className="text-lg text-[#a0a0a0]">
                   <span className="">
-                    {colorItem.stocks[0].price.toLocaleString("ko-KR")}
+                    {colorItem.price.toLocaleString("ko-KR")}
                   </span>
                   원
                 </span>
@@ -293,14 +272,14 @@ export default function Client({ colorItem }: Props) {
                 <div className="font-semibold">적립예정포인트</div>
                 <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
                   <span className="underline cursor-pointer">
-                    0.5%({Math.round(colorItem.stocks[0].price / 200)}P)
+                    0.5%({Math.round(colorItem.price / 200)}P)
                   </span>
                 </div>
               </div>
               <div className="flex justify-between">
                 <div className="font-semibold">배송비</div>
                 <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
-                  {colorItem.stocks[0].discountedPrice >= 40000
+                  {colorItem.discountedPrice >= 40000
                     ? "무료"
                     : "3,000원 (40,000원 이상 결제 시 무료)"}
                 </div>
@@ -342,18 +321,22 @@ export default function Client({ colorItem }: Props) {
                   </div>
                   <div className="flex gap-x-4 overflow-x-auto">
                     {colorItem.relatedColorItems.map((related, index) => (
-                      <Image
+                      <Link
+                        href={`/color-items/${related.id}`}
                         key={`relatedItem-${index}`}
-                        src={related.imageSrc}
-                        alt={related.color}
-                        width={50}
-                        height={50}
-                        className={
-                          related.id === colorItem.id
-                            ? "border-[1px] border-black"
-                            : ""
-                        }
-                      />
+                      >
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_CDN_URL}/${related.uploadFile.storedFileName}`}
+                          alt={related.color}
+                          width={50}
+                          height={50}
+                          className={
+                            related.id === colorItem.id
+                              ? "border-[1px] border-black"
+                              : ""
+                          }
+                        />
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -363,7 +346,7 @@ export default function Client({ colorItem }: Props) {
                 <div className="font-semibold">옵션</div>
                 <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
                   <div className="flex gap-x-3 overflow-x-auto">
-                    {colorItem.stocks.map((size, index) => (
+                    {colorItem.sizeStocks.map((size, index) => (
                       <button
                         key={`option-${index}`}
                         className={
@@ -413,26 +396,27 @@ export default function Client({ colorItem }: Props) {
                 <div className="text-xl font-bold py-3">판매가</div>
                 <div>
                   <span className="text-4xl font-bold">
-                    {colorItem.stocks[0].discountedPrice
-                      ? (
-                          colorItem.stocks[0].discountedPrice * orderCount
-                        ).toLocaleString("ko-KR")
-                      : (colorItem.stocks[0].price * orderCount).toLocaleString(
+                    {colorItem.discountedPrice
+                      ? (colorItem.discountedPrice * orderCount).toLocaleString(
                           "ko-KR"
-                        )}
+                        )
+                      : (colorItem.price * orderCount).toLocaleString("ko-KR")}
                   </span>
                   원
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-x-1 xl:text-2xl">
-                <button className="border p-4">선물하기</button>
+              <div className="grid grid-cols-2 gap-x-1 xl:text-2xl">
+                {/*<button className="border p-4">선물하기</button>*/}
                 <button
                   className="border p-4 bg-[#787878] text-[#fff]"
                   onClick={() => putItemInShoppingBag()}
                 >
                   쇼핑백 담기
                 </button>
-                <button className="border p-4 bg-[#131922] text-[#fff]">
+                <button
+                  className="border p-4 bg-[#131922] text-[#fff]"
+                  onClick={orderItem}
+                >
                   바로 구매
                 </button>
               </div>
@@ -457,7 +441,7 @@ export default function Client({ colorItem }: Props) {
             }`}
             onClick={() => handleNavClick("리뷰")}
           >
-            리뷰({reviews.result})
+            리뷰({reviews.page.rowCount})
           </button>
           <button
             className={`border-b pb-4 ${
@@ -525,7 +509,46 @@ export default function Client({ colorItem }: Props) {
 
         {/* 리뷰 */}
         <div ref={reviewRef} className="p-2" hidden={activeSection !== "리뷰"}>
-          <Review reviews={reviews} />
+          {/* 정렬 리스트 */}
+          <span className="inline-flex flex-col relative bg-white">
+            <button
+              className="p-2"
+              onMouseEnter={() => setDisplay("block")}
+              onMouseLeave={() => setDisplay("none")}
+            >
+              {sort}∨
+            </button>
+            <ul
+              className="border space-y-2 absolute z-10 top-full bg-white px-4 whitespace-nowrap"
+              style={{ display: display }}
+              onMouseEnter={() => setDisplay("block")}
+              onMouseLeave={() => setDisplay("none")}
+            >
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("createdAt");
+                    setSortDirection("desc");
+                  }}
+                >
+                  최신순
+                </button>
+              </li>
+              <li>
+                <button
+                  className="hover:underline hover:font-semibold"
+                  onClick={() => {
+                    setSortProperty("createdAt");
+                    setSortDirection("asc");
+                  }}
+                >
+                  오래된순
+                </button>
+              </li>
+            </ul>
+          </span>
+          <ReviewList review={reviews} />
         </div>
 
         {/* 배송/상품/교환안내 */}

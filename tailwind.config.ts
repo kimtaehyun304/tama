@@ -22,6 +22,11 @@ export default {
         standard: "10%",
         "mobile-standard": "11rem",
       },
+      fontFamily: {
+        //nanumGothic: ["var(--font-nanum-gothic)"],
+        nanumGothicBold: ["var(--font-nanum-gothic-bold)"],
+        sans: ['Arial', 'Helvetica', 'sans-serif'],
+      },
     },
   },
   plugins: [],

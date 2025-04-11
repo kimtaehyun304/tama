@@ -1,9 +1,3 @@
-import React from "react";
-
-interface StarRatingProps {
-  rating: number; // 평점 (0 ~ 5 사이의 값, 소수점 포함)
-  maxStars?: number; // 별의 최대 개수 (기본값: 5)
-}
 
 export default function ItemRetrunGuide() {
   return (

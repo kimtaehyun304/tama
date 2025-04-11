@@ -1,0 +1,74 @@
+카카오 우편번호 API
+ㄴiframe이라 불편, 트래픽 무제한. 
+무제한이라 선택. 
+
+https://www.clien.net/service/board/park/3629655
+iframe 보안 이슈
+
+https://www.data.go.kr/data/15056971/openapi.do?recommendDataYn=Y#tab_layer_detail_function
+ㄴREST API 제공
+ㄴ트래픽 제한. 무제한으로 하려면?
+
+https://blog.portone.io/opi_pg-comparison/
+ㄴpg사 추천
+
+https://helloinyong.tistory.com/305
+ㄴtree shaking으로 빌드 파일을 줄이자
+
+https://fe-developers.kakaoent.com/2022/221124-typescript-tip/
+ㄴenum과 union type
+
+📌 Next.js의 fetch 캐싱 옵션 해석 (서버 컴포넌트)
+
+Configure how the request should interact with Next.js Data Cache.
+
+1️⃣ auto (기본값, no cache)
+개발 환경 (development): 매 요청마다 원격 서버에서 데이터를 가져옴.
+프로덕션 환경 (production):
+빌드 시 한 번 데이터를 가져오고, 정적으로 미리 렌더링됨(SSG, Static Site Generation).
+하지만 해당 경로(route)에 Dynamic API가 포함되어 있다면, 매 요청마다 데이터를 다시 가져옴.
+Dynamic API ex) fetch 옵션 headers를 쓰면 캐싱X. EX)인증헤더
+☆searchParams prop 캐싱X
+
+클라이언트에서 호출 -> 캐싱X
+color-item/1 -> 캐싱 -> no-store 필요
+
+2️⃣ no-store (캐싱 안 함)
+매 요청마다 원격 서버에서 데이터를 다시 가져옴.
+정적으로 미리 렌더링되지 않으며, 동적 요청(SSR, Server-Side Rendering)이 강제됨.
+Dynamic API 여부와 상관없이 항상 새로운 데이터를 가져옴.
+
+3️⃣ force-cache (캐싱 강제 적용)
+Next.js의 Data Cache를 우선적으로 확인.
+캐시에 **유효한 데이터(프레시한 데이터)**가 있으면 그대로 반환.
+캐시에 없거나 오래된(stale) 데이터라면, 원격 서버에서 새 데이터를 가져오고 캐시를 업데이트함.
+
+클라이언트 fetch는 브라우저 http캐시와 상호작용. 서버 fetch는 서버 캐시와 상호작용
+
+CSR vs SSR
+ㄴSSR이 아웃바운드가 적어서 네트워크 요금이 덜 청구되나, 서버에서 렌더링 해서 메모리 사용량이 높음 -> 서버 트래픽 문제
+이런 이유로 CSR 선호. 
+
+useEffect에서 if(!authContext.isLogined) alert("로그인 해주세요") -> 의존성 배열 땜에 alert 두번 발생 -> return LoginScreen
+
+space-x, before
+ㄴflex-gap과 같이 쓰기 좋은건 before    
+
+w-fit, h-fit
+ㄴdiv나 flex에서 원래 크기로 줄여줌
+
+max-w, grow를 쓰면 pc와 모바일 화면을 동시에 설정 가능
+
+position:absolute인 요소의 width:100%는 무엇의 100%일까?
+ㄴposition: absolute, width: 100%일 때, width:100%는 부모가 아니라 상위 요소 중 position 속성이 부여된(absolute, relative, fixed, sticky) 요소의 width를 상속한다.(height도 마찬가지)
+ㄴ만약 position 속성을 주고 싶은데 부모의 width를 퍼센트로 가져오고 싶다면 relative를 부여하면 된다.
+
+카카오페이 css cors 강력 새로고침 하니까 해결됨. iframe말고 새탭으로 열기 한 곳에서 해야함. 이윤 모르겠음
+
+flex justify-center 정렬 이쁘게 안되면 아이템 각각에 flex-1 적용
+
+nohup &는 안되길래 pm2 사용
+Next.js는 기본적으로 npm start나 next start로 실행되기 때문에, pm2가 가장 확실하고 깔끔하게 작동합니다.
+pm2 start npm --name "next-app" -- start
+pm2 startup
+pm2 save

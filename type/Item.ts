@@ -3,26 +3,39 @@ type ItemImageType = {
   src: string[];
 };
 
-type ItemStockType = {
+type ColorItemSizeStockType = {
   id: number;
   size: string;
   stock: number;
 };
 
-type LocalStorageCartItemType = {
-  itemStockId: number;
+type StorageItemType = {
+  colorItemSizeStockId: number;
   orderCount: number;
 };
 
-type CartItemType = {
+//장바구니 or 주문 상품
+type StorageItemDetailType = {
   price: number;
   discountedPrice: number;
-  stock: ItemStockType;
+  sizeStock: ColorItemSizeStockType;
+  colorItemId: number;
+  color: string;
+  name: string;
+  uploadFile: UploadFileType;
+};
+
+/*
+type OrderItemType = {
+  price: number;
+  discountedPrice: number;
+  sizeStock: ColorItemSizeStockType;
   colorItemId: number;
   color: string;
   name: string;
   image: string;
 };
+*/
 
 type CommonInfoType = {
   id: number;
@@ -41,30 +54,68 @@ type CommonInfoType = {
 type RelatedColorItemType = {
   id: number;
   color: string;
-  imageSrc: string;
+  uploadFile: UploadFileType;
 };
 
 type ColorItemType = {
-  images: string[];
+  uploadFiles: UploadFileType[];
   id: number;
   color: string;
+  price: number;
+  discountedPrice: number;
   common: CommonInfoType;
-  stocks: ItemStockType[];
+  sizeStocks: ColorItemSizeStockType[];
   relatedColorItems: RelatedColorItemType[];
 };
 
 type ReviewType = {
-  result: number;
-  starRatingAvg: number;
-  data: Data[];
+  avgRating: number;
+  content: ReviewContent[];
+  page: PageType;
 };
 
-type Data = {
+type ReviewContent = {
+  member: ReviewMember;
+  option: string;
   rating: number;
-  email: string;
+  comment: string;
   createdAt: Date;
-  height: number;
-  weight: number;
-  item: string;
-  content: string;
+};
+
+type ReviewMember = {
+  nickname: string;
+  height: string;
+  weight: string;
+};
+
+type MinMaxPrice = {
+  minPrice: number;
+  maxPrice: number;
+};
+
+type PageType = {
+  page: number;
+  size: number;
+  //totalElements: number;
+  pageCount: number;
+  rowCount: number;
+};
+
+type GenderType = "MALE" | "FEMALE" | "BOTH";
+
+//type ColorItems = SaveColorItemRequest[]; // Equivalent to your List<SaveColorItemRequest> in Java
+
+type SaveColorItemRequest = {
+  colorId: number;
+  files: File[]; // Assuming you're handling the file uploads as `File` objects in TypeScript
+  sizeStocks: SaveSizeStockRequest[];
+};
+
+type SaveSizeStockRequest = {
+  size: string;
+  stock: number;
+};
+
+type SavedColorItemIdResponse = {
+  savedColorItemIds: number[];
 };

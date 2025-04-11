@@ -1,14 +1,20 @@
-import React from "react";
-import Slider from "react-slick";
 import Image from "next/image";
-import "slick-carousel/slick/slick.css";
+import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
 type props = {
   images: BannerImageType[]
 }
 
-function NextArrow(props: any) {
+type CustomArrowProps = {
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+};
+
+
+function NextArrow(props: CustomArrowProps) {
   const { className, style, onClick } = props;
   return (
     <div
@@ -19,7 +25,7 @@ function NextArrow(props: any) {
   );
 }
 
-function PrevArrow(props: any) {
+function PrevArrow(props: CustomArrowProps) {
   const { className, style, onClick } = props;
   return (
     <div

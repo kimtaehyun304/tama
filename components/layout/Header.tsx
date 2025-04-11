@@ -1,14 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import LoginButton from "./LoginButton";
-import ClientHeader from "./ClientHeader";
-import MyError from "../MyError";
+import MenuNav from "./MenuNav";
+import MyPageButton from "./MyPageButton";
 
 export default async function Header() {
-  let categories: CateogoryType[] = [];
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`);
-  categories = await res.json();
 
   return (
     <header className="sticky top-0 z-10 bg-white">
@@ -24,7 +20,7 @@ export default async function Header() {
           <div className="flex justify-between items-center text-sm pb-4">
             <div className="flex justify-center gap-x-10">
               <Link href={"/"} className="">
-                <div className="font-extrabold text-4xl">TAMA</div>
+                <div className="font-nanumGothicBold text-4xl">TAMA</div>
               </Link>
 
               <div className="flex border rounded-full bg-[#F9F9F9] px-4 py-1">
@@ -43,17 +39,7 @@ export default async function Header() {
               </div>
             </div>
             <div className="flex justify-center gap-x-3">
-              <Link href={"/"} className="">
-                <div className="grid justify-items-center">
-                  <Image
-                    src="/icon/icon-person.png"
-                    alt="mypae"
-                    width={30}
-                    height={30}
-                  />
-                  <div className="">마이페이지</div>
-                </div>
-              </Link>
+              <MyPageButton />
 
               <Link href={"/"} className="">
                 <div className="grid justify-items-center">
@@ -111,7 +97,7 @@ export default async function Header() {
         </div>
       </nav>
 
-      <ClientHeader categories={categories} />
+      <MenuNav />
     </header>
   );
 }

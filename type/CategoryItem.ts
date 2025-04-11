@@ -1,24 +1,44 @@
 type CategoryItemType = {
   content: CategoryItemContentType[];
+  page: PageType;
+  message: string;
 };
 
 type CategoryItemContentType = {
   name: string;
   price: number;
   discountedPrice: number;
-  relatedColorItems: RlatedColorItemType[];
+  relatedColorItems: RelatedCategoryColorItemType[];
 };
 
-type RlatedColorItemType = {
+type RelatedCategoryColorItemType = {
   colorItemId: number;
   color: string;
   hexCode: string;
-  imageSrc: string;
-  totalStock: number;
+  uploadFile: UploadFileType;
 };
 
-type ColorType = {
+type FamilyColorType = BaseColorType & {
+  children: BaseColorType[];
+};
+
+type BaseColorType = {
   id: number;
   name: string;
   hexCode: string;
+};
+
+type CategoryBestItemType = {
+  colorItemId: number;
+  name: string;
+  price: number;
+  discountedPrice: number;
+  uploadFile: UploadFileType;
+  avgRating: number;
+  reviewCount: number;
+};
+
+type UploadFileType = {
+  originalFileName: string;
+  storedFileName: string;
 };

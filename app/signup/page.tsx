@@ -1,10 +1,6 @@
 
 
-import LoadingScreen from "@/components/LoadingScreen";
-import BannerSlider from "@/components/slider/BannerSlider";
-import Image from "next/image";
 import Link from "next/link";
-import GoogleSignUpButton from "./GoogleSignUpButton";
 
 export default function SignUp() {
 

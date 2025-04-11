@@ -3,19 +3,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import LoginButton from "./LoginButton";
 
-type Props = {
-  categories: CateogoryType[];
-};
-
-export default ({ categories }: Props) => {
-
+export default () => {
   const params = useParams<{ categoryId: string }>();
   const [categoryIndex, setCategoryIndex] = useState<number>(0);
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
 
   useEffect(() => {
-    setIsVisible(false)
+    async function fetchCategories() {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
+        {
+          cache: "no-store",
+        }
+      );
+      const categoriesRes = await res.json();
+
+      if (!res.ok) {
+        alert(categoriesRes.message);
+        return;
+      }
+
+      setCategories(categoriesRes);
+    }
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    setIsVisible(false);
   }, [params.categoryId]);
 
   return (
@@ -37,18 +54,29 @@ export default ({ categories }: Props) => {
                 <div className="py-2">전체 카테고리</div>
               </div>
             </button>
+
             <Link href={"/"} className="">
               <div className="px-4 xl:px-0">홈</div>
             </Link>
+
+            <div className="xl:hidden">
+              <LoginButton />
+            </div>
+
+            <div className="px-4 xl:px-0 xl:hidden">고객센터</div>
+
+            {/*
             <Link href={"/"} className="">
               <div className="">베스트</div>
             </Link>
+            */}
           </div>
         </div>
       </nav>
 
+      {/*하위 카테고리 수에 따라 height가 바뀌길래 제일 긴걸로 고정 */}
       {isVisible && (
-        <div className="xl:mx-standard border-r border-b">
+        <div className="xl:mx-standard border-r border-b h-[240px]">
           <div className="flex">
             <ul className="bg-[#F5F5F5]">
               {categories.map((category, index) => (
@@ -61,7 +89,9 @@ export default ({ categories }: Props) => {
                   key={`category${index}`}
                   onMouseOver={() => setCategoryIndex(index)}
                 >
-                  <Link href={`/category/${category.id}`}>{category.name}</Link>
+                  <Link href={`/category/${category.id}/item`}>
+                    {category.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -71,7 +101,9 @@ export default ({ categories }: Props) => {
                   className="px-8 py-3 hover:text-[#ff5432] hover:font-bold bg-[#ffffff]"
                   key={`category${index}`}
                 >
-                  <Link href={`/category/${category.id}`}>{category.name}</Link>
+                  <Link href={`/category/${category.id}/item`}>
+                    {category.name}
+                  </Link>
                 </li>
               ))}
             </ul>
