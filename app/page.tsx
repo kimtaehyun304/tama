@@ -118,7 +118,7 @@ export default function Home() {
             </span>
             */}
           </div>
-          <Link href={"/"} className="text-end text-[#777]">
+          <Link href={"/category/0/item"} className="text-end text-[#777]">
             더보기 &#10095;
           </Link>
         </nav>
