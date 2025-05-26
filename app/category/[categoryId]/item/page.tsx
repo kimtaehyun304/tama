@@ -3,6 +3,7 @@
 import LoadingScreen from "@/components/LoadingScreen";
 import ColorFilterModal from "@/components/modal/filter/ColorFilterModal";
 import EtcFilterModal from "@/components/modal/filter/EtcFilterModal";
+import ItemNameFilterModal from "@/components/modal/filter/itemNameFilterModal";
 import PriceFilterModal from "@/components/modal/filter/PriceFilterModal";
 import MyPagination from "@/components/MyPagination";
 
@@ -33,6 +34,8 @@ export default () => {
   //sortProperty,sortDirection로 분류한 sort 이름
   const [sort, setSort] = useState<string>("신상품순");
 
+  //검색어
+  const [itemName, setItemName] = useState<string>("");
   //fetchMinMaxPrice()로 채워짐
   const [minPrice, setMinPrice] = useState<number>();
   const [maxPrice, setMaxPrice] = useState<number>();
@@ -46,6 +49,8 @@ export default () => {
   const [colors, setColors] = useState<BaseColorType[]>([]);
 
   //검색 필터 모달(모바일용)
+  const [isOpenItemNameFilterModal, setIsOpenItemNameFilterModal] =
+    useState<boolean>(false);
   const [isOpenPriceFilterModal, setIsOpenPriceFilterModal] =
     useState<boolean>(false);
   const [isOpenColorFilterModal, setIsOpenColorFilterModal] =
@@ -61,6 +66,7 @@ export default () => {
     params.append("size", String(pageSize));
     params.append("sort", `${sortProperty},${sortDirection}`);
 
+    if (itemName) params.append("itemName", itemName);
     if (minPrice) params.append("minPrice", String(minPrice));
     if (maxPrice) params.append("maxPrice", String(maxPrice));
     if (colorIds.length) params.append("colorIds", colorIds.join(","));
@@ -242,6 +248,44 @@ export default () => {
 
         <section className="space-y-4">
           <div className="font-bold">필터</div>
+
+          <section className="space-y-2">
+            <div className="flex items-center">
+              <label htmlFor="itemName" className="whitespace-nowrap">
+                검색어
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  id="itemName"
+                  className="ml-2 border text-right p-1 focus:outline-none"
+                  value={itemName}
+                  onChange={(event) => {
+                    setItemName(event.target.value);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex items-center">
+              <label htmlFor="priceMax" className="whitespace-nowrap">
+                최대
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  id="priceMax"
+                  className="ml-2 border text-right p-1 pr-7 focus:outline-none"
+                  value={maxPrice ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
+                    setMaxPrice(value == "" ? undefined : Number(value));
+                  }}
+                />
+                <span className="relative right-6">원</span>
+              </div>
+            </div>
+          </section>
+
           <section className="space-y-2">
             <div>가격</div>
             <div className="flex items-center">
@@ -281,6 +325,7 @@ export default () => {
               </div>
             </div>
           </section>
+
           <section className="space-y-2">
             <div>색상 계열</div>
             <div className="grid grid-cols-2">
@@ -310,6 +355,7 @@ export default () => {
               ))}
             </div>
           </section>
+
           <section className="space-y-2">
             <div>기타</div>
             <div className="">
@@ -354,6 +400,7 @@ export default () => {
           적용
         </button>
       </aside>
+
       {/*상품 리스트 */}
       <section className="grow mx-[1%] lg:mx-0">
         <div className="space-x-4">
@@ -418,6 +465,12 @@ export default () => {
         <div className="xl:hidden">
           <div className="flex gap-x-3 my-3 ">
             <button
+              onClick={() => setIsOpenItemNameFilterModal(true)}
+              className="border p-3"
+            >
+              검색어
+            </button>
+            <button
               onClick={() => setIsOpenPriceFilterModal(true)}
               className="border p-3"
             >
@@ -442,6 +495,12 @@ export default () => {
               적용
             </button>
           </div>
+          <ItemNameFilterModal
+            isOpenModal={isOpenItemNameFilterModal}
+            setIsOpenModal={setIsOpenItemNameFilterModal}
+            itemName={itemName}
+            setItemName={setItemName}
+          />
           <PriceFilterModal
             isOpenModal={isOpenPriceFilterModal}
             setIsOpenModal={setIsOpenPriceFilterModal}
