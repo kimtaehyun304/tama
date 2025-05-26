@@ -72,3 +72,5 @@ Next.js는 기본적으로 npm start나 next start로 실행되기 때문에, pm
 pm2 start npm --name "next-app" -- start
 pm2 startup
 pm2 save
+
+##
