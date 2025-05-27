@@ -1,10 +1,13 @@
-# 실행 전용 이미지
-FROM node:18-alpine AS runner
+FROM node:18-alpine
+
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
+COPY .next/standalone/ ./          
+COPY .next/static/ ./.next/static/  
+COPY public/ ./public               
 
-#수정
 EXPOSE 3000
-CMD ["npm", "start"]
+
+CMD ["node", "server.js"]
