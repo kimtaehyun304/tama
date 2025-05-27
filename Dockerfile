@@ -9,5 +9,6 @@ COPY public ./public
 COPY node_modules ./node_modules
 COPY package.json ./
 
+#수정
 EXPOSE 3000
 CMD ["npm", "start"]
