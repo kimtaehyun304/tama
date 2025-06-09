@@ -1,5 +1,7 @@
 쇼핑몰 1인 개발 / 개발 기간: 2024.12 ~  
 
+next.js / typeScript  
+
 프론트 주소  
 [https://dlpoma.store](https://dlpoma.store/)  
 
