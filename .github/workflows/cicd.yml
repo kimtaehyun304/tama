@@ -3,7 +3,9 @@ name: Deploy to Beanstalk
 on:
   push:
     branches: [ master ]
-
+    paths-ignore: 
+      - '**/README.md'
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
