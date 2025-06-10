@@ -36,9 +36,8 @@ export default async function Page({
       cache: "no-store",
     }
   );
-  const colorItem: ColorItemType = await res.json();
-
-  if (!res.ok) return colorItem;
+  const colorItem = await res.json();
+  if (!res.ok) throw new Error(colorItem.message)
 
   return <Client colorItem={colorItem} />;
 }
