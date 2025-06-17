@@ -25,10 +25,12 @@ jobs:
           cp -r .next/standalone/* deploy/
           cp -r .next/static deploy/.next/
           cp -r public deploy/
-          cp -r .ebextensions deploy/.ebextensions
-          
+          cp Procfile deploy/  
+
       - name: Create deployment package
-        run: zip -r app.zip . -x "*.git*"
+        run: |
+          cd deploy
+          zip -r ../app.zip .
 
       - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v20
