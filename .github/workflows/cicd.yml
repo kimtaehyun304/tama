@@ -25,7 +25,8 @@ jobs:
           cp -r .next/standalone/* deploy/
           cp -r .next/static deploy/.next/
           cp -r public deploy/
-
+          cp -r .ebextensions deploy/.ebextensions
+          
       - name: Create deployment package
         run: zip -r app.zip . -x "*.git*"
 
