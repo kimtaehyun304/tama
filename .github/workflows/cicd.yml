@@ -21,7 +21,7 @@ jobs:
 
       - name: Copy standalone files to deploy folder
         run: |
-          mkdir -p deploy
+          mkdir -p deploy/.next/static
           cp -r .next/standalone/* deploy
           cp -r .next/static/* deploy/.next/static
           cp -r public deploy/
