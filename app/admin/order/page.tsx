@@ -8,6 +8,7 @@ import MyPagination from "@/components/MyPagination";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
+import MenuList from "../MenuList";
 
 export default () => {
   const [orders, setOrders] = useState<AdminOrderResponse>();
@@ -85,64 +86,70 @@ export default () => {
   }
 
   return (
-    <section className="space-y-4 grow">
-      <div className="font-bold text-xl">주문/배송 조회</div>
-      {orders.content.map((order, index) => (
-        <section className="border p-4 space-y-2" key={`order-${index}`}>
-          <section className="space-y-2 ">
-            <div className="flex gap-x-1">
-              <div className="font-bold">{order.orderDate}</div>
-              <div>{order.status}</div>
-            </div>
-            <div>{order.buyerName}</div>
-            <div>
-              ({order.delivery.zipCode}) {order.delivery.street}{" "}
-              {order.delivery.detail}
-            </div>
-            <div>{order.delivery.message}</div>
-          </section>
+    <article className="xl:mx-32 m-[2%] flex flex-wrap gap-x-16 gap-y-4 justify-center xl:justify-start">
+      {authContext?.isLogined && <MenuList />}
+      <section className="space-y-4 grow">
+        <div className="font-bold text-xl">주문/배송 조회</div>
+        {orders.content.map((order, index) => (
+          <section className="border p-4 space-y-2" key={`order-${index}`}>
+            <section className="space-y-2 ">
+              <div className="flex gap-x-1">
+                <div className="font-bold">{order.orderDate}</div>
+                <div>{order.status}</div>
+              </div>
+              <div>{order.buyerName}</div>
+              <div>
+                ({order.delivery.zipCode}) {order.delivery.street}{" "}
+                {order.delivery.detail}
+              </div>
+              <div>{order.delivery.message}</div>
+            </section>
 
-          {(order.status == "PAYMENT" || order.status == "CHECK") && (
-            <button
-              onClick={() => cancelOrder(order.id)}
-              className="border bg-black text-white p-2"
-              disabled={cancelOrderDisable}
-            >
-              주문 취소
-            </button>
-          )}
-
-          <div className=" grid xl:grid-cols-2 gap-3">
-            {order.orderItems.map((item, index) => (
-              <div
-                className="border flex gap-x-4 p-2"
-                key={`orderItems-${index}`}
+            {(order.status == "PAYMENT" || order.status == "CHECK") && (
+              <button
+                onClick={() => cancelOrder(order.id)}
+                className="border bg-black text-white p-2"
+                disabled={cancelOrderDisable}
               >
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
-                  alt={item.name}
-                  width={100}
-                  height={100}
-                />
+                주문 취소
+              </button>
+            )}
 
-                <div className="flex flex-col gap-y-2 flex-1">
-                  <div>
-                    <div>{item.name}</div>
+            <div className=" grid xl:grid-cols-2 gap-3">
+              {order.orderItems.map((item, index) => (
+                <div
+                  className="border flex gap-x-4 p-2"
+                  key={`orderItems-${index}`}
+                >
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
+                    alt={item.name}
+                    width={100}
+                    height={100}
+                  />
+
+                  <div className="flex flex-col gap-y-2 flex-1">
                     <div>
-                      {item.color}/{item.size}
+                      <div>{item.name}</div>
+                      <div>
+                        {item.color}/{item.size}
+                      </div>
+                      <div>{item.count}개 주문</div>
                     </div>
-                    <div>{item.count}개 주문</div>
-                  </div>
-                  <div className="text-sm text-[#aaa]">
-                    {item.orderPrice.toLocaleString("ko-kr")}원
+                    <div className="text-sm text-[#aaa]">
+                      {item.orderPrice.toLocaleString("ko-kr")}원
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-      <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
-    </section>
+              ))}
+            </div>
+          </section>
+        ))}
+        <MyPagination
+          pageCount={orders.page.pageCount}
+          pageRangeDisplayed={5}
+        />
+      </section>
+    </article>
   );
 };

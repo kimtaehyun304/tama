@@ -27,8 +27,21 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: tama2
-          environment_name: Tama2-env
+          application_name: tama-node
+          environment_name: Tama-node-env
           version_label: nextjs-${{ github.run_number }}
           region: ap-northeast-2
           deployment_package: app.zip
+
+      - name: Copy standalone files
+        run: |
+          mkdir deploy
+          cp -r .next/standalone/* deploy/
+          cp -r .next/static deploy/.next/
+          cp -r public deploy/
+          cp package.json deploy/
+
+      - name: Zip for deployment
+        run: |
+          cd deploy
+          zip -r ../app.zip .
