@@ -22,15 +22,11 @@ jobs:
       - name: Copy standalone files to deploy folder
         run: |
           mkdir -p deploy
-          cp -r .next/standalone/* deploy/
-          cp -r .next/static deploy/
+          cp -r .next/standalone/ deploy/
+          cp -r .next/static deploy/.next/
           cp -r public deploy/
           cp Procfile deploy/
-
-      - name: Create deployment package
-        run: |
-          cd deploy
-          zip -r ../app.zip .
+          cd deploy && zip -r app.zip .
 
       - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v20
@@ -42,5 +38,3 @@ jobs:
           version_label: nextjs-${{ github.run_number }}
           region: ap-northeast-2
           deployment_package: app.zip
-
-
