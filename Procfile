@@ -1,1 +1,1 @@
-web: npm standalone-start
+web: npm run standalone-start
