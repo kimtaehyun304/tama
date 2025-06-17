@@ -19,6 +19,15 @@ jobs:
       - name: Build app
         run: npm run build
 
+      - name: Copy standalone files to deploy folder
+        run: |
+          mkdir -p deploy/.next/static
+          cp -r .next/standalone/* deploy/
+          cp -r .next/static deploy/.next/
+          cp -r public deploy/
+          cp package.json deploy/
+          cp server.js deploy/
+
       - name: Create deployment package
         run: zip -r app.zip . -x "*.git*"
 
@@ -33,15 +42,4 @@ jobs:
           region: ap-northeast-2
           deployment_package: app.zip
 
-      - name: Copy standalone files
-        run: |
-          mkdir deploy
-          cp -r .next/standalone/* deploy/
-          cp -r .next/static deploy/.next/
-          cp -r public deploy/
-          cp package.json deploy/
 
-      - name: Zip for deployment
-        run: |
-          cd deploy
-          zip -r ../app.zip .
