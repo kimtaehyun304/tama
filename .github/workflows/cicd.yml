@@ -25,8 +25,6 @@ jobs:
           cp -r .next/standalone/* deploy/
           cp -r .next/static deploy/.next/
           cp -r public deploy/
-          cp package.json deploy/
-          cp server.js deploy/
 
       - name: Create deployment package
         run: zip -r app.zip . -x "*.git*"
