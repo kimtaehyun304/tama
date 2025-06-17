@@ -1,1 +1,1 @@
-web: node .next/standalone/server.js
+web: NODE_ENV=production node .next/standalone/server.js
