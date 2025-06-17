@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const menus = ["주문/배송 조회", "상품 등록"];
 //const menuList = ["주문/배송 조회", "개인정보/배송지 수정", "포인트", "쿠폰"];
@@ -19,7 +19,6 @@ export default () => {
   const path = usePathname(); // "/admin/item"
   const segments = path.split("/"); // ["", "admin", "item"]
   const currentMenu = segments[2]; // "item"
-
 
   return (
     <aside className=" border p-4">
