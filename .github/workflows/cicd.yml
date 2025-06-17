@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir -p deploy
           cp -r .next/standalone deploy/
-          cp -r .next/static deploy/.next/static/
+          cp -r .next/static deploy/.next/
           cp -r public deploy/public/
           cp Procfile deploy/
           cd deploy && zip -r app.zip .
