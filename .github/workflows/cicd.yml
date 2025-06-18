@@ -25,7 +25,6 @@ jobs:
           cp -r .next/standalone/. deploy
           cp -r .next/static deploy/.next
           cp -r public deploy
-          cp Procfile deploy
           cd deploy && zip -r app.zip .
 
       - name: Deploy to Beanstalk
