@@ -32,4 +32,4 @@ jobs:
           environment_name: Tama2-env
           version_label: nextjs-${{ github.run_number }}
           region: ap-northeast-2
-          deployment_package: deploy/app.zip
+          deployment_package: app.zip
