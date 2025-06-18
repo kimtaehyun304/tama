@@ -8,7 +8,7 @@ next.js / typeScript / tailwind
 ### 어필
 <ul>
   <li>ES6 문법으로 클린 코드 작성</li>
-  <li>상품 상세 페이지만 SSR 적용</li>
+  <li>비용 절감을 위해 상품 상세 페이지만 SSR 적용</li>
   <li>가시성있는 UI를 위해 모달 사용</li>
   <li>클라이언트 컴포넌트도 서버에서 만들어지는 걸 인지</li>
   <ul>
