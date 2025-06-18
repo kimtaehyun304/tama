@@ -14,8 +14,8 @@ next.js / typeScript / tailwind
   <ul>
     <li>로컬 스토리지는 useEffect() 또는 funtion 안에서 써야함</li>
   </ul>
-  <li>로딩 애니메이션 적용 (loading.tsx)</li>
-  <li>전역 에러 처리 적용 (global-error.tsx)</li>
+  <li>글로벌 로딩 애니메이션 적용 (loading.tsx)</li>
+  <li>글로벌 에러 처리 적용 (global-error.tsx)</li>
   <li>standalone 빌드 + 필요한 것만 zip에 담기로 배포 시간 1분 줄임</li>
 </ul>
 
