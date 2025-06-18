@@ -21,7 +21,12 @@ jobs:
 
       - name: Copy standalone files to deploy folder
         run: |
-          zip -r app.zip .
+          mkdir -p deploy
+          cp -r .next/standalone/. deploy
+          cp -r .next/static deploy/.next
+          cp -r public deploy
+          cp Procfile deploy
+          cd deploy && zip -r app.zip .
 
       - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v20
@@ -32,4 +37,4 @@ jobs:
           environment_name: Tama2-env
           version_label: nextjs-${{ github.run_number }}
           region: ap-northeast-2
-          deployment_package: app.zip
+          deployment_package: deploy/app.zip
