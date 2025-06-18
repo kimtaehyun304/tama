@@ -4,9 +4,9 @@ WORKDIR /app
 
 #ENV NODE_ENV=production
 
-COPY .next/standalone/ ./          
-COPY .next/static/ ./.next/static/  
-COPY public/ ./public               
+COPY ./ ./          
+RUN [ -f Dockerfile ] && rm Dockerfile || true
+
 
 EXPOSE 3000
 
