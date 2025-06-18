@@ -22,10 +22,6 @@ jobs:
       - name: Copy standalone files to deploy folder
         run: |
           mkdir -p deploy
-          cp -r .next/standalone/. deploy
-          cp -r .next/static deploy/.next
-          cp -r public deploy
-          cp Procfile deploy
           cd deploy && zip -r app.zip .
 
       - name: Deploy to Beanstalk
@@ -33,8 +29,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: tama-node
-          environment_name: Tama-node-env
+          application_name: tama2
+          environment_name: Tama2-env
           version_label: nextjs-${{ github.run_number }}
           region: ap-northeast-2
           deployment_package: deploy/app.zip
