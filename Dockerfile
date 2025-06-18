@@ -1,7 +1,12 @@
-
 FROM node:18-alpine
 
-WORKDIR /app          
+WORKDIR /app
+
+#ENV NODE_ENV=production
+
+COPY .next/standalone/ ./          
+COPY .next/static/ ./.next/static/  
+COPY public/ ./public               
 
 EXPOSE 3000
 
