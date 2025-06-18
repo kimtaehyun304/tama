@@ -22,7 +22,7 @@ jobs:
       - name: Copy standalone files to deploy folder
         run: |
           mkdir -p deploy
-          cp -r .next/standalone/. deploy/
+          cp -r .next/standalone/* deploy/
           cp Procfile deploy/
           cd deploy && zip -r app.zip .
 
