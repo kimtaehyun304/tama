@@ -16,6 +16,6 @@ next.js / typeScript / tailwind
   </ul>
   <li>로딩 애니메이션 적용 (loading.tsx)</li>
   <li>전역 에러 처리 적용 (global-error.tsx)</li>
-  <li>도커 사용</li>
+  <li>standalone 빌드 + 필요한 것만 zip에 담기로 배포 시간 1분 줄임</li>
 </ul>
 
