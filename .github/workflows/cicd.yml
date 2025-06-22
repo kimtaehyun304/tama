@@ -25,6 +25,7 @@ jobs:
           cp -r .next/standalone/. deploy
           cp -r .next/static deploy/.next
           cp -r public deploy
+          cp -r .platform deploy/.platform
           cp Dockerfile deploy
           cd deploy && zip -r app.zip .
 
