@@ -3,7 +3,7 @@
 next.js / typeScript / tailwind
 
 프론트 주소  
-[https://dlpoma.store](https://dlpoma.store/)  
+[https://dlta.kr](https://dlta.kr/)  
 
 ### 어필
 <ul>
