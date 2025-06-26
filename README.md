@@ -4,11 +4,7 @@
 </p>
 <p align="center">초기엔 ELB와 ACM을 썼지만, 비용 문제로 지우고 Certbot으로 전환</p>
 
-
-next.js / typeScript / tailwind
-
-프론트 주소  
-[https://dlta.kr](https://dlta.kr/)  
+https://dlta.kr & next.js, typeScript, tailwind
 
 ### 어필
 <ul>
