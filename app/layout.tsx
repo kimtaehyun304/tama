@@ -42,7 +42,7 @@ export default function RootLayout({
   return (
     <html>
       <body
-        className={`${nanumGothic.className} ${nanumGothicBold.variable} flex flex-col h-[100vh]`}
+        className={`${nanumGothic.className} ${nanumGothicBold.variable} flex flex-col h-[100vh] overflow-y-scroll`}
       >
         <AuthProvider>
           <LoginModalProvider>

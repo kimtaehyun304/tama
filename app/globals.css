@@ -31,7 +31,8 @@ body {
   display: none !important;
 }
 
-@media (min-width: 1280px) { /* XL 화면 이상 */
+@media (min-width: 1280px) {
+  /* XL 화면 이상 */
   .slick-prev {
     display: block !important;
   }
@@ -41,10 +42,16 @@ body {
 }
 
 .slick-prev:before {
-  color:black !important;
+  color: black !important;
 }
 
 .slick-next:before {
-  color:black !important;
+  color: black !important;
 }
 
+/*안되서 overscroll-y 사용*/
+@layer utilities {
+  .scrollbar-gutter-stable {
+    scrollbar-gutter: stable;
+  }
+}

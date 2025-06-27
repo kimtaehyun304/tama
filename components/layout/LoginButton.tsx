@@ -1,20 +1,21 @@
 "use client";
-import { useContext, useEffect } from "react";
 
+import { useContext, useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AuthContext } from "../context/AuthContext";
 import { LoginModalContext } from "../context/LoginModalContext";
 
 export default function LoginButton() {
-  const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
+  const loginModalContext = useContext(LoginModalContext);
   const authContext = useContext(AuthContext);
 
-  // 새로고침하면 전역상태 사라져서 재설정
+  const [isInitialized, setIsInitialized] = useState(false); // 깜박임 방지용
+
   useEffect(() => {
     const accessToken = localStorage.getItem("tamaAccessToken");
     if (accessToken) {
       const decoded: JwtPayload | string | null = jwt.decode(accessToken);
-      const now = Math.floor(Date.now() / 1000); // 현재 시간 (초 단위)
+      const now = Math.floor(Date.now() / 1000); // 초 단위 시간
 
       if (
         decoded &&
@@ -22,33 +23,30 @@ export default function LoginButton() {
         decoded.exp !== undefined &&
         decoded.exp < now
       ) {
-        //모달 겹치면 안떠서 alert 사용
+        // 만료된 토큰
         alert("로그인 만료");
         localStorage.removeItem("tamaAccessToken");
         loginModalContext?.setIsOpenLoginModal(true);
-        return;
+      } else {
+        authContext?.setIsLogined(true); // 유효한 토큰 → 로그인 처리
       }
-      
-      authContext?.setIsLogined(true);
     }
+    setIsInitialized(true); // ✅ 초기화 완료 후에만 렌더링
   }, []);
 
-  // typeof !== "undefined" 필요할 것 같았는데 에러 안나네 뭐지 -> onClick function이라 그런듯
   function logout() {
     authContext?.setIsLogined(false);
     localStorage.removeItem("tamaAccessToken");
   }
 
+  // 초기화 전에는 아무 것도 렌더링하지 않음 (깜박임 방지)
+  if (!isInitialized) return null;
+
   return !authContext?.isLogined ? (
-    <button
-      className=""
-      onClick={() => loginModalContext?.setIsOpenLoginModal(true)}
-    >
+    <button onClick={() => loginModalContext?.setIsOpenLoginModal(true)}>
       로그인
     </button>
   ) : (
-    <button className="" onClick={() => logout()}>
-      로그아웃
-    </button>
+    <button onClick={logout}>로그아웃</button>
   );
 }

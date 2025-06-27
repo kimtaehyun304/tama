@@ -45,10 +45,6 @@ export default function ItemSlider({ uploadFiles }) {
     setNav2(sliderRef2.current);
   }, []);
 
-  useEffect(() => {
-    console.log(activeIndex);
-  }, [activeIndex]);
-
   return (
     <section className="">
       <Slider asNavFor={nav2} ref={sliderRef1} {...hiddenArrowSettings}>
@@ -74,7 +70,6 @@ export default function ItemSlider({ uploadFiles }) {
         swipeToSlide={true}
         focusOnSelect={true}
         beforeChange={(current, next) => {
-          console.log(next);
           setActiveIndex(next);
         }}
         infinite={true}

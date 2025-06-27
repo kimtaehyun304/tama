@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
         pathname: "/**", // 이미지 경로 패턴
       },
     ],
+    //avif로하니까 크기가 변해서 적용 안함
+    //formats: ["image/avif"],
   },
   output: "standalone",
 };

@@ -1,18 +1,21 @@
-import Image from "next/image";
+"use client";
+
+
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
-type props = {
-  images: BannerImageType[]
-}
+const images: BannerImageType[] = [
+  { src: "/banner1.jpg", alt: "Banner 1" },
+  { src: "/banner2.jpg", alt: "Banner 2" },
+  { src: "/banner3.jpg", alt: "Banner 3" },
+];
 
 type CustomArrowProps = {
   className?: string;
   style?: React.CSSProperties;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 };
-
 
 function NextArrow(props: CustomArrowProps) {
   const { className, style, onClick } = props;
@@ -30,13 +33,13 @@ function PrevArrow(props: CustomArrowProps) {
   return (
     <div
       className={className}
-      style={{ ...style, display: "block"}}
+      style={{ ...style, display: "block" }}
       onClick={onClick}
     />
   );
 }
 
-export default function BannerSlider({images}: props) {
+export default function BannerSlider() {
   const settings = {
     pauseOnHover: true,
     dots: true,
@@ -54,12 +57,15 @@ export default function BannerSlider({images}: props) {
     <section className="pb-5 ">
       <Slider {...settings}>
         {images.map((image, index) => (
-          <div key={index} className="relative min-w-full h-[500px]">
-            <Image src={image.src} alt={image.alt} fill />
+          <div key={index} className="relative h-[500px]">
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="w-full h-full"
+            />
           </div>
         ))}
       </Slider>
     </section>
   );
 }
-
