@@ -54,7 +54,6 @@ export default () => {
     setCategoryBestItems(categoryBestItems);
   }
 
-
   return (
     <section className="xl:block my-16">
       <nav className="flex justify-between items-end border-b pb-6 px-3 xl:px-0 text">
