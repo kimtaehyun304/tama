@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
     //avif로하니까 크기가 변해서 적용 안함
     //formats: ["image/avif"],
   },
-  output: "standalone",
+  //output: "standalone",
 };
 
 export default nextConfig;
