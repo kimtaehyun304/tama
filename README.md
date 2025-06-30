@@ -4,11 +4,12 @@
 </p>
 <p align="center">초기엔 ELB와 ACM을 썼지만, 비용 문제로 지우고 Certbot으로 전환</p>
 
-https://dlta.kr & next.js, typeScript, tailwind
+https://dlta.kr  
+next.js 15, typeScript, tailwind
 
 ### 어필
 <ul>
-  <li>next.js 15 앱 라우터 사용</li>
+  <li>next.js 앱 라우터 사용</li>
     <li>클라이언트 컴포넌트도 서버에서 만들어지는 걸 인지</li>
   <ul>
     <li>로컬 스토리지는 useEffect() 또는 funtion 안에서 써야함</li>
