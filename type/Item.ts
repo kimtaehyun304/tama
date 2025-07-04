@@ -119,3 +119,21 @@ type SaveSizeStockRequest = {
 type SavedColorItemIdResponse = {
   savedColorItemIds: number[];
 };
+
+type ItemSummaryState = {
+  itemName: string;
+  selectedCategoryId?: number;
+  price?: number;
+  discountedPrice?: number;
+  gender: GenderType;
+};
+
+type ItemDetailState = {
+  yearSeason: string;
+  description: string;
+  dateOfManufacture: string;
+  countryOfManufacture: string;
+  manufacturer: string;
+  textile: string;
+  precaution: string;
+};

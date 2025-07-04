@@ -68,6 +68,8 @@ export default function LoginModal() {
         return;
       }
       localStorage.setItem("tamaAccessToken", data.accessToken);
+      document.cookie = `tamaAccessToken=${data.accessToken}; path=/; max-age=3600; secure`;
+
       authContext?.setIsLogined(true);
       closeModal();
     }

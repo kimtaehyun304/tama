@@ -3,7 +3,6 @@
 import { AuthContext } from "@/components/context/AuthContext";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import ForbiddenScreen from "@/components/ForbiddenScreen";
 import MyPagination from "@/components/MyPagination";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -81,13 +80,14 @@ export default () => {
     }
   }
 
-  if (!orders || !authContext?.isLogined) {
-    return <ForbiddenScreen />;
+  //forbiddebScreen 띄우면 화면 바뀌어서 눈 아픔
+  if (!orders) {
+    return null;
   }
 
   return (
     <article className="xl:mx-32 m-[2%] flex flex-wrap gap-x-16 gap-y-4 justify-center xl:justify-start">
-      {authContext?.isLogined && <MenuList />}
+      <MenuList />
       <section className="space-y-4 grow">
         <div className="font-bold text-xl">주문/배송 조회</div>
         {orders.content.map((order, index) => (
