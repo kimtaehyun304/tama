@@ -137,3 +137,8 @@ type ItemDetailState = {
   textile: string;
   precaution: string;
 };
+
+type ItemColorIdImageState = {
+  selectedColorIds: (number | undefined)[];
+  files: File[][];
+};

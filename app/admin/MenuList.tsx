@@ -11,10 +11,6 @@ menuMap.set("주문/배송 조회", "order");
 menuMap.set("상품 등록", "item");
 
 export default () => {
-  //const [activeMenuIndex, setActiveMenuIndex] = useState<number>(0);
-  //const [activeMenu, setActiveMenu] = useState<string>(menus[0]);
-  //const params = useParams<{ menu: string }>();
-  //const paramsMenu = params.menu;
 
   const path = usePathname(); // "/admin/item"
   const segments = path.split("/"); // ["", "admin", "item"]

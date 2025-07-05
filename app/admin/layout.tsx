@@ -22,7 +22,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(res.ok);
+
       setIsAdmin(res.ok);
     }
     checkAdmin();

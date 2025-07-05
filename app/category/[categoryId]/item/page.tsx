@@ -89,36 +89,6 @@ export default () => {
     setCategoryItems(categoryItems);
   }
 
-  /*최소값, 최대값 보여주기 - 검색 필터에 의도하지않은게 들어가서 기능 유기
-  async function fetchMinMaxPrice() {
-    const params = new URLSearchParams();
-    params.append("categoryId", String(categoryId));
-
-    if (minPrice) params.append("minPrice", String(minPrice));
-    if (maxPrice) params.append("maxPrice", String(maxPrice));
-    if (colorIds.length) params.append("colorIds", colorIds.join(","));
-    if (genders.length) params.append("genders", genders.join(","));
-    if (isContainSoldOut)
-      params.append("isContainSoldOut", String(isContainSoldOut));
-
-    const priceRes = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/items/minMaxPrice?${params.toString()}`,
-      {
-        cache: "no-store",
-      }
-    );
-
-    if (!priceRes.ok) {
-      return priceRes;
-    }
-
-    const prices: MinMaxPrice = await priceRes.json();
-
-    setMinPrice(prices.minPrice);
-    setMaxPrice(prices.maxPrice);
-  }
-  */
-
   useEffect(() => {
     async function fetchCategories() {
       const categoriesRes = await fetch(
@@ -187,7 +157,7 @@ export default () => {
     switchSort();
   }, [sortProperty, sortDirection]);
 
-  //loading.tsx때문에 자동으로 뜨지만, 생략하면 categoryItems' is possibly 'undefined'.ts(18048) 에러 생김
+  //기본값 넣는 방벋도 있지만, 그러면 컴포넌트가 이동해서 어지러움
   if (!categoryItems) return <LoadingScreen />;
 
   //필터 성별 체크박스

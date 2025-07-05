@@ -4,6 +4,7 @@ import {
   Controller,
   useForm,
   UseFormRegister,
+  UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
 
@@ -11,14 +12,19 @@ type ItemSummaryFormProps = {
   register: UseFormRegister<ItemSummaryState>;
   watch: UseFormWatch<ItemSummaryState>;
   control: Control<ItemSummaryState>;
+  setValue: UseFormSetValue<ItemSummaryState>;
 };
 
-export default ({ register, watch, control }: ItemSummaryFormProps) => {
+export default ({
+  register,
+  watch,
+  control,
+  setValue,
+}: ItemSummaryFormProps) => {
   const [isActiveCategoryUl, setIsActiveCategoryUl] = useState(false);
   const [categories, setCategories] = useState<FamilyCateogoryType[]>([]);
   const [categoryMap, setCategoryMap] = useState<Map<number, string>>();
   const selectedCategoryId = watch("selectedCategoryId");
-  const { setValue } = useForm<ItemSummaryState>();
 
   useEffect(() => {
     async function fetchCategories() {
