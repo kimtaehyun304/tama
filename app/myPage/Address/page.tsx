@@ -7,8 +7,8 @@ import { AuthContext } from "@/components/context/AuthContext";
 import LoginScreen from "@/components/LoginScreen";
 
 export default () => {
-  const buttons = ["배송지 추가", "배송지 목록"];
-  const [activeButton, setActiveButton] = useState<string>(buttons[0]);
+  const BUTTONS_STR = ["배송지 추가", "배송지 목록"];
+  const [activeButton, setActiveButton] = useState<string>(BUTTONS_STR[0]);
   const authContext = useContext(AuthContext);
 
   function getComponent(activeButton: string) {
@@ -27,7 +27,7 @@ export default () => {
   return (
     <section className="space-y-4 grow">
       <div className="flex">
-        {buttons.map((button, index) => (
+        {BUTTONS_STR.map((button, index) => (
           <button
             onClick={() => {
               setActiveButton(button);

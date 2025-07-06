@@ -65,3 +65,8 @@ type DeliveryResponse = {
   receiverNickname: string;
   receiverPhone: string;
 };
+
+type SenderFormState = {
+  senderNickname: string;
+  senderEmail: string;
+};

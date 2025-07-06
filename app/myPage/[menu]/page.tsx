@@ -1,9 +1,9 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import Address from "../Address/Address";
-import Information from "../Information";
-import Order from "../Order";
-import MenuList from "./MenuList";
+import Address from "../address/page";
+import Information from "../information/page";
+import Order from "../order/page";
+import MenuList from "../MyPageMenuList";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "@/components/context/AuthContext";
 
@@ -54,7 +54,7 @@ export default () => {
 
   return (
     <article className="xl:mx-32 m-[2%] flex flex-wrap gap-x-16 gap-y-4 justify-center xl:justify-start">
-       {authContext?.isLogined && <MenuList />}
+      {authContext?.isLogined && <MenuList />}
       {getMenuComponent(paramsMenu)}
     </article>
   );

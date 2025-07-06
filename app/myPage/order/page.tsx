@@ -8,6 +8,7 @@ import MyPagination from "@/components/MyPagination";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
+import MyPageMenuList from "../MyPageMenuList";
 
 export default () => {
   const [orders, setOrders] = useState<OrderResponse>();
