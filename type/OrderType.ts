@@ -69,4 +69,16 @@ type DeliveryResponse = {
 type SenderFormState = {
   senderNickname: string;
   senderEmail: string;
+  deliveryMessage: string;
+};
+
+type ReceiverFormState = {
+  receiverNickname: string;
+  receiverPhone: string;
+  zoneCode: number | undefined;
+  streetAddress: string;
+  detailAddress: string;
+  addressName: string;
+  memberAddresses: AddressResponse[];
+  hasAddress: boolean;
 };

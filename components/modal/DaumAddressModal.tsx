@@ -1,23 +1,22 @@
 import { Dispatch, SetStateAction } from "react";
 
 import { DaumPostcodeEmbed } from "react-daum-postcode";
+import { UseFormSetValue } from "react-hook-form";
 type Props = {
-  isOpenAddressModal: boolean;
-  setIsOpenAddressModal: Dispatch<SetStateAction<boolean>>;
-  setZoneCode: Dispatch<SetStateAction<number | undefined>>;
-  setStreetAddress: Dispatch<SetStateAction<string>>;
+  isOpenDaumAddressModal: boolean;
+  setIsOpenDaumAddressModal: Dispatch<SetStateAction<boolean>>;
+  setValue: UseFormSetValue<ReceiverFormState>;
   setIsDisabled: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function AddressModal({
-  isOpenAddressModal,
-  setIsOpenAddressModal,
-  setZoneCode,
-  setStreetAddress,
+export default ({
+  isOpenDaumAddressModal,
+  setIsOpenDaumAddressModal,
+  setValue,
   setIsDisabled,
-}: Props) {
+}: Props) => {
   const closeModal = () => {
-    setIsOpenAddressModal(false); // 모달 닫기
+    setIsOpenDaumAddressModal(false); // 모달 닫기
   };
 
   const handleComplete = (data: OnCompleteType) => {
@@ -33,14 +32,14 @@ export default function AddressModal({
           extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
       }
       fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-      setStreetAddress(fullAddress);
-      setZoneCode(Number(data.zonecode));
+      setValue("streetAddress", fullAddress);
+      setValue("zoneCode", Number(data.zonecode));
     }
     setIsDisabled(true);
-    setIsOpenAddressModal(false);
+    setIsOpenDaumAddressModal(false);
   };
 
-  if (!isOpenAddressModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
+  if (!isOpenDaumAddressModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
 
   return (
     <article className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -77,4 +76,4 @@ export default function AddressModal({
       </section>
     </article>
   );
-}
+};

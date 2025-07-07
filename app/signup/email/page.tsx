@@ -163,33 +163,29 @@ export default function SignUpEmail() {
     const button = event.target as HTMLButtonElement;
     button.disabled = true;
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/new`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: `${emailUsername}@${emailDomain}`,
-            authString: authString,
-            phone: phone,
-            nickname: nickname,
-            password: pw,
-          }),
-        }
-      );
-      const simpleRes: SimpleResponseType = await response.json();
-
-      if (response.status === 201) {
-        alert(simpleRes.message);
-        loginModalContext?.setIsOpenLoginModal(true);
-      } else {
-        alert(simpleRes.message);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/new`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: `${emailUsername}@${emailDomain}`,
+          authString: authString,
+          phone: phone,
+          nickname: nickname,
+          password: pw,
+        }),
       }
-    } catch (error) {
-      alert(error);
+    );
+    const simpleRes: SimpleResponseType = await response.json();
+
+    if (response.status === 201) {
+      alert(simpleRes.message);
+      loginModalContext?.setIsOpenLoginModal(true);
+    } else {
+      alert(simpleRes.message);
     }
 
     button.disabled = false;

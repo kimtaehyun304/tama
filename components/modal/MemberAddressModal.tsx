@@ -1,32 +1,19 @@
 import { Dispatch, SetStateAction, useState } from "react";
+import { UseFormSetValue } from "react-hook-form";
 
 type Props = {
-  isOpenMemberAddresskModal: boolean;
-  setIsOpenMemberAddressModal: Dispatch<SetStateAction<boolean>>;
-  setReceiverNickname: Dispatch<SetStateAction<string>>;
-  setReceiverPhone: Dispatch<SetStateAction<string>>;
-  setZoneCode: Dispatch<SetStateAction<number | undefined>>;
-  setStreetAddress: Dispatch<SetStateAction<string>>;
-  setDetailAddress: Dispatch<SetStateAction<string>>;
-  setAddressName: Dispatch<SetStateAction<string>>;
   addresses: AddressResponse[];
-  setHasAddress: Dispatch<SetStateAction<boolean>>;
+  setValue: UseFormSetValue<ReceiverFormState>;
+  isOpenMemberAddressModal: boolean;
+  setIsOpenMemberAddressModal: Dispatch<SetStateAction<boolean>>;
 };
 
 export default ({
-  isOpenMemberAddresskModal,
-  setIsOpenMemberAddressModal,
-  setReceiverNickname,
-  setReceiverPhone,
-  setZoneCode,
-  setStreetAddress,
-  setDetailAddress,
-  setAddressName,
   addresses,
-  setHasAddress,
+  setValue,
+  isOpenMemberAddressModal,
+  setIsOpenMemberAddressModal,
 }: Props) => {
-  //const [isOpen, setIsOpen] = useState(true); // 모달 상태 관리
-
   const handleClose = () => {
     setIsOpenMemberAddressModal(false); // 모달 닫기
   };
@@ -39,24 +26,24 @@ export default ({
     const selectedAddress: AddressResponse = addresses.find(
       (address) => address.id == selectedAddressId
     )!;
-    setAddressName(selectedAddress.name);
-    setStreetAddress(selectedAddress.street);
-    setDetailAddress(selectedAddress.detail);
-    setZoneCode(Number(selectedAddress.zipCode));
-    setReceiverNickname(selectedAddress.receiverNickname);
-    setReceiverPhone(selectedAddress.receiverPhone);
+    setValue("addressName", selectedAddress.name);
+    setValue("streetAddress", selectedAddress.name);
+    setValue("detailAddress", selectedAddress.detail);
+    setValue("zoneCode", Number(selectedAddress.zipCode));
+    setValue("receiverNickname", selectedAddress.receiverNickname);
+    setValue("receiverPhone", selectedAddress.receiverPhone);
   }
 
   function clearAddress() {
-    setAddressName("");
-    setStreetAddress("");
-    setDetailAddress("");
-    setZoneCode(undefined);
-    setReceiverNickname("");
-    setReceiverPhone("");
+    setValue("addressName", "");
+    setValue("streetAddress", "");
+    setValue("detailAddress", "");
+    setValue("zoneCode", undefined);
+    setValue("receiverNickname", "");
+    setValue("receiverPhone", "");
   }
 
-  if (!isOpenMemberAddresskModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
+  if (!isOpenMemberAddressModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
 
   return (
     <article className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -131,7 +118,7 @@ export default ({
                 <button
                   onClick={() => {
                     clearAddress();
-                    setHasAddress(false);
+                    setValue("hasAddress", false);
                   }}
                   className="p-3 border"
                 >
