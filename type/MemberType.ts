@@ -36,3 +36,12 @@ type AddressResponse = {
 };
 
 type AuthorityType = "MEMBER" | "ADMIN";
+
+type AddressFormState = {
+  receiverNickname: string;
+  receiverPhone: string;
+  zoneCode: number | undefined;
+  streetAddress: string;
+  detailAddress: string;
+  addressName: string;
+};

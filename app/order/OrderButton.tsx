@@ -1,5 +1,5 @@
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { UseFormSetFocus, UseFormWatch } from "react-hook-form";
 
 import { useRouter, useSearchParams } from "next/navigation";
@@ -145,7 +145,7 @@ export default ({
     };
 
     let redirectUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/order/mobile?paymentId=${paymentId}`;
-    console.log(redirectUrl)
+    console.log(redirectUrl);
     if (inCart) redirectUrl += "&inCart=true";
 
     const response = await PortOne.requestPayment({

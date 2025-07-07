@@ -1,6 +1,5 @@
 "use client";
 
-import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import React, { useContext, useState } from "react";
 import MenuList from "../MenuList";
@@ -52,8 +51,6 @@ export default () => {
   const [colorMap, setColorMap] = useState<Map<number, string>>(new Map());
   const [sizes, setSizes] = useState<string[]>([""]);
   const [stocks, setStocks] = useState<number[][]>([]);
-
-  const authContext = useContext(AuthContext);
 
   async function saveItem() {
     function validateForm() {

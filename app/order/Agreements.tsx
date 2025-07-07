@@ -1,4 +1,3 @@
-import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 
@@ -9,16 +8,15 @@ const AGREEMENTS_STR = [
 ];
 
 type AgreementsProps = {
-  isAgreed: boolean;
   setIsAgreed: Dispatch<SetStateAction<boolean>>;
 };
-export default ({ isAgreed, setIsAgreed }: AgreementsProps) => {
+
+export default ({ setIsAgreed }: AgreementsProps) => {
   const [isChecked, setIsChecked] = useState<boolean[]>(
     Array(AGREEMENTS_STR.length).fill(false)
   );
 
   const simpleModalContext = useContext(SimpleModalContext);
-  const authContext = useContext(AuthContext);
 
   function check(event: React.ChangeEvent<HTMLInputElement>, index: number) {
     if (index === 0)
@@ -37,38 +35,37 @@ export default ({ isAgreed, setIsAgreed }: AgreementsProps) => {
     } else setIsAgreed(true);
   }
 
-  if (authContext?.isLogined && !isAgreed)
-    return (
-      <section>
-        <div className="text-center font-bold text-3xl py-9">
-          비회원 주문 약관동의
+  return (
+    <section>
+      <div className="text-center font-bold text-3xl py-9">
+        비회원 주문 약관동의
+      </div>
+      <div className="flex justify-center">
+        <div className="divide-y-2">
+          {AGREEMENTS_STR.map((agreement, index) => (
+            <div className="flex py-3" key={`agreement${index}`}>
+              <input
+                type="checkbox"
+                className="w-7 h-7 accent-black"
+                id={`checkbox${index}`}
+                checked={isChecked[index]}
+                onChange={(event) => {
+                  check(event, index);
+                }}
+              />
+              <label htmlFor={`checkbox${index}`} className="pl-2 text-xl">
+                {agreement}
+              </label>
+            </div>
+          ))}
+          <button
+            className="border p-3 w-full bg-black text-white"
+            onClick={validateAgreement}
+          >
+            약관동의
+          </button>
         </div>
-        <div className="flex justify-center">
-          <div className="divide-y-2">
-            {AGREEMENTS_STR.map((agreement, index) => (
-              <div className="flex py-3" key={`agreement${index}`}>
-                <input
-                  type="checkbox"
-                  className="w-7 h-7 accent-black"
-                  id={`checkbox${index}`}
-                  checked={isChecked[index]}
-                  onChange={(event) => {
-                    check(event, index);
-                  }}
-                />
-                <label htmlFor={`checkbox${index}`} className="pl-2 text-xl">
-                  {agreement}
-                </label>
-              </div>
-            ))}
-            <button
-              className="border p-3 w-full bg-black text-white"
-              onClick={validateAgreement}
-            >
-              약관동의
-            </button>
-          </div>
-        </div>
-      </section>
-    );
+      </div>
+    </section>
+  );
 };

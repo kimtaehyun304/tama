@@ -22,7 +22,7 @@ export default () => {
     register: senderFormRegister,
     watch: senderFormWatch,
     setValue: senderFormSetValue,
-    setFocus: senderFormSetFoucs,
+    setFocus: senderFormSetFocus,
   } = useForm<SenderFormState>({
     defaultValues: {
       senderNickname: "",
@@ -73,10 +73,10 @@ export default () => {
       )}
 
       {!authContext?.isLogined && !isAgreed && (
-        <Agreements isAgreed={isAgreed} setIsAgreed={setIsAgreed} />
+        <Agreements setIsAgreed={setIsAgreed} />
       )}
 
-      {authContext?.isLogined && (
+      {(authContext?.isLogined || isAgreed) && (
         <>
           <OrderForm
             senderFormRegister={senderFormRegister}
@@ -102,7 +102,7 @@ export default () => {
             selectedPayMethodEng={selectedPayMethodEng}
             orderTotalPrice={orderTotalPrice}
             orderName={orderName}
-            senderFormSetFocus={senderFormSetFoucs} 
+            senderFormSetFocus={senderFormSetFocus}
             receiverFormSetFocus={receiverFormSetFocus}
           />
         </>

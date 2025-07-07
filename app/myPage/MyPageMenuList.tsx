@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const menus = ["주문/배송 조회", "회원정보 수정", "배송지 관리"];
 //const menuList = ["주문/배송 조회", "개인정보/배송지 수정", "포인트", "쿠폰"];

@@ -3,29 +3,33 @@
 import { AuthContext } from "@/components/context/AuthContext";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import AddressModal from "@/components/modal/AddressModal";
-import { useContext, useRef, useState } from "react";
+import DaumAddressModal from "@/components/modal/DaumAddressModal";
+import { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default () => {
   const authContext = useContext(AuthContext);
   const simpleModalContext = useContext(SimpleModalContext);
 
-  const [addressName, setAddressName] = useState<string>("");
-  const [receiverNickname, setReceiverNickname] = useState<string>("");
-  const [receiverPhone, setReceiverPhone] = useState<string>("");
-  //우편번호
-  const [zoneCode, setZoneCode] = useState<number | undefined>();
-  const [streetAddress, setStreetAddress] = useState<string>("");
-  const [detailAddress, setDetailAddress] = useState<string>("");
+  const {
+    register: addressFormRegister,
+    watch: addressFormWatch,
+    setValue: addressFormSetValue,
+  } = useForm<AddressFormState>({
+    defaultValues: {
+      receiverNickname: "",
+      receiverPhone: "",
+      zoneCode: undefined,
+      streetAddress: "",
+      detailAddress: "",
+      addressName: "",
+    },
+  });
+
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const [isOpenAddressModal, setIsOpenAddressModal] = useState<boolean>(false);
-  const addressNameRef = useRef<HTMLInputElement>(null);
-  const receiverNicknameRef = useRef<HTMLInputElement>(null);
-  const receiverPhoneRef = useRef<HTMLInputElement>(null);
-  const zoneCodeRef = useRef<HTMLInputElement>(null);
-  const streetAddressRef = useRef<HTMLInputElement>(null);
-  const detailAddressRef = useRef<HTMLInputElement>(null);
+  const [isOpenDaumAddressModal, setIsOpenDaumAddressModal] =
+    useState<boolean>(false);
 
   async function saveAddress() {
     if (authContext?.isLogined) {
@@ -39,12 +43,12 @@ export default () => {
           },
           //객체 단축 표기법
           body: JSON.stringify({
-            addressName,
-            receiverNickname,
-            receiverPhone,
-            zipCode: zoneCode,
-            streetAddress,
-            detailAddress,
+            addressName: addressFormWatch("addressName"),
+            receiverNickname: addressFormWatch("receiverNickname"),
+            receiverPhone: addressFormWatch("receiverPhone"),
+            zipCode: addressFormWatch("zoneCode"),
+            streetAddress: addressFormWatch("streetAddress"),
+            detailAddress: addressFormWatch("detailAddress"),
           }),
         }
       );
@@ -69,9 +73,7 @@ export default () => {
             type="text"
             className="border p-3 grow"
             placeholder="배송지명"
-            value={addressName}
-            onChange={(event) => setAddressName(event.target.value)}
-            ref={addressNameRef}
+            {...addressFormRegister("addressName")}
           />
         </div>
 
@@ -84,9 +86,7 @@ export default () => {
             type="text"
             className="border p-3 grow"
             placeholder="받으시는 분"
-            value={receiverNickname}
-            onChange={(event) => setReceiverNickname(event.target.value)}
-            ref={receiverNicknameRef}
+            {...addressFormRegister("receiverNickname")}
           />
         </div>
 
@@ -99,9 +99,7 @@ export default () => {
             type="text"
             className="border p-3 grow"
             placeholder="숫자만 입력하세요"
-            value={receiverPhone}
-            onChange={(event) => setReceiverPhone(event.target.value)}
-            ref={receiverPhoneRef}
+            {...addressFormRegister("receiverPhone")}
           />
         </div>
 
@@ -114,29 +112,39 @@ export default () => {
             type="text"
             className="border p-3 grow"
             placeholder="우편번호"
-            value={zoneCode ?? ""}
-            onChange={(event) => {
-              const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-              setZoneCode(value == "" ? undefined : Number(value));
-            }}
+            {...addressFormRegister("zoneCode", {
+              onChange: (e) => {
+                // 숫자만 입력되도록 필터링
+                const onlyNumber = e.target.value.replace(/\D/g, "");
+                addressFormSetValue(
+                  "zoneCode",
+                  onlyNumber === "" ? undefined : Number(onlyNumber),
+                  { shouldValidate: true }
+                );
+              },
+            })}
             disabled={isDisabled}
-            ref={zoneCodeRef}
           />
+
           <button
             className="border p-3 ml-auto"
             onClick={() => {
-              setIsOpenAddressModal(true);
+              setIsOpenDaumAddressModal(true);
             }}
           >
             우편번호 찾기
           </button>
         </div>
 
-        <AddressModal
-          isOpenAddressModal={isOpenAddressModal}
-          setIsOpenAddressModal={setIsOpenAddressModal}
-          setZoneCode={setZoneCode}
-          setStreetAddress={setStreetAddress}
+        <DaumAddressModal
+          isOpenDaumAddressModal={isOpenDaumAddressModal}
+          setIsOpenDaumAddressModal={setIsOpenDaumAddressModal}
+          setStreetAddress={(value: string) =>
+            addressFormSetValue("streetAddress", value)
+          }
+          setZoneCode={(value: number) =>
+            addressFormSetValue("zoneCode", value)
+          }
           setIsDisabled={setIsDisabled}
         />
 
@@ -149,10 +157,8 @@ export default () => {
             type="text"
             className="border p-3 grow"
             placeholder="도로명주소"
-            value={streetAddress}
-            onChange={(event) => setStreetAddress(event.target.value)}
+            {...addressFormRegister("streetAddress")}
             disabled={isDisabled}
-            ref={streetAddressRef}
           />
         </div>
 
@@ -165,9 +171,7 @@ export default () => {
             type="text"
             className="border p-3 grow"
             placeholder="상세주소"
-            value={detailAddress}
-            onChange={(event) => setDetailAddress(event.target.value)}
-            ref={detailAddressRef}
+            {...addressFormRegister("detailAddress")}
           />
         </div>
 

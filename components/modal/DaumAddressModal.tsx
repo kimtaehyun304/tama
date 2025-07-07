@@ -1,18 +1,20 @@
 import { Dispatch, SetStateAction } from "react";
 
 import { DaumPostcodeEmbed } from "react-daum-postcode";
-import { UseFormSetValue } from "react-hook-form";
+
 type Props = {
   isOpenDaumAddressModal: boolean;
   setIsOpenDaumAddressModal: Dispatch<SetStateAction<boolean>>;
-  setValue: UseFormSetValue<ReceiverFormState>;
+  setStreetAddress: (value: string) => void;
+  setZoneCode: (value: number) => void;
   setIsDisabled: Dispatch<SetStateAction<boolean>>;
 };
 
 export default ({
   isOpenDaumAddressModal,
   setIsOpenDaumAddressModal,
-  setValue,
+  setStreetAddress,
+  setZoneCode,
   setIsDisabled,
 }: Props) => {
   const closeModal = () => {
@@ -32,8 +34,8 @@ export default ({
           extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
       }
       fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-      setValue("streetAddress", fullAddress);
-      setValue("zoneCode", Number(data.zonecode));
+      setStreetAddress(fullAddress);
+      setZoneCode(Number(data.zonecode));
     }
     setIsDisabled(true);
     setIsOpenDaumAddressModal(false);

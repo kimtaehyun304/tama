@@ -1,5 +1,4 @@
 import { AuthContext } from "@/components/context/AuthContext";
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import DaumAddressModal from "@/components/modal/DaumAddressModal";
 import MemberAddressModal from "@/components/modal/MemberAddressModal";
 
@@ -11,7 +10,6 @@ import {
   useState,
 } from "react";
 import {
-  useForm,
   UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
@@ -316,7 +314,12 @@ export default ({
             <DaumAddressModal
               isOpenDaumAddressModal={isOpenDaumAddressModal}
               setIsOpenDaumAddressModal={setIsOpenDaumAddressModal}
-              setValue={receiverFormSetValue}
+              setStreetAddress={(value: string) =>
+                receiverFormSetValue("streetAddress", value)
+              }
+              setZoneCode={(value: number) =>
+                receiverFormSetValue("zoneCode", value)
+              }
               setIsDisabled={setIsDisabled}
             />
 

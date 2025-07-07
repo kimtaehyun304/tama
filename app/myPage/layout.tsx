@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, ReactNode } from "react";
+import { ReactNode } from "react";
 import MyPageMenuList from "./MyPageMenuList";
 
 export default function MyPageLayout({ children }: { children: ReactNode }) {

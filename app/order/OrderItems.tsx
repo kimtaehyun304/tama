@@ -1,8 +1,6 @@
-import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import PortOne from "@portone/browser-sdk/v2";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+
 import {
   Dispatch,
   SetStateAction,
