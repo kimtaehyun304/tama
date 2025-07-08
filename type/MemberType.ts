@@ -45,3 +45,7 @@ type AddressFormState = {
   detailAddress: string;
   addressName: string;
 };
+
+type isAdminResponse = {
+  isAdmin: boolean;
+};

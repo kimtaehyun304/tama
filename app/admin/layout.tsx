@@ -3,11 +3,12 @@ import { useEffect, useState, ReactNode } from "react";
 import NotFoundScreen from "@/components/NotFoundScreen";
 import LoadingScreen from "@/components/LoadingScreen";
 
+
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   useEffect(() => {
-
     async function checkAdmin() {
       const token = localStorage.getItem("tamaAccessToken");
 
@@ -22,8 +23,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      setIsAdmin(res.ok);
+      const isAdminJson: isAdminResponse = await res.json();
+      setIsAdmin(isAdminJson.isAdmin);
     }
     checkAdmin();
   }, []);
