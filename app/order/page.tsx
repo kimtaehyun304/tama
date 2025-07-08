@@ -23,6 +23,7 @@ export default () => {
     watch: senderFormWatch,
     setValue: senderFormSetValue,
     setFocus: senderFormSetFocus,
+    reset: senderFormReset,
   } = useForm<SenderFormState>({
     defaultValues: {
       senderNickname: "",
@@ -36,6 +37,7 @@ export default () => {
     watch: receiverFormWatch,
     setValue: receiverFormSetValue,
     setFocus: receiverFormSetFocus,
+    reset: receiverFormReset,
   } = useForm<ReceiverFormState>({
     defaultValues: {
       receiverNickname: "",
@@ -87,6 +89,8 @@ export default () => {
             receiverFormSetValue={receiverFormSetValue}
             selectedPayMethodEng={selectedPayMethodEng}
             setSelectedPayMethodEng={setSelectedPayMethodEng}
+            senderFormReset={senderFormReset}
+            receiverFormReset={receiverFormReset}
           />
 
           <OrderItems

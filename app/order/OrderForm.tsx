@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   UseFormRegister,
+  UseFormReset,
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
@@ -39,6 +40,8 @@ type Props = {
   receiverFormWatch: UseFormWatch<ReceiverFormState>;
   senderFormSetValue: UseFormSetValue<SenderFormState>;
   receiverFormSetValue: UseFormSetValue<ReceiverFormState>;
+  senderFormReset: UseFormReset<SenderFormState>;
+  receiverFormReset: UseFormReset<ReceiverFormState>;
   selectedPayMethodEng: PayMethodEng;
   setSelectedPayMethodEng: Dispatch<SetStateAction<PayMethodEng>>;
 };
@@ -50,6 +53,8 @@ export default ({
   receiverFormWatch,
   senderFormSetValue,
   receiverFormSetValue,
+  senderFormReset,
+  receiverFormReset,
   selectedPayMethodEng,
   setSelectedPayMethodEng,
 }: Props) => {
@@ -165,51 +170,52 @@ export default ({
       }
     }
     if (authContext?.isLogined) fetchMemberOrderSetUp();
+
+    if (!authContext?.isLogined) {
+      senderFormReset();
+      receiverFormReset();
+    }
   }, [authContext?.isLogined]);
 
   return (
     <>
       {/*주문고객 */}
       {/*로그인 유저는 폼 없어도 자동 할당*/}
-      {!authContext?.isLogined && (
-        <section>
-          <div className="font-bold text-2xl p-[1%] border-b">주문고객</div>
-          <div className="p-[2%] space-y-3 max-w-[50rem]">
-            <div className="flex items-center">
-              <label
-                htmlFor="senderNickname"
-                className="w-32  whitespace-nowrap"
-              >
-                이름
-              </label>
-              <input
-                id="senderNickname"
-                type="text"
-                className="border p-3 grow"
-                placeholder="주문하시는 분"
-                {...senderFormRegister("senderNickname")}
-              />
-            </div>
 
-            <div className="flex items-center">
-              <label htmlFor="senderEmail" className="w-32">
-                이메일 주소
-              </label>
-              <input
-                id="senderEmail"
-                type="text"
-                className="border p-3 grow"
-                placeholder="이메일 주소"
-                {...senderFormRegister("senderEmail")}
-              />
-            </div>
-            <div className="text-[#787878] py-3">
-              주문고객님의 정보로 주문정보(주문완료, 배송상태 등)를 안내해
-              드립니다.
-            </div>
+      <section>
+        <div className="font-bold text-2xl p-[1%] border-b">주문고객</div>
+        <div className="p-[2%] space-y-3 max-w-[50rem]">
+          <div className="flex items-center">
+            <label htmlFor="senderNickname" className="w-32  whitespace-nowrap">
+              이름
+            </label>
+            <input
+              id="senderNickname"
+              type="text"
+              className="border p-3 grow"
+              placeholder="주문하시는 분"
+              {...senderFormRegister("senderNickname")}
+            />
           </div>
-        </section>
-      )}
+
+          <div className="flex items-center">
+            <label htmlFor="senderEmail" className="w-32">
+              이메일 주소
+            </label>
+            <input
+              id="senderEmail"
+              type="text"
+              className="border p-3 grow"
+              placeholder="이메일 주소"
+              {...senderFormRegister("senderEmail")}
+            />
+          </div>
+          <div className="text-[#787878] py-3">
+            주문고객님의 정보로 주문정보(주문완료, 배송상태 등)를 안내해
+            드립니다.
+          </div>
+        </div>
+      </section>
 
       {/*받는고객 */}
       {receiverFormWatch("hasAddress") && (

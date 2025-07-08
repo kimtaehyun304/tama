@@ -5,6 +5,7 @@ import LoginEffect from "./index/LoginEffect";
 export const dynamic = "force-dynamic"; // Next.js 13+
 
 export default function Home() {
+
   return (
     <article className="xl:mx-standard">
       <BannerSlider />

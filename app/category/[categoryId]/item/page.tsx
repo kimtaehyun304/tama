@@ -495,7 +495,7 @@ export default () => {
             setIsContainSoldOut={setIsContainSoldOut}
           />
         </div>
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-5 gap-x-1 pb-6">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-5 gap-1 pb-6">
           {categoryItems.content.map((item, categoryItemindex) => (
             <li key={`color-items${categoryItemindex}`}>
               <Link
