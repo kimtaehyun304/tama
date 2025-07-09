@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import MyPageMenuList from "./MyPageMenuList";
 import { useRouter } from "next/navigation";
 
