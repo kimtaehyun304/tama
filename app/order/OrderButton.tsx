@@ -9,6 +9,7 @@ import { PayMethodEng } from "./OrderForm";
 
 const TOSS_PAYMENTS_CHANNEL_KEY =
   "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
+const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
 
 type Props = {
   senderFormWatch: UseFormWatch<SenderFormState>;
@@ -124,6 +125,10 @@ export default ({
     orderName: string
   ) {
     if (!validateForm()) return;
+
+    simpleModalContext?.setMessage("결제창 로딩중..");
+    simpleModalContext?.setIsOpenSimpleModal(true);
+
     //1단계-PG사 결제
     const paymentId = `payment-${crypto.randomUUID()}`;
     //2단계-주문 API 호출
@@ -145,16 +150,15 @@ export default ({
     };
 
     let redirectUrl = `${process.env.NEXT_PUBLIC_CLIENT_URL}/order/mobile?paymentId=${paymentId}`;
-    console.log(redirectUrl);
     if (inCart) redirectUrl += "&inCart=true";
 
-    const response = await PortOne.requestPayment({
+    const portOneRes = await PortOne.requestPayment({
       storeId: "store-f9c6de63-d746-420d-88c6-0a6815d4352b",
       paymentId: paymentId,
       orderName: orderName,
       totalAmount: itemTotalPrice,
       currency: "CURRENCY_KRW",
-      channelKey: TOSS_PAYMENTS_CHANNEL_KEY,
+      channelKey: EXIM_BAY_CHANNEL_KEY,
       payMethod: payMethod,
       redirectUrl: redirectUrl,
       //oauth 계정은 휴대폰 번호가 없음
@@ -166,12 +170,13 @@ export default ({
       customData,
     });
 
-    if (response?.code !== undefined) {
+    //모바일 결제는 redirectUrl(moibleUrl)에서 결제
+    if (portOneRes?.code !== undefined) {
       // 오류 발생
-      alert(response.message);
+      simpleModalContext?.setMessage(portOneRes.message!);
       return;
     }
-    //모바일 결제는 redirectUrl
+
     orderOnPc();
 
     async function orderOnPc() {
@@ -257,9 +262,8 @@ export default ({
             className="bg-[#131922] text-[#fff] border p-4 w-full"
             onClick={(event) => {
               event.currentTarget.disabled = true;
-              simpleModalContext?.setMessage("결제창 로딩중..");
-              simpleModalContext?.setIsOpenSimpleModal(true);
               requestPayment(selectedPayMethodEng, orderTotalPrice, orderName);
+              event.currentTarget.disabled = false;
             }}
           >
             결제하기

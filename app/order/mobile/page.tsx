@@ -2,7 +2,7 @@
 import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default () => {
   const authContext = useContext(AuthContext);
@@ -12,18 +12,19 @@ export default () => {
   const inCart = searchParams.get("inCart");
   const paymentId = searchParams.get("paymentId");
   const router = useRouter();
+  const [text, setText] = useState<string>(
+    "결제가 끝나면 주문 조회로 이동합니다."
+  );
 
   useEffect(() => {
+    if (authContext?.isLogined === undefined) return;
+
     orderOnMobile();
-  }, []);
+  }, [authContext]);
 
   async function orderOnMobile() {
-    const fetchUrl =
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/` +
-      (authContext?.isLogined ? "member" : "guest") +
-      "/mobile" +
-      `?paymentId=${paymentId}`;
-
+    const memberOrGuest = authContext?.isLogined ? "member" : "guest";
+    const fetchUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${memberOrGuest}/mobile?paymentId=${paymentId}`;
     const token = localStorage.getItem("tamaAccessToken");
 
     const fetchHeader: Record<string, string> = {
@@ -32,7 +33,7 @@ export default () => {
         token && { Authorization: `Bearer ${token}` }),
     };
 
-    //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요
+    //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요 (?잘되네 뭐지)
     simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
     simpleModalContext?.setIsOpenSimpleModal(true);
 
@@ -43,6 +44,9 @@ export default () => {
 
     const notifiedJson: SimpleResponseType = await resultRes.json();
     simpleModalContext?.setMessage(notifiedJson.message);
+    setText(notifiedJson.message);
+
+    if (resultRes.status != 201) router.push("/order");
 
     if (resultRes.status == 201) {
       const stringCart = localStorage.getItem("tamaCart");
@@ -73,9 +77,7 @@ export default () => {
 
   return (
     <section>
-      <div className="text-center">
-        결제가 끝나면 주문 조회로 이동합니다.
-      </div>
+      <div className="text-center">{text}</div>
     </section>
   );
 };
