@@ -236,24 +236,6 @@ export default () => {
                 />
               </div>
             </div>
-            <div className="flex items-center">
-              <label htmlFor="priceMax" className="whitespace-nowrap">
-                최대
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  id="priceMax"
-                  className="ml-2 border text-right p-1 pr-7 focus:outline-none"
-                  value={maxPrice ?? ""}
-                  onChange={(event) => {
-                    const value = event.target.value.replace(/\D/g, ""); // 숫자 이외의 문자 제거
-                    setMaxPrice(value == "" ? undefined : Number(value));
-                  }}
-                />
-                <span className="relative right-6">원</span>
-              </div>
-            </div>
           </section>
 
           <section className="space-y-2">
