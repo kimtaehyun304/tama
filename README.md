@@ -10,7 +10,23 @@
 <img src="https://github.com/user-attachments/assets/b3528f47-4cdb-4fd4-a5bb-2eed72233c6c" />
 </p>
 
-### 어필
+### 페이지
+공통 UI
+<ul>
+  <li>pc·모바일 반응형 웹 제작</li>
+  <li>이쁜 알림창을 위해 모달 사용</li>
+</ul>
+
+<ul>
+  <li>상품 검색·인기 상품</li>
+  <li>장바구니·상품 주문</li>
+  <li>마이 페이지 (주문 조회·배송지 조회·유저 정보 변경)</li>
+  <li>관리자 페이지 (주문 조회·상품 등록)</li>
+</ul>
+
+### 기능
+
+
 <ul>
   <li>next.js 앱 라우터 사용</li>
     <li>클라이언트 컴포넌트도 서버에서 만들어지는 걸 인지</li>
