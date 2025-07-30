@@ -1,11 +1,14 @@
 <h1>쇼핑몰 1인 개발 / 2024.12 ~ </h1>
-<p align="center">
-<img src="https://github.com/user-attachments/assets/b160556b-07c2-4af6-a10c-65b0fb57e5c1" />
-</p>
-<p align="center">초기엔 ELB와 ACM을 썼지만, 비용 문제로 지우고 Certbot으로 전환</p>
 
-https://dlta.kr  
-next.js 15, typeScript, tailwind
+### 인프라
+<p align="center">
+<img src="https://github.com/user-attachments/assets/fee97e3b-fe2a-4662-b7e6-555f3c8f68e5" />
+</p>
+<p align="center">초기엔 ELB 썻지만 비용 발생해서 지움</p>
+
+<p align="center">
+<img src="https://github.com/user-attachments/assets/b3528f47-4cdb-4fd4-a5bb-2eed72233c6c" />
+</p>
 
 ### 어필
 <ul>
