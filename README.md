@@ -10,6 +10,11 @@
 <img src="https://github.com/user-attachments/assets/b3528f47-4cdb-4fd4-a5bb-2eed72233c6c" />
 </p>
 
+<p>https://dlta.kr</p>
+
+### 프로젝트 스킬
+next.js 15 앱 라우터
+
 ### 페이지
 공통 UI
 <ul>
@@ -26,21 +31,16 @@
   <li>관리자 페이지 (주문 조회·상품 등록)</li>
 </ul>
 
-### 기능
-
-
+### 프로젝트로 얻은 경혐
+next.js 지식
 <ul>
-  <li>next.js 앱 라우터 사용</li>
-    <li>클라이언트 컴포넌트도 서버에서 만들어지는 걸 인지</li>
-  <ul>
-    <li>로컬 스토리지는 useEffect() 또는 funtion 안에서 써야함</li>
-  </ul>
-  <li>standalone 빌드 + 필요한 것만 압축해서 배포 시간 1분 줄임</li>
-  <li>useSeachParam 사용 시 pre-redner 불가 → force-dynamic</li>
-  <li>비용 절감을 위해 상품 상세 페이지만 SSR 적용</li>
-  <li>ES6 문법으로 클린 코드 작성</li>
-  <li>가시성있는 UI를 위해 모달 사용</li>
-  <li>글로벌 로딩 애니메이션 적용 (loading.tsx)</li>
-  <li>글로벌 에러 처리 적용 (global-error.tsx)</li>
+  <li>pre-render를 통해 seo·렌더링 속도 향상</li>
+  <li>csr도 pre-render 가능 (브라우저에서 API 호출한 경우·useSeachParam 사용한 경우 제외)</li>
+  <li>코드 간소화를 위해 전역 에러 처리 적용</li>
+  <li>첫 도메인 요청은 SSR</li>
+  <li>서버 컴포넌트가 SSR 되지 않을 경우 → force-dynamic 사용</li>  
 </ul>
 
+기타
+<li>standalone 빌드·최소한의 파일만 압축 → 배포 시간 1분 줄임</li>
+<li>협업 시 프로젝트 호환 문제를 없애기 위해 도커 사용</li>
