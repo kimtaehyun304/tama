@@ -1,10 +1,9 @@
-import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import {
   Dispatch,
   SetStateAction,
-  useContext,
   useEffect,
   useState,
 } from "react";
@@ -22,10 +21,9 @@ export default ({
   setOrderTotalPrice,
   setOrderName,
 }: Props) => {
-  const simpleModalContext = useContext(SimpleModalContext);
 
   //const [isLoading, setIsLoading] = useState(true);
-
+  const router = useRouter();
   const [orderStorageMap, setOrderStorageMap] = useState<Map<number, number>>(
     new Map()
   );
@@ -38,8 +36,10 @@ export default ({
         : null;
 
       if (!parsedOrder || parsedOrder.length === 0) {
-        simpleModalContext?.setMessage("주문할 상품이 없습니다");
-        simpleModalContext?.setIsOpenSimpleModal(true);
+        //simpleModalContext?.setMessage("주문할 상품이 없습니다");
+        //simpleModalContext?.setIsOpenSimpleModal(true);
+        alert("주문할 상품이 없습니다");
+        router.back();
         return;
       }
 

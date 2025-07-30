@@ -22,7 +22,7 @@ export default function Cart() {
   const [stock, setStock] = useState(0);
   const authContext = useContext(AuthContext);
   const loginModalContext = useContext(LoginModalContext);
-  //const NO_ITEM_MESSAGE = "장바구니에 담긴 상품이 없습니다";
+  const NO_ITEM_MESSAGE = "장바구니에 담긴 상품이 없습니다";
   const router = useRouter();
 
   useEffect(() => {
@@ -243,141 +243,149 @@ export default function Cart() {
               </div>
             )}
           </section>
+          {cartItems.length === 0 && (
+            <div className="text-center p-3">{NO_ITEM_MESSAGE}</div>
+          )}
 
-          <>
-            <section className="py-3 underline text-[#787878] cursor-pointer">
-              품절상품 삭제
-            </section>
-            <section className="flex flex-col xl:grid xl:grid-cols-2 gap-3">
-              {cartItems.map((item, index) => (
-                <div className="border flex gap-x-3 p-2" key={`item-${index}`}>
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
-                    alt={item.name}
-                    width={100}
-                    height={100}
-                  />
-                  <div className="flex flex-col gap-y-2 flex-1">
-                    <div>
+          {cartItems.length !== 0 && (
+            <>
+              <section className="py-3 underline text-[#787878] cursor-pointer">
+                품절상품 삭제
+              </section>
+              <section className="flex flex-col xl:grid xl:grid-cols-2 gap-3">
+                {cartItems.map((item, index) => (
+                  <div
+                    className="border flex gap-x-3 p-2"
+                    key={`item-${index}`}
+                  >
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
+                      alt={item.name}
+                      width={100}
+                      height={100}
+                    />
+                    <div className="flex flex-col gap-y-2 flex-1">
                       <div>
-                        {item.sizeStock.stock === 0 ? (
-                          <span className="text-red-500">품절</span>
-                        ) : (
-                          <span className="text-gray-400">
-                            남은 재고 {item.sizeStock.stock}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-red-500 font-bold">
-                        {item.sizeStock.stock !== 0 &&
-                          item.sizeStock.stock <
-                            cartMap.get(item.sizeStock.id)! &&
-                          "재고가 부족합니다"}
-                      </div>
+                        <div>
+                          {item.sizeStock.stock === 0 ? (
+                            <span className="text-red-500">품절</span>
+                          ) : (
+                            <span className="text-gray-400">
+                              남은 재고 {item.sizeStock.stock}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-red-500 font-bold">
+                          {item.sizeStock.stock !== 0 &&
+                            item.sizeStock.stock <
+                              cartMap.get(item.sizeStock.id)! &&
+                            "재고가 부족합니다"}
+                        </div>
 
-                      <div>{item.name}</div>
-                      <div>
-                        {item.color}/{item.sizeStock.size}
+                        <div>{item.name}</div>
+                        <div>
+                          {item.color}/{item.sizeStock.size}
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-sm text-[#aaa]">
-                      {item.discountedPrice &&
-                        `${(
-                          item.price * cartMap.get(item.sizeStock.id)!
-                        ).toLocaleString("ko-KR")}원`}
-                    </div>
-                    <div className="text-2xl font-semibold">
-                      {item.discountedPrice
-                        ? `${(
-                            item.discountedPrice *
-                            cartMap.get(item.sizeStock.id)!
-                          ).toLocaleString("ko-KR")}원`
-                        : `${(
+                      <div className="text-sm text-[#aaa]">
+                        {item.discountedPrice &&
+                          `${(
                             item.price * cartMap.get(item.sizeStock.id)!
                           ).toLocaleString("ko-KR")}원`}
+                      </div>
+                      <div className="text-2xl font-semibold">
+                        {item.discountedPrice
+                          ? `${(
+                              item.discountedPrice *
+                              cartMap.get(item.sizeStock.id)!
+                            ).toLocaleString("ko-KR")}원`
+                          : `${(
+                              item.price * cartMap.get(item.sizeStock.id)!
+                            ).toLocaleString("ko-KR")}원`}
+                      </div>
+                      <div className="flex">
+                        <button
+                          className="border p-2"
+                          onClick={() => minusOurderCount(item.sizeStock)}
+                        >
+                          -
+                        </button>
+                        <button className="border p-2 flex-1">
+                          {cartMap.get(item.sizeStock.id)}
+                        </button>
+                        <button
+                          className="border p-2"
+                          onClick={() => plusOurderCount(item.sizeStock)}
+                        >
+                          +
+                        </button>
+                      </div>
+                      {item.sizeStock.stock >=
+                        cartMap.get(item.sizeStock.id)! && (
+                        <button
+                          className="border p-2"
+                          onClick={() => orderItem(item.sizeStock.id)}
+                        >
+                          바로 구매
+                        </button>
+                      )}
                     </div>
-                    <div className="flex">
-                      <button
-                        className="border p-2"
-                        onClick={() => minusOurderCount(item.sizeStock)}
-                      >
-                        -
-                      </button>
-                      <button className="border p-2 flex-1">
-                        {cartMap.get(item.sizeStock.id)}
-                      </button>
-                      <button
-                        className="border p-2"
-                        onClick={() => plusOurderCount(item.sizeStock)}
-                      >
-                        +
+                    <div>
+                      <button onClick={() => deleteCartItem(item.sizeStock)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={24}
+                          height={24}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="black"
+                          strokeWidth={1}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                          <line x1="6" y1="18" x2="18" y2="6" />
+                        </svg>
                       </button>
                     </div>
-                    {item.sizeStock.stock >=
-                      cartMap.get(item.sizeStock.id)! && (
-                      <button
-                        className="border p-2"
-                        onClick={() => orderItem(item.sizeStock.id)}
-                      >
-                        바로 구매
-                      </button>
-                    )}
+                  </div>
+                ))}
+              </section>
+
+              <section className="text-center m-4">
+                <div className="bg-[#f5f5f5] inline-block p-4 space-y-3">
+                  <div className="flex justify-center gap-x-20">
+                    <span className="grow">상품금액</span>
+                    <span className="grow">
+                      {itemTotalPrice.toLocaleString("ko-KR")}원
+                    </span>
+                  </div>
+                  <div className="flex justify-center">
+                    <span className="">배송비</span>
+                    <span className="grow text-right">
+                      {shippingFee.toLocaleString("ko-KR")}원
+                    </span>
+                  </div>
+                  <hr />
+                  <div className="flex font-semibold text-xl">
+                    <span>총</span>
+                    <span className="grow text-right">
+                      {(itemTotalPrice + shippingFee).toLocaleString("ko-KR")}
+                    </span>
+                    원
                   </div>
                   <div>
-                    <button onClick={() => deleteCartItem(item.sizeStock)}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width={24}
-                        height={24}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="black"
-                        strokeWidth={1}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                        <line x1="6" y1="18" x2="18" y2="6" />
-                      </svg>
+                    <button
+                      className="bg-[#131922] text-[#fff] border p-4 w-full"
+                      onClick={orderItems}
+                    >
+                      주문하기
                     </button>
                   </div>
                 </div>
-              ))}
-            </section>
-
-            <section className="text-center m-4">
-              <div className="bg-[#f5f5f5] inline-block p-4 space-y-3">
-                <div className="flex justify-center gap-x-20">
-                  <span className="grow">상품금액</span>
-                  <span className="grow">
-                    {itemTotalPrice.toLocaleString("ko-KR")}원
-                  </span>
-                </div>
-                <div className="flex justify-center">
-                  <span className="">배송비</span>
-                  <span className="grow text-right">
-                    {shippingFee.toLocaleString("ko-KR")}원
-                  </span>
-                </div>
-                <hr />
-                <div className="flex font-semibold text-xl">
-                  <span>총</span>
-                  <span className="grow text-right">
-                    {(itemTotalPrice + shippingFee).toLocaleString("ko-KR")}
-                  </span>
-                  원
-                </div>
-                <div>
-                  <button
-                    className="bg-[#131922] text-[#fff] border p-4 w-full"
-                    onClick={orderItems}
-                  >
-                    주문하기
-                  </button>
-                </div>
-              </div>
-            </section>
-          </>
+              </section>
+            </>
+          )}
         </article>
       </article>
     </>
