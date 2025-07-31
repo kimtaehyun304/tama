@@ -35,7 +35,7 @@ next.js 15 앱 라우터
 next.js 지식
 <ul>
   <li>pre-render를 통해 seo·렌더링 속도 향상</li>
-  <li>csr도 pre-render 가능 (브라우저에서 API 호출한 경우·useSeachParam 사용한 경우 제외)</li>
+  <li>csr도 pre-render 가능 (브라우저에서 API 호출·useSeachParam 사용한 경우 제외)</li>
   <li>코드 간소화를 위해 전역 에러 처리 적용</li>
   <li>첫 도메인 요청은 SSR</li>
   <li>서버 컴포넌트가 SSR 되지 않을 경우 force-dynamic 사용</li>  
