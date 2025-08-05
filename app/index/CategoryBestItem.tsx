@@ -106,6 +106,7 @@ export default () => {
             </button>
           ))}
         </div>
+        
         <div className="grid px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6 justify-items-center xl:justify-items-start">
           {categoryBestItems?.map((item, index) => (
             <Link

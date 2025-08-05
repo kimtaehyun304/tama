@@ -7,8 +7,10 @@ import PortOne from "@portone/browser-sdk/v2";
 import { AuthContext } from "@/components/context/AuthContext";
 import { PayMethodEng } from "./OrderForm";
 
-//const TOSS_PAYMENTS_CHANNEL_KEY = "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
-const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
+const TOSS_PAYMENTS_CHANNEL_KEY = "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
+//const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
+
+const CHANNEL_KEY = TOSS_PAYMENTS_CHANNEL_KEY;
 
 type Props = {
   senderFormWatch: UseFormWatch<SenderFormState>;
@@ -157,7 +159,7 @@ export default ({
       orderName: orderName,
       totalAmount: itemTotalPrice,
       currency: "CURRENCY_KRW",
-      channelKey: EXIM_BAY_CHANNEL_KEY,
+      channelKey: CHANNEL_KEY,
       payMethod: payMethod,
       redirectUrl: redirectUrl,
       //oauth 계정은 휴대폰 번호가 없음
