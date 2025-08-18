@@ -61,8 +61,8 @@ type ColorItemType = {
   uploadFiles: UploadFileType[];
   id: number;
   color: string;
-  price: number;
-  discountedPrice: number;
+  originalPrice: number;
+  nowPrice: number;
   common: CommonInfoType;
   sizeStocks: ColorItemSizeStockType[];
   relatedColorItems: RelatedColorItemType[];

@@ -116,27 +116,27 @@ export default ({ colorItem }: Props) => {
         </div>
         <div className="py-2 text-xl">{colorItem.common.name}</div>
         <div className="py-2 flex items-end gap-x-4">
-          {colorItem.discountedPrice && (
+          {colorItem.nowPrice && (
             <span className="font-semibold text-3xl text-[#d99c63]">
               {100 -
-                Math.round((colorItem.discountedPrice / colorItem.price) * 100)}
+                Math.round((colorItem.nowPrice / colorItem.originalPrice) * 100)}
               %
             </span>
           )}
 
           <span className="text-3xl">
             <span className="font-semibold">
-              {colorItem.discountedPrice
-                ? colorItem.discountedPrice.toLocaleString("ko-KR")
-                : colorItem.price.toLocaleString("ko-KR")}
+              {colorItem.nowPrice
+                ? colorItem.nowPrice.toLocaleString("ko-KR")
+                : colorItem.originalPrice.toLocaleString("ko-KR")}
             </span>
             원
           </span>
 
-          {colorItem.discountedPrice && (
+          {colorItem.originalPrice && (
             <span className="text-lg text-[#a0a0a0]">
               <span className="">
-                {colorItem.price.toLocaleString("ko-KR")}
+                {colorItem.originalPrice.toLocaleString("ko-KR")}
               </span>
               원
             </span>
@@ -165,14 +165,14 @@ export default ({ colorItem }: Props) => {
             <div className="font-semibold">적립예정포인트</div>
             <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
               <span className="underline cursor-pointer">
-                0.5%({Math.round(colorItem.price / 200)}P)
+                0.5%({Math.round(colorItem.nowPrice / 200)}P)
               </span>
             </div>
           </div>
           <div className="flex justify-between">
             <div className="font-semibold">배송비</div>
             <div className="w-[calc(100%-125px)] xl:w-[calc(100%-180px)]">
-              {colorItem.discountedPrice >= 40000
+              {colorItem.nowPrice >= 40000
                 ? "무료"
                 : "3,000원 (40,000원 이상 결제 시 무료)"}
             </div>
@@ -287,11 +287,11 @@ export default ({ colorItem }: Props) => {
             <div className="text-xl font-bold py-3">판매가</div>
             <div>
               <span className="text-4xl font-bold">
-                {colorItem.discountedPrice
-                  ? (colorItem.discountedPrice * orderCount).toLocaleString(
+                {colorItem.nowPrice
+                  ? (colorItem.nowPrice * orderCount).toLocaleString(
                       "ko-KR"
                     )
-                  : (colorItem.price * orderCount).toLocaleString("ko-KR")}
+                  : (colorItem.originalPrice * orderCount).toLocaleString("ko-KR")}
               </span>
               원
             </div>
