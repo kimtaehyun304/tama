@@ -1,7 +1,6 @@
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import { useContext } from "react";
 import { UseFormSetFocus, UseFormWatch } from "react-hook-form";
-
 import { useRouter, useSearchParams } from "next/navigation";
 import PortOne from "@portone/browser-sdk/v2";
 import { AuthContext } from "@/components/context/AuthContext";
