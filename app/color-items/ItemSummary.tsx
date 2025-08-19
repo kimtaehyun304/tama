@@ -119,7 +119,9 @@ export default ({ colorItem }: Props) => {
           {colorItem.nowPrice && (
             <span className="font-semibold text-3xl text-[#d99c63]">
               {100 -
-                Math.round((colorItem.nowPrice / colorItem.originalPrice) * 100)}
+                Math.round(
+                  (colorItem.nowPrice / colorItem.originalPrice) * 100
+                )}
               %
             </span>
           )}
@@ -216,17 +218,18 @@ export default ({ colorItem }: Props) => {
                     href={`/color-items/${related.id}`}
                     key={`relatedItem-${index}`}
                   >
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_CDN_URL}/${related.uploadFile.storedFileName}`}
-                      alt={related.color}
-                      width={50}
-                      height={50}
-                      className={
-                        related.id === colorItem.id
-                          ? "border-[1px] border-black"
-                          : ""
-                      }
-                    />
+                    <div className="w-[50px] h-[50px] relative bg-gray-100">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_CDN_URL}/${related.uploadFile.storedFileName}`}
+                        alt={related.color}
+                        fill
+                        className={
+                          related.id === colorItem.id
+                            ? "object-contain border-[1px] border-black"
+                            : "object-contain"
+                        }
+                      />
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -288,10 +291,10 @@ export default ({ colorItem }: Props) => {
             <div>
               <span className="text-4xl font-bold">
                 {colorItem.nowPrice
-                  ? (colorItem.nowPrice * orderCount).toLocaleString(
+                  ? (colorItem.nowPrice * orderCount).toLocaleString("ko-KR")
+                  : (colorItem.originalPrice * orderCount).toLocaleString(
                       "ko-KR"
-                    )
-                  : (colorItem.originalPrice * orderCount).toLocaleString("ko-KR")}
+                    )}
               </span>
               원
             </div>

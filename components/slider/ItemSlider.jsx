@@ -47,7 +47,12 @@ export default function ItemSlider({ uploadFiles }) {
 
   return (
     <section className="">
-      <Slider asNavFor={nav2} ref={sliderRef1} {...hiddenArrowSettings}>
+      <Slider
+        asNavFor={nav2}
+        ref={sliderRef1}
+        {...hiddenArrowSettings}
+        adaptiveHeight={true}
+      >
         {uploadFiles.map((uploadFile, index) => (
           <div
             className="relative w-full h-[400px] xl:h-[600px]"
@@ -66,25 +71,27 @@ export default function ItemSlider({ uploadFiles }) {
       <Slider
         asNavFor={nav1}
         ref={sliderRef2}
-        slidesToShow={Math.min(6, uploadFiles.length)} // 👈 여기에 주의!
-        swipeToSlide={true}
+        slidesToShow={Math.min(6, uploadFiles.length)}
+        swipeToSlide={6}
         focusOnSelect={true}
         beforeChange={(current, next) => {
           setActiveIndex(next);
         }}
         infinite={true}
+        adaptiveHeight={true}
       >
         {uploadFiles.map((uploadFile, index) => (
           <div className="pr-1" key={`item-detail-${index}`}>
-            <Image
-              src={`${process.env.NEXT_PUBLIC_CDN_URL}/${uploadFile.storedFileName}`}
-              alt={uploadFile.originalFileName}
-              width={100}
-              height={100}
-              className={`${
-                activeIndex === index ? "border border-black" : ""
-              }`}
-            />
+            <div className="w-[100px] h-[100px] relative">
+              <Image
+                src={`${process.env.NEXT_PUBLIC_CDN_URL}/${uploadFile.storedFileName}`}
+                alt={uploadFile.originalFileName}
+                fill
+                className={`object-contain ${
+                  activeIndex === index ? "border border-black" : ""
+                }`}
+              />
+            </div>
           </div>
         ))}
       </Slider>

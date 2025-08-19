@@ -20,7 +20,7 @@ export default () => {
   const pagePrams = Number(searchParams.get("page")) || 1;
 
   //아이템 개수
-  const pageSize = 10;
+  const pageSize = 8;
 
   //배열을 만들고 아이템 개수만큼 selectedColorItemIndex를 할당한다. 초기값은 0
   //EX) pageSize 1 가정. 이 아이템 색상은 빨강, 파랑이다. 파랑 클릭하면 selectedColorItemIndex는 [0] -> [1] 바뀜
@@ -477,9 +477,12 @@ export default () => {
             setIsContainSoldOut={setIsContainSoldOut}
           />
         </div>
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-5 gap-1 pb-6">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-4 gap-1 pb-6">
           {categoryItems.content.map((item, categoryItemindex) => (
-            <li key={`color-items${categoryItemindex}`}>
+            <li
+              key={`color-items${categoryItemindex}`}
+              className="relative w-full aspect-square"
+            >
               <Link
                 href={`/color-items/${
                   item.relatedColorItems[
@@ -487,16 +490,18 @@ export default () => {
                   ].colorItemId
                 }`}
               >
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_CDN_URL}/${
-                    item.relatedColorItems[
-                      selectedColorItemIndex[categoryItemindex]
-                    ].uploadFile.storedFileName
-                  }`}
-                  width={232}
-                  height={232}
-                  alt={item.name}
-                />
+                <div className="w-full h-full relative">
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${
+                      item.relatedColorItems[
+                        selectedColorItemIndex[categoryItemindex]
+                      ].uploadFile.storedFileName
+                    }`}
+                    alt={item.name}
+                    fill
+                      className="object-contain"
+                  />
+                </div>
               </Link>
               <div className="pt-3">
                 <Link
