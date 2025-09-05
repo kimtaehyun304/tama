@@ -235,6 +235,7 @@ export default ({ colorItem }: Props) => {
               </div>
             </div>
           </div>
+          
           {/*구매 옵션 */}
           <div className="flex justify-between">
             <div className="font-semibold">옵션</div>

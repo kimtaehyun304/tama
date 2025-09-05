@@ -16,8 +16,8 @@ type StorageItemType = {
 
 //장바구니 or 주문 상품
 type StorageItemDetailType = {
-  price: number;
-  discountedPrice: number;
+  originalPrice: number;
+  nowPrice: number;
   sizeStock: ColorItemSizeStockType;
   colorItemId: number;
   color: string;

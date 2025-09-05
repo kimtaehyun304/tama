@@ -490,7 +490,7 @@ export default () => {
                   ].colorItemId
                 }`}
               >
-                <div className="w-full h-full relative">
+                <div className="w-full h-full relative max-w-[250px] max-h-[250px]">
                   <Image
                     src={`${process.env.NEXT_PUBLIC_CDN_URL}/${
                       item.relatedColorItems[

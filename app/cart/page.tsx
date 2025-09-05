@@ -78,7 +78,7 @@ export default function Cart() {
       cartItems.reduce(
         (total, cartItem) =>
           total +
-          (cartItem.discountedPrice ?? cartItem.price) *
+          (cartItem.nowPrice ?? cartItem.originalPrice) *
             (cartMap.get(cartItem.sizeStock.id) ?? 0),
         0
       )
@@ -288,19 +288,19 @@ export default function Cart() {
                         </div>
                       </div>
                       <div className="text-sm text-[#aaa]">
-                        {item.discountedPrice &&
+                        {item.nowPrice &&
                           `${(
-                            item.price * cartMap.get(item.sizeStock.id)!
+                            item.originalPrice * cartMap.get(item.sizeStock.id)!
                           ).toLocaleString("ko-KR")}원`}
                       </div>
                       <div className="text-2xl font-semibold">
-                        {item.discountedPrice
+                        {item.nowPrice
                           ? `${(
-                              item.discountedPrice *
+                              item.nowPrice *
                               cartMap.get(item.sizeStock.id)!
                             ).toLocaleString("ko-KR")}원`
                           : `${(
-                              item.price * cartMap.get(item.sizeStock.id)!
+                              item.originalPrice * cartMap.get(item.sizeStock.id)!
                             ).toLocaleString("ko-KR")}원`}
                       </div>
                       <div className="flex">
