@@ -90,7 +90,7 @@ export default ({
       orderItems.reduce(
         (total, orderItem) =>
           total +
-          (orderItem.discountedPrice ?? orderItem.price) *
+          (orderItem.nowPrice ?? orderItem.originalPrice) *
             (orderStorageMap.get(orderItem.sizeStock.id) ?? 0),
         0
       )
@@ -124,19 +124,19 @@ export default ({
                 <div>{orderStorageMap.get(item.sizeStock.id)}개 주문</div>
               </div>
               <div className="text-sm text-[#aaa]">
-                {item.discountedPrice &&
+                {item.nowPrice &&
                   `${(
-                    item.price * orderStorageMap.get(item.sizeStock.id)!
+                    item.originalPrice * orderStorageMap.get(item.sizeStock.id)!
                   ).toLocaleString("ko-kr")}원`}
               </div>
               <div className="text-2xl font-semibold">
-                {item.discountedPrice
+                {item.nowPrice
                   ? `${(
-                      item.discountedPrice *
+                      item.nowPrice *
                       orderStorageMap.get(item.sizeStock.id)!
                     ).toLocaleString("ko-kr")}원`
                   : `${(
-                      item.price * orderStorageMap.get(item.sizeStock.id)!
+                      item.originalPrice * orderStorageMap.get(item.sizeStock.id)!
                     ).toLocaleString("ko-kr")}원`}
               </div>
             </div>
