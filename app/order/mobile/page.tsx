@@ -24,7 +24,7 @@ export default () => {
 
   async function orderOnMobile() {
     const memberOrGuest = authContext?.isLogined ? "member" : "guest";
-    const fetchUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${memberOrGuest}/mobile?paymentId=${paymentId}`;
+    const fetchUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${memberOrGuest}?paymentId=${paymentId}`;
     const token = localStorage.getItem("tamaAccessToken");
 
     const fetchHeader: Record<string, string> = {
