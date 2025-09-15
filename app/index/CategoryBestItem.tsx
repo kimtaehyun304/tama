@@ -107,13 +107,13 @@ export default () => {
           ))}
         </div>
         
-        <div className="grid px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6 justify-items-center xl:justify-items-start">
+        <div className="px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6">
           {categoryBestItems?.map((item, index) => (
             <Link
               href={`/color-items/${item.colorItemId}`}
               key={`categoryBestimages-${index}`}
             >
-              <ul className="relative max-w-[232px]">
+              <ul className="">
                 <li>
                   <Image
                     src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}

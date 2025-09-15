@@ -171,7 +171,7 @@ export default () => {
   }
 
   return (
-    <article className="xl:mx-32 xl:my-[2%] flex gap-x-16">
+    <article className="xl:mx-32 xl:my-[2%] xl:flex gap-x-16">
       {/* 카테고리, 검색 필터*/}
       <aside className="hidden xl:block ">
         <section>
@@ -372,7 +372,7 @@ export default () => {
               {sort}∨
             </button>
             <ul
-              className="border space-y-2 absolute z-1 top-full bg-white px-4 whitespace-nowrap"
+              className="border space-y-2 absolute z-10 top-full bg-white px-4 whitespace-nowrap"
               style={{ display: display }}
               onMouseEnter={() => setDisplay("block")}
               onMouseLeave={() => setDisplay("none")}
@@ -477,33 +477,10 @@ export default () => {
             setIsContainSoldOut={setIsContainSoldOut}
           />
         </div>
-        <ul className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-4 gap-1 pb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:gird-cols-4 lg:grid-cols-4 gap-1 pb-6">
           {categoryItems.content.map((item, categoryItemindex) => (
-            <li
-              key={`color-items${categoryItemindex}`}
-              className="relative w-full aspect-square"
-            >
-              <Link
-                href={`/color-items/${
-                  item.relatedColorItems[
-                    selectedColorItemIndex[categoryItemindex]
-                  ].colorItemId
-                }`}
-              >
-                <div className="w-full h-full relative max-w-[250px] max-h-[250px]">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${
-                      item.relatedColorItems[
-                        selectedColorItemIndex[categoryItemindex]
-                      ].uploadFile.storedFileName
-                    }`}
-                    alt={item.name}
-                    fill
-                      className="object-contain"
-                  />
-                </div>
-              </Link>
-              <div className="pt-3">
+            <ul key={`categoryItems${categoryItemindex}`}>
+              <li className="">
                 <Link
                   href={`/color-items/${
                     item.relatedColorItems[
@@ -511,45 +488,67 @@ export default () => {
                     ].colorItemId
                   }`}
                 >
-                  <div>{item.name}</div>
-                  <div className="flex gap-x-1">
-                    {item.discountedPrice && (
-                      <span className="font-semibold text-[#d99c63]">
-                        {100 -
-                          Math.round((item.discountedPrice / item.price) * 100)}
-                        %
-                      </span>
-                    )}
-                    {(item.discountedPrice || item.price).toLocaleString(
-                      "ko-kr"
-                    )}
-                    원
-                  </div>
-                </Link>
-                <div className="flex gap-x-1">
-                  {item.relatedColorItems.map((related, relatdIndex) => (
-                    <div
-                      style={{ backgroundColor: related.hexCode }}
-                      className={`w-[20px] h-[20px] inline-block border cursor-pointer ${
-                        relatdIndex ===
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${
+                      item.relatedColorItems[
                         selectedColorItemIndex[categoryItemindex]
-                          ? "border-black"
-                          : "border-gray-300"
-                      }`}
-                      data-tooltip={related.color}
-                      key={`relatdColrItem${relatdIndex}`}
-                      onClick={() => {
-                        const newArr = [...selectedColorItemIndex];
-                        newArr[categoryItemindex] = relatdIndex;
-                        setSelectedColorItemIndex(newArr);
-                      }}
-                    ></div>
-                  ))}
+                      ].uploadFile.storedFileName
+                    }`}
+                    alt={item.name}
+                    width={232}
+                    height={232}
+                  />
+                </Link>
+                <div className="pt-3">
+                  <Link
+                    href={`/color-items/${
+                      item.relatedColorItems[
+                        selectedColorItemIndex[categoryItemindex]
+                      ].colorItemId
+                    }`}
+                  >
+                    <div>{item.name}</div>
+                    <div className="flex gap-x-1">
+                      {item.discountedPrice && (
+                        <span className="font-semibold text-[#d99c63]">
+                          {100 -
+                            Math.round(
+                              (item.discountedPrice / item.price) * 100
+                            )}
+                          %
+                        </span>
+                      )}
+                      {(item.discountedPrice || item.price).toLocaleString(
+                        "ko-kr"
+                      )}
+                      원
+                    </div>
+                  </Link>
+                  <div className="flex gap-x-1">
+                    {item.relatedColorItems.map((related, relatdIndex) => (
+                      <div
+                        style={{ backgroundColor: related.hexCode }}
+                        className={`w-[20px] h-[20px] inline-block border cursor-pointer ${
+                          relatdIndex ===
+                          selectedColorItemIndex[categoryItemindex]
+                            ? "border-black"
+                            : "border-gray-300"
+                        }`}
+                        data-tooltip={related.color}
+                        key={`relatdColrItem${relatdIndex}`}
+                        onClick={() => {
+                          const newArr = [...selectedColorItemIndex];
+                          newArr[categoryItemindex] = relatdIndex;
+                          setSelectedColorItemIndex(newArr);
+                        }}
+                      ></div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </li>
+              </li>
+            </ul>
           ))}
-        </ul>
+        </div>
 
         <MyPagination
           pageCount={categoryItems.page.pageCount}
