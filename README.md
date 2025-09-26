@@ -39,3 +39,27 @@ next.js 지식
   <li>이미지 슬라이더 사용</li>
 </ul>
 
+### 화면
+<h4 align="center">메인 페이지</h4>
+<p align="center">
+<img src="https://github.com/user-attachments/assets/a2eb56ba-5ce4-4659-bac0-aff5b75a0887" />
+</p>
+
+<h4 align="center">상품 검색</h4>
+<p align="center">
+<img src="https://github.com/user-attachments/assets/2725d254-418a-413a-a349-526648ed98a8" />
+</p>
+
+<h4 align="center">주문 조회</h4>
+<p align="center">
+<img src="https://github.com/user-attachments/assets/0e69a6a8-eb4b-4a16-b827-7875befa78ed" />
+</p>
+
+<p align="center">
+<img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
+</p>
+
+
+
+
+
