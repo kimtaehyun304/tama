@@ -14,7 +14,7 @@ next.js 15 앱 라우터, typeScript 5, tailwind 3
 next.js 지식
 <ul>
   <li>pre-render를 통해 seo 또는 렌더링 속도 향상</li>
-  <li>csr도 pre-render 가능 (브라우저에서 API 호출, useSeachParam 사용한 경우는 불가)</li>
+  <li>csr도 pre-render 가능 (브라우저에서 API 호출, useSeachParam 사용한 경우 제외)</li>
   <li>첫 웹 페이지 접속은 SSR → "localstorage is not defined" → useEffect에 담기</li>
   <li>서버 컴포넌트가 자동 설정으로 인해 SSR 되지 않다면 → force-dynamic</li>  
   <li>코드 간소화를 위해 전역 에러 처리 적용</li>
@@ -38,3 +38,4 @@ next.js 지식
   <li>명확한 메시지 전달을 위해, 모달 사용</li>
   <li>이미지 슬라이더 사용</li>
 </ul>
+
