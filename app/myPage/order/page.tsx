@@ -120,7 +120,7 @@ export default () => {
   if (!memberInformation) return;
 
   return (
-    <section className="space-y-4 grow">
+    <section className="space-y-4">
       <div className="font-bold text-xl">주문/배송 조회</div>
       {orders.content.map((order, index) => (
         <section className="border p-4 space-y-2" key={`order-${index}`}>
@@ -136,24 +136,19 @@ export default () => {
             <div>{order.delivery.message}</div>
           </section>
 
-          <div className="flex gap-x-3">
-            {(order.status == "PAYMENT" || order.status == "CHECK") && (
-              <button
-                onClick={() => cancelOrder(order.id)}
-                disabled={cancelOrderDisable}
-                className="border bg-black text-white p-2"
-              >
-                주문 취소
-              </button>
-            )}
-          </div>
+          {(order.status == "PAYMENT" || order.status == "CHECK") && (
+            <button
+              onClick={() => cancelOrder(order.id)}
+              disabled={cancelOrderDisable}
+              className="border bg-black text-white p-2"
+            >
+              주문 취소
+            </button>
+          )}
 
-          <div className=" grid xl:grid-cols-2 gap-3">
-            {order.orderItems.map((item, index) => (
-              <div
-                className="border flex gap-x-4 p-2"
-                key={`orderItems-${index}`}
-              >
+          {order.orderItems.map((item, index) => (
+            <div key={`orderItems-${index}`}>
+              <div className="border flex gap-x-4 p-2">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
                   alt={item.name}
@@ -161,36 +156,33 @@ export default () => {
                   height={100}
                 />
 
-                <div className="flex flex-col gap-y-2 flex-1">
+                <div className="flex gap-y-2 ">
                   <div>
                     <div>{item.name}</div>
                     <div>
                       {item.color}/{item.size}
                     </div>
                     <div>{item.count}개 주문</div>
-                  </div>
-                  <div className="text-sm text-[#aaa]">
-                    {item.orderPrice.toLocaleString("ko-kr")}원
+                    <div className="text-sm text-[#aaa]">
+                      {item.orderPrice.toLocaleString("ko-kr")}원
+                    </div>
                   </div>
                 </div>
-
-                {item.isReviewWritten == false && (
-                  <button
-                    onClick={() => {
-                      setOrderItemId(item.orderItemId);
-                      setOrderItemName(
-                        `${item.name}/${item.color}/${item.size}`
-                      );
-                      setIsOpenReviewFormModal(true);
-                    }}
-                    className="border p-2"
-                  >
-                    리뷰 작성
-                  </button>
-                )}
               </div>
-            ))}
-          </div>
+              {item.isReviewWritten == false && (
+                <button
+                  onClick={() => {
+                    setOrderItemId(item.orderItemId);
+                    setOrderItemName(`${item.name}/${item.color}/${item.size}`);
+                    setIsOpenReviewFormModal(true);
+                  }}
+                  className="border p-2"
+                >
+                  리뷰 작성
+                </button>
+              )}
+            </div>
+          ))}
         </section>
       ))}
 

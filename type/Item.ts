@@ -123,8 +123,8 @@ type SavedColorItemIdResponse = {
 type ItemSummaryState = {
   itemName: string;
   selectedCategoryId?: number;
-  price?: number;
-  discountedPrice?: number;
+  originalPrice?: number;
+  nowPrice?: number;
   gender: GenderType;
 };
 

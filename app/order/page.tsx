@@ -51,11 +51,15 @@ export default () => {
   });
 
   const [orderItems, setOrderItems] = useState<StorageItemDetailType[]>([]);
+  const [orderItemsPrice, setOrderItemsPrice] = useState<number>(0);
   const [orderTotalPrice, setOrderTotalPrice] = useState<number>(0);
   const [orderName, setOrderName] = useState<string>("");
 
   const [selectedPayMethodEng, setSelectedPayMethodEng] =
     useState<PayMethodEng>(PAY_METHOD_LABELS[0].eng);
+
+  const [selectedMemberCouponId, setSelectedMemberCouponId] =
+    useState<number>(0);
 
   return (
     <article className="xl:mx-standard">
@@ -89,13 +93,19 @@ export default () => {
             receiverFormSetValue={receiverFormSetValue}
             selectedPayMethodEng={selectedPayMethodEng}
             setSelectedPayMethodEng={setSelectedPayMethodEng}
+            selectedMemberCouponId={selectedMemberCouponId}
+            setSelectedMemberCouponId={setSelectedMemberCouponId}
             senderFormReset={senderFormReset}
             receiverFormReset={receiverFormReset}
+            orderItemsPrice={orderItemsPrice}
+            orderTotalPrice={orderTotalPrice}
+            setOrderTotalPrice={setOrderTotalPrice}
           />
 
           <OrderItems
             orderItems={orderItems}
             setOrderItems={setOrderItems}
+            setOrderItemsPrice={setOrderItemsPrice}
             setOrderTotalPrice={setOrderTotalPrice}
             setOrderName={setOrderName}
           />
@@ -104,6 +114,7 @@ export default () => {
             senderFormWatch={senderFormWatch}
             receiverFormWatch={receiverFormWatch}
             selectedPayMethodEng={selectedPayMethodEng}
+            selectedMemberCouponId={selectedMemberCouponId}
             orderTotalPrice={orderTotalPrice}
             orderName={orderName}
             senderFormSetFocus={senderFormSetFocus}

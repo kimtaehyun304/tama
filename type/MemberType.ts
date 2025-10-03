@@ -10,6 +10,7 @@ type MemberOrderSetUpType = {
   nickname: string;
   email: string;
   phone: string;
+  point: number;
   addresses: AddressResponse[];
 };
 
@@ -48,4 +49,11 @@ type AddressFormState = {
 
 type isAdminResponse = {
   isAdmin: boolean;
+};
+
+type MemberCouponType = {
+  id: number;
+  type: "PERCENT_DISCOUNT" | "FIXED_DISCOUNT";
+  discountValue: number;
+  expiresAt: Date;
 };

@@ -1,16 +1,12 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
   orderItems: StorageItemDetailType[];
   setOrderItems: Dispatch<SetStateAction<StorageItemDetailType[]>>;
+  setOrderItemsPrice: Dispatch<SetStateAction<number>>;
   setOrderTotalPrice: Dispatch<SetStateAction<number>>;
   setOrderName: Dispatch<SetStateAction<string>>;
 };
@@ -18,10 +14,10 @@ type Props = {
 export default ({
   orderItems,
   setOrderItems,
+  setOrderItemsPrice,
   setOrderTotalPrice,
   setOrderName,
 }: Props) => {
-
   //const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [orderStorageMap, setOrderStorageMap] = useState<Map<number, number>>(
@@ -86,15 +82,16 @@ export default ({
   useEffect(() => {
     if (orderItems.length === 0) return;
 
-    setOrderTotalPrice(
-      orderItems.reduce(
-        (total, orderItem) =>
-          total +
-          (orderItem.nowPrice ?? orderItem.originalPrice) *
-            (orderStorageMap.get(orderItem.sizeStock.id) ?? 0),
-        0
-      )
+    let orderItemsPrice: number = orderItems.reduce(
+      (total, orderItem) =>
+        total +
+        (orderItem.nowPrice ?? orderItem.originalPrice) *
+          (orderStorageMap.get(orderItem.sizeStock.id) ?? 0),
+      0
     );
+
+    setOrderItemsPrice(orderItemsPrice);
+    setOrderTotalPrice(orderItemsPrice);
 
     setOrderName(
       orderItems.length === 1
@@ -132,11 +129,11 @@ export default ({
               <div className="text-2xl font-semibold">
                 {item.nowPrice
                   ? `${(
-                      item.nowPrice *
-                      orderStorageMap.get(item.sizeStock.id)!
+                      item.nowPrice * orderStorageMap.get(item.sizeStock.id)!
                     ).toLocaleString("ko-kr")}원`
                   : `${(
-                      item.originalPrice * orderStorageMap.get(item.sizeStock.id)!
+                      item.originalPrice *
+                      orderStorageMap.get(item.sizeStock.id)!
                     ).toLocaleString("ko-kr")}원`}
               </div>
             </div>

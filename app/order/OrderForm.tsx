@@ -44,6 +44,11 @@ type Props = {
   receiverFormReset: UseFormReset<ReceiverFormState>;
   selectedPayMethodEng: PayMethodEng;
   setSelectedPayMethodEng: Dispatch<SetStateAction<PayMethodEng>>;
+  selectedMemberCouponId: number;
+  setSelectedMemberCouponId: Dispatch<SetStateAction<number>>;
+  orderItemsPrice: number;
+  orderTotalPrice: number;
+  setOrderTotalPrice: Dispatch<SetStateAction<number>>;
 };
 
 export default ({
@@ -57,6 +62,11 @@ export default ({
   receiverFormReset,
   selectedPayMethodEng,
   setSelectedPayMethodEng,
+  selectedMemberCouponId,
+  setSelectedMemberCouponId,
+  orderItemsPrice,
+  orderTotalPrice,
+  setOrderTotalPrice,
 }: Props) => {
   const authContext = useContext(AuthContext);
   const [isOpenMemberAddressModal, setIsOpenMemberAddressModal] =
@@ -129,12 +139,33 @@ export default ({
     </div>
   );
 
+  const [memberCoupons, setMemberCoupons] = useState<MemberCouponType[]>([]);
+  const [memberPoint, setMemberPoint] = useState<number>(0);
+  const [appliedPoint, setAppliedPoint] = useState<number>(0);
+
+  function applyCoupon(memberCoupon: MemberCouponType) {
+    switch (memberCoupon.type) {
+      case "PERCENT_DISCOUNT":
+        setOrderTotalPrice(
+          orderItemsPrice * (1 - memberCoupon.discountValue / 100)
+        );
+        break;
+      case "FIXED_DISCOUNT":
+        setOrderTotalPrice(orderItemsPrice - memberCoupon.discountValue);
+        break;
+    }
+    if (selectedMemberCouponId === memberCoupon.id) {
+      setSelectedMemberCouponId(0);
+      setOrderTotalPrice(orderItemsPrice);
+    } else setSelectedMemberCouponId(memberCoupon.id);
+  }
+
   //전역 객체 할당 딜레이 때문에 필요
   //로그인한 유저는 기본 값 설정
   useEffect(() => {
-    async function fetchMemberOrderSetUp() {
+    async function fetchOrderSetUp() {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/order-setup`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/order/setup`,
         {
           method: "GET",
           headers: {
@@ -145,15 +176,14 @@ export default ({
       );
 
       if (res.ok) {
-        const memebrOrderSetUp: MemberOrderSetUpType = await res.json();
-        receiverFormSetValue("memberAddresses", memebrOrderSetUp.addresses);
-        senderFormSetValue("senderNickname", memebrOrderSetUp.nickname);
-        senderFormSetValue("senderEmail", memebrOrderSetUp.email);
+        const orderSetUp: MemberOrderSetUpType = await res.json();
+        receiverFormSetValue("memberAddresses", orderSetUp.addresses);
+        senderFormSetValue("senderNickname", orderSetUp.nickname);
+        senderFormSetValue("senderEmail", orderSetUp.email);
+        setMemberPoint(orderSetUp.point);
 
         const defaultAddress: AddressResponse | undefined =
-          memebrOrderSetUp.addresses.find(
-            (address) => address.isDefault == true
-          );
+          orderSetUp.addresses.find((address) => address.isDefault == true);
 
         if (defaultAddress) {
           receiverFormSetValue("hasAddress", true);
@@ -169,7 +199,28 @@ export default ({
         }
       }
     }
-    if (authContext?.isLogined) fetchMemberOrderSetUp();
+    async function fetchMemberCoupon() {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/coupon`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
+          },
+        }
+      );
+
+      if (res.ok) {
+        const memebrCoupons: MemberCouponType[] = await res.json();
+        setMemberCoupons(memebrCoupons);
+      }
+    }
+
+    if (authContext?.isLogined) {
+      fetchOrderSetUp();
+      fetchMemberCoupon();
+    }
 
     if (!authContext?.isLogined) {
       senderFormReset();
@@ -372,12 +423,94 @@ export default ({
                     ? "bg-gray-100 text-black border-black"
                     : "bg-white"
                 }`}
-                onClick={() => setSelectedPayMethodEng(eng)}
+                onClick={() => {
+                  setSelectedPayMethodEng(eng);
+                }}
               >
                 {kor}
               </button>
             );
           })}
+        </div>
+      </section>
+
+      {/*쿠폰/포인트 */}
+      <section>
+        <div className="font-bold text-2xl p-[1%] border-b">쿠폰/포인트</div>
+        {/*쿠폰*/}
+        <div className="p-[2%] flex gap-x-2 flex-wrap">
+          {memberCoupons.map((coupon, i) => {
+            return (
+              <button
+                key={i}
+                className={`border p-3 rounded-md ${
+                  selectedMemberCouponId === coupon.id
+                    ? "bg-gray-100 text-black border-black"
+                    : "bg-white"
+                }`}
+                onClick={() => {
+                  applyCoupon(coupon);
+                }}
+              >
+                {coupon.discountValue.toLocaleString("ko-kr")}
+                {coupon.type === "FIXED_DISCOUNT" ? "원" : "%"} 할인 쿠폰
+              </button>
+            );
+          })}
+        </div>
+
+        {/*포인트 잔액*/}
+        <div className="p-[2%] flex gap-x-2 flex-wrap">
+          사용 가능한 포인트: {memberPoint?.toLocaleString("ko-kr")}원
+        </div>
+
+        {/*사용할 포인트*/}
+        <div className="p-[2%] space-y-3 max-w-[50rem]">
+          <div className="flex items-center">
+            <label htmlFor="appliedPoint" className="w-32  whitespace-nowrap">
+              사용할 포인트
+            </label>
+            <input
+              id="appliedPoint"
+              type="text"
+              className="border p-3 grow"
+              placeholder="사용할 포인트"
+              value={appliedPoint ?? ""}
+              onChange={(event) => {
+                const appliedPointValue = Number(
+                  event.target.value.replace(/\D/g, "")
+                ); // 숫자 이외의 문자 제거
+
+                if (memberPoint < appliedPointValue) {
+                  alert("보유 포인트 이상 사용할 수 없습니다");
+                  return;
+                }
+
+                setOrderTotalPrice((prev) => prev - appliedPointValue);
+                setAppliedPoint(appliedPointValue);
+                setOrderTotalPrice((prev) => prev - appliedPointValue);
+              }}
+            />
+            <button
+              className="bg-[#131922] text-[#fff] border p-3 whitespace-nowrap disabled:bg-gray-500 disabled:text-gray-300"
+              onClick={(event) => {
+                const availablePoint = Math.min(memberPoint, orderTotalPrice);
+                
+                setAppliedPoint(availablePoint);
+                setOrderTotalPrice((prev) => prev - availablePoint);
+              }}
+              disabled={Math.min(memberPoint, orderTotalPrice) === 0}
+            >
+              전액 사용
+            </button>
+          </div>
+        </div>
+
+        {/*안내 문구*/}
+        <div className="p-[2%] ">
+          <ul>
+            <li>* 배송비에는 적용되지 않습니다</li>
+          </ul>
         </div>
       </section>
     </>

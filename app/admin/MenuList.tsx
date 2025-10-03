@@ -17,7 +17,7 @@ export default () => {
   const currentMenu = segments[2]; // "item"
 
   return (
-    <aside className=" border p-4">
+    <aside className="border mx-auto xl:mx-0 w-fit p-4 my-3 xl:my-0">
       <div className="font-bold text-3xl py-3">관리자 페이지</div>
       <ul className="">
         {menus.map((menu, index) => (

@@ -18,6 +18,7 @@ type Props = {
   receiverFormSetFocus: UseFormSetFocus<ReceiverFormState>;
   orderTotalPrice: number;
   selectedPayMethodEng: PayMethodEng;
+  selectedMemberCouponId: number;
   orderName: string;
 };
 
@@ -28,6 +29,7 @@ export default ({
   receiverFormSetFocus,
   orderTotalPrice,
   selectedPayMethodEng,
+  selectedMemberCouponId,
   orderName,
 }: Props) => {
   const SHIPPING_FEE = orderTotalPrice >= 40000 ? 0 : 3000;

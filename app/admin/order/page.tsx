@@ -86,9 +86,9 @@ export default () => {
   }
 
   return (
-    <article className="xl:mx-32 m-[2%] flex flex-wrap gap-x-16 gap-y-4 justify-center xl:justify-start">
+    <article className="xl:mx-32 m-[2%] xl:flex xl:gap-16">
       <MenuList />
-      <section className="space-y-4 grow">
+      <section className="space-y-4">
         <div className="font-bold text-xl">주문/배송 조회</div>
         {orders.content.map((order, index) => (
           <section className="border p-4 space-y-2" key={`order-${index}`}>

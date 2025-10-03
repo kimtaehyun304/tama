@@ -129,28 +129,28 @@ export default ({
         </div>
 
         <div className="flex items-center">
-          <label htmlFor="price" className="w-32 whitespace-nowrap">
+          <label htmlFor="originalPrice" className="w-32 whitespace-nowrap">
             가격
           </label>
           <input
-            id="price"
+            id="originalPrice"
             type="text"
             className="border p-3 grow"
             placeholder="가격"
-            {...register("price", { valueAsNumber: true })}
+            {...register("originalPrice", { valueAsNumber: true })}
           />
         </div>
 
         <div className="flex items-center">
-          <label htmlFor="discountedPrice" className="w-32 whitespace-nowrap">
+          <label htmlFor="nowPrice" className="w-32 whitespace-nowrap">
             할인된 가격
           </label>
           <input
-            id="discountedPrice"
+            id="nowPrice"
             type="text"
             className="border p-3 grow"
             placeholder="할인된 가격"
-            {...register("discountedPrice", { valueAsNumber: true })}
+            {...register("nowPrice", { valueAsNumber: true })}
           />
         </div>
 

@@ -18,8 +18,8 @@ export default () => {
     defaultValues: {
       itemName: "",
       selectedCategoryId: undefined,
-      price: undefined,
-      discountedPrice: undefined,
+      originalPrice: undefined,
+      nowPrice: undefined,
       gender: "BOTH",
     },
   });
@@ -55,8 +55,8 @@ export default () => {
   async function saveItem() {
     function validateForm() {
       const itemName = itemSummaryWatch("itemName");
-      const price = itemSummaryWatch("price");
-      const discountedPrice = itemSummaryWatch("discountedPrice");
+      const originalPrice = itemSummaryWatch("originalPrice");
+      const nowPrice = itemSummaryWatch("nowPrice");
       const gender = itemSummaryWatch("gender");
       const selectedCategoryId = itemSummaryWatch("selectedCategoryId");
 
@@ -75,12 +75,12 @@ export default () => {
         return false;
       }
 
-      if (!price || price <= 0) {
+      if (!originalPrice || originalPrice <= 0) {
         alert("가격을 올바르게 입력해주세요.");
         return false;
       }
 
-      if (discountedPrice !== undefined && discountedPrice < 0) {
+      if (nowPrice !== undefined && nowPrice < 0) {
         alert("할인 가격은 0 이상이어야 합니다.");
         return false;
       }
@@ -182,8 +182,8 @@ export default () => {
         body: JSON.stringify({
           name: itemSummaryWatch("itemName"),
           categoryId: itemSummaryWatch("selectedCategoryId"),
-          price: itemSummaryWatch("price"),
-          discountedPrice: itemSummaryWatch("discountedPrice"),
+          originalPrice: itemSummaryWatch("originalPrice"),
+          nowPrice: itemSummaryWatch("nowPrice"),
           gender: itemSummaryWatch("gender"),
           description: itemDetailWatch("description"),
           yearSeason: itemDetailWatch("yearSeason"),
@@ -197,7 +197,7 @@ export default () => {
       }
     );
 
-    if (!savedItemRes.ok) {
+    if (savedItemRes.status !== 201) {
       alert("상품 저장에 실패했습니다.");
       return;
     }
