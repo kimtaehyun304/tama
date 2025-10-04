@@ -23,6 +23,7 @@ export default () => {
   const [orderItemName, setOrderItemName] = useState<string>("");
   const [orderItemId, setOrderItemId] = useState<number | undefined>(undefined);
   const [cancelOrderDisable, setCancelOrderDisable] = useState<boolean>(false);
+  const [isLoadingFetchOrder, setIsLoadingFetchOrder] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -43,6 +44,7 @@ export default () => {
       }
     }
     fetchOrder();
+    setIsLoadingFetchOrder(false);
   }, [authContext?.isLogined, pagePrams]);
 
   useEffect(() => {
@@ -185,6 +187,8 @@ export default () => {
           ))}
         </section>
       ))}
+
+      {!isLoadingFetchOrder && orders.content.length == 0 && <div>주문한 상품이 없습니다</div>}
 
       <ReviewFormModal
         isOpenModal={isOpenReviewFormModal}

@@ -49,6 +49,8 @@ type Props = {
   orderItemsPrice: number;
   orderTotalPrice: number;
   setOrderTotalPrice: Dispatch<SetStateAction<number>>;
+  appliedPoint: number;
+  setAppliedPoint: Dispatch<SetStateAction<number>>;
 };
 
 export default ({
@@ -67,6 +69,8 @@ export default ({
   orderItemsPrice,
   orderTotalPrice,
   setOrderTotalPrice,
+  appliedPoint,
+  setAppliedPoint,
 }: Props) => {
   const authContext = useContext(AuthContext);
   const [isOpenMemberAddressModal, setIsOpenMemberAddressModal] =
@@ -80,6 +84,10 @@ export default ({
   const [isSelfDeliveryMsg, setIsSelfDeliveryMsg] = useState<boolean>(false);
 
   const [isDisabled, setIsDisabled] = useState(false);
+  const [orderPriceAfterCoupon, setOrderPriceAfterCoupon] = useState<number>(0);
+
+  const [memberCoupons, setMemberCoupons] = useState<MemberCouponType[]>([]);
+  const [memberPoint, setMemberPoint] = useState<number>(0);
 
   const DeliveryMessageBox = (
     <div className="relative flex items-center flex-wrap gap-y-3">
@@ -139,25 +147,27 @@ export default ({
     </div>
   );
 
-  const [memberCoupons, setMemberCoupons] = useState<MemberCouponType[]>([]);
-  const [memberPoint, setMemberPoint] = useState<number>(0);
-  const [appliedPoint, setAppliedPoint] = useState<number>(0);
-
   function applyCoupon(memberCoupon: MemberCouponType) {
     switch (memberCoupon.type) {
       case "PERCENT_DISCOUNT":
+        setOrderPriceAfterCoupon(
+          orderItemsPrice * (1 - memberCoupon.discountValue / 100)
+        );
         setOrderTotalPrice(
           orderItemsPrice * (1 - memberCoupon.discountValue / 100)
         );
         break;
       case "FIXED_DISCOUNT":
+        setOrderPriceAfterCoupon(orderItemsPrice - memberCoupon.discountValue);
         setOrderTotalPrice(orderItemsPrice - memberCoupon.discountValue);
         break;
     }
     if (selectedMemberCouponId === memberCoupon.id) {
       setSelectedMemberCouponId(0);
+      setOrderPriceAfterCoupon(orderItemsPrice);
       setOrderTotalPrice(orderItemsPrice);
     } else setSelectedMemberCouponId(memberCoupon.id);
+    setAppliedPoint(0);
   }
 
   //전역 객체 할당 딜레이 때문에 필요
@@ -482,20 +492,25 @@ export default ({
                 ); // 숫자 이외의 문자 제거
 
                 if (memberPoint < appliedPointValue) {
-                  alert("보유 포인트 이상 사용할 수 없습니다");
+                  alert("보유한 포인트보다 넘게 사용할 수 없습니다");
                   return;
                 }
 
+                if (orderPriceAfterCoupon < appliedPointValue) {
+                  alert("주문 가격이 넘게 포인트를 사용할 수 없습니다");
+                  return;
+                }
+
+                setOrderTotalPrice(orderPriceAfterCoupon);
                 setOrderTotalPrice((prev) => prev - appliedPointValue);
                 setAppliedPoint(appliedPointValue);
-                setOrderTotalPrice((prev) => prev - appliedPointValue);
               }}
             />
             <button
               className="bg-[#131922] text-[#fff] border p-3 whitespace-nowrap disabled:bg-gray-500 disabled:text-gray-300"
               onClick={(event) => {
                 const availablePoint = Math.min(memberPoint, orderTotalPrice);
-                
+
                 setAppliedPoint(availablePoint);
                 setOrderTotalPrice((prev) => prev - availablePoint);
               }}

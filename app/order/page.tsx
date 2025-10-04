@@ -61,6 +61,8 @@ export default () => {
   const [selectedMemberCouponId, setSelectedMemberCouponId] =
     useState<number>(0);
 
+  const [appliedPoint, setAppliedPoint] = useState<number>(0);
+
   return (
     <article className="xl:mx-standard">
       <div className="text-center font-bold text-3xl py-9 border-b-2 border-black">
@@ -100,6 +102,8 @@ export default () => {
             orderItemsPrice={orderItemsPrice}
             orderTotalPrice={orderTotalPrice}
             setOrderTotalPrice={setOrderTotalPrice}
+            appliedPoint={appliedPoint}
+            setAppliedPoint={setAppliedPoint}
           />
 
           <OrderItems
@@ -119,6 +123,7 @@ export default () => {
             orderName={orderName}
             senderFormSetFocus={senderFormSetFocus}
             receiverFormSetFocus={receiverFormSetFocus}
+            appliedPoint={appliedPoint}
           />
         </>
       )}

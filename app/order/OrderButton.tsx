@@ -6,7 +6,8 @@ import PortOne from "@portone/browser-sdk/v2";
 import { AuthContext } from "@/components/context/AuthContext";
 import { PayMethodEng } from "./OrderForm";
 
-const TOSS_PAYMENTS_CHANNEL_KEY = "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
+const TOSS_PAYMENTS_CHANNEL_KEY =
+  "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
 //const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
 
 const CHANNEL_KEY = TOSS_PAYMENTS_CHANNEL_KEY;
@@ -20,6 +21,7 @@ type Props = {
   selectedPayMethodEng: PayMethodEng;
   selectedMemberCouponId: number;
   orderName: string;
+  appliedPoint: number;
 };
 
 export default ({
@@ -31,6 +33,7 @@ export default ({
   selectedPayMethodEng,
   selectedMemberCouponId,
   orderName,
+  appliedPoint,
 }: Props) => {
   const SHIPPING_FEE = orderTotalPrice >= 40000 ? 0 : 3000;
 
@@ -148,6 +151,8 @@ export default ({
       streetAddress: receiverFormWatch("streetAddress"),
       detailAddress: receiverFormWatch("detailAddress"),
       deliveryMessage: senderFormWatch("deliveryMessage"),
+      memberCouponId: selectedMemberCouponId,
+      point: appliedPoint,
       orderItems: parsedTamaOrder,
     };
 
