@@ -47,10 +47,11 @@ type Props = {
   selectedMemberCouponId: number;
   setSelectedMemberCouponId: Dispatch<SetStateAction<number>>;
   orderItemsPrice: number;
-  orderTotalPrice: number;
-  setOrderTotalPrice: Dispatch<SetStateAction<number>>;
-  appliedPoint: number;
-  setAppliedPoint: Dispatch<SetStateAction<number>>;
+  couponPrice: number;
+  setCouponPrice: Dispatch<SetStateAction<number>>;
+  usedPoint: number;
+  setUsedPoint: Dispatch<SetStateAction<number>>;
+  shippingFee: number;
 };
 
 export default ({
@@ -67,10 +68,11 @@ export default ({
   selectedMemberCouponId,
   setSelectedMemberCouponId,
   orderItemsPrice,
-  orderTotalPrice,
-  setOrderTotalPrice,
-  appliedPoint,
-  setAppliedPoint,
+  couponPrice,
+  setCouponPrice,
+  usedPoint,
+  setUsedPoint,
+  shippingFee,
 }: Props) => {
   const authContext = useContext(AuthContext);
   const [isOpenMemberAddressModal, setIsOpenMemberAddressModal] =
@@ -84,7 +86,7 @@ export default ({
   const [isSelfDeliveryMsg, setIsSelfDeliveryMsg] = useState<boolean>(false);
 
   const [isDisabled, setIsDisabled] = useState(false);
-  const [orderPriceAfterCoupon, setOrderPriceAfterCoupon] = useState<number>(0);
+  //const [orderPriceAfterCoupon, setOrderPriceAfterCoupon] = useState<number>(0);
 
   const [memberCoupons, setMemberCoupons] = useState<MemberCouponType[]>([]);
   const [memberPoint, setMemberPoint] = useState<number>(0);
@@ -150,24 +152,28 @@ export default ({
   function applyCoupon(memberCoupon: MemberCouponType) {
     switch (memberCoupon.type) {
       case "PERCENT_DISCOUNT":
-        setOrderPriceAfterCoupon(
+        setCouponPrice(orderItemsPrice * (memberCoupon.discountValue / 100));
+        /*
+        setOrderFinalPrice(
           orderItemsPrice * (1 - memberCoupon.discountValue / 100)
         );
-        setOrderTotalPrice(
-          orderItemsPrice * (1 - memberCoupon.discountValue / 100)
-        );
+        */
         break;
       case "FIXED_DISCOUNT":
-        setOrderPriceAfterCoupon(orderItemsPrice - memberCoupon.discountValue);
-        setOrderTotalPrice(orderItemsPrice - memberCoupon.discountValue);
+        setCouponPrice(memberCoupon.discountValue);
+        //setOrderFinalPrice(orderItemsPrice - memberCoupon.discountValue);
         break;
     }
     if (selectedMemberCouponId === memberCoupon.id) {
       setSelectedMemberCouponId(0);
+      setCouponPrice(0);
+      /*
       setOrderPriceAfterCoupon(orderItemsPrice);
-      setOrderTotalPrice(orderItemsPrice);
+      setOrderFinalPrice(orderItemsPrice);
+      */
     } else setSelectedMemberCouponId(memberCoupon.id);
-    setAppliedPoint(0);
+    //쿠폰이 바뀌면 사용한 포인트 폼 재입력 시키기
+    setUsedPoint(0);
   }
 
   //전역 객체 할당 딜레이 때문에 필요
@@ -485,36 +491,44 @@ export default ({
               type="text"
               className="border p-3 grow"
               placeholder="사용할 포인트"
-              value={appliedPoint ?? ""}
+              value={usedPoint ?? ""}
               onChange={(event) => {
-                const appliedPointValue = Number(
+                const usedPointValue = Number(
                   event.target.value.replace(/\D/g, "")
                 ); // 숫자 이외의 문자 제거
 
-                if (memberPoint < appliedPointValue) {
+                if (memberPoint < usedPointValue) {
                   alert("보유한 포인트보다 넘게 사용할 수 없습니다");
                   return;
                 }
 
-                if (orderPriceAfterCoupon < appliedPointValue) {
+                if (
+                  orderItemsPrice + shippingFee - couponPrice <
+                  usedPointValue
+                ) {
                   alert("주문 가격이 넘게 포인트를 사용할 수 없습니다");
                   return;
                 }
 
-                setOrderTotalPrice(orderPriceAfterCoupon);
-                setOrderTotalPrice((prev) => prev - appliedPointValue);
-                setAppliedPoint(appliedPointValue);
+                setUsedPoint(usedPointValue);
               }}
             />
             <button
               className="bg-[#131922] text-[#fff] border p-3 whitespace-nowrap disabled:bg-gray-500 disabled:text-gray-300"
-              onClick={(event) => {
-                const availablePoint = Math.min(memberPoint, orderTotalPrice);
+              onClick={() => {
+                const availablePoint = Math.min(
+                  memberPoint,
+                  orderItemsPrice + shippingFee - couponPrice
+                );
 
-                setAppliedPoint(availablePoint);
-                setOrderTotalPrice((prev) => prev - availablePoint);
+                setUsedPoint(availablePoint);
               }}
-              disabled={Math.min(memberPoint, orderTotalPrice) === 0}
+              disabled={
+                Math.min(
+                  memberPoint,
+                  orderItemsPrice + shippingFee - (couponPrice + usedPoint)
+                ) === 0
+              }
             >
               전액 사용
             </button>
@@ -524,7 +538,7 @@ export default ({
         {/*안내 문구*/}
         <div className="p-[2%] ">
           <ul>
-            <li>* 배송비에는 적용되지 않습니다</li>
+            <li>* 배송비에는 쿠폰 할인이 적용되지 않습니다</li>
           </ul>
         </div>
       </section>

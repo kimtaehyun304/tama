@@ -7,16 +7,16 @@ type Props = {
   orderItems: StorageItemDetailType[];
   setOrderItems: Dispatch<SetStateAction<StorageItemDetailType[]>>;
   setOrderItemsPrice: Dispatch<SetStateAction<number>>;
-  setOrderTotalPrice: Dispatch<SetStateAction<number>>;
   setOrderName: Dispatch<SetStateAction<string>>;
+  setShippingFee: Dispatch<SetStateAction<number>>;
 };
 
 export default ({
   orderItems,
   setOrderItems,
   setOrderItemsPrice,
-  setOrderTotalPrice,
   setOrderName,
+  setShippingFee
 }: Props) => {
   //const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -61,6 +61,7 @@ export default ({
 
       const orderItemsJson: StorageItemDetailType[] = await res.json(); // 정상 데이터 처리
       setOrderItems(orderItemsJson);
+
     }
     fetchOrderItem();
 
@@ -82,16 +83,16 @@ export default ({
   useEffect(() => {
     if (orderItems.length === 0) return;
 
-    let orderItemsPrice: number = orderItems.reduce(
+    const orderItemsPrice: number = orderItems.reduce(
       (total, orderItem) =>
         total +
         (orderItem.nowPrice ?? orderItem.originalPrice) *
           (orderStorageMap.get(orderItem.sizeStock.id) ?? 0),
       0
     );
-
+    const shippingFee = orderItemsPrice > 40000 ? 0 : 3000;
+    setShippingFee(shippingFee);
     setOrderItemsPrice(orderItemsPrice);
-    setOrderTotalPrice(orderItemsPrice);
 
     setOrderName(
       orderItems.length === 1
