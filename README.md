@@ -16,7 +16,7 @@ next.js 지식
   <li>pre-render를 통해 seo 또는 렌더링 속도 향상</li>
   <li>csr도 pre-render 가능 (브라우저에서 API 호출, useSeachParam 사용한 경우 제외)</li>
   <li>첫 웹 페이지 접속은 SSR → "localstorage is not defined" → useEffect에 담기</li>
-  <li>서버 컴포넌트가 SSR 적용 안 됌 → force-dynamic</li>  
+  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
   <li>코드 간소화를 위해 전역 에러 처리 적용</li>
   <li>standalone 빌드·최소한의 파일만 압축 → 배포 시간 1분 줄임</li>
   <li>loading, global-error, layout 사용</li>
@@ -59,6 +59,7 @@ next.js 지식
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
