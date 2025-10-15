@@ -15,7 +15,7 @@ next.js 15 앱 라우터, typeScript 5, tailwind 3
 react-hook-form으로 props 줄이기
 <ul>
   <li>기존엔 state를 모두 넘겨야해서 힘들었음</li>
-  <li>react-hook-form 도입 이후 register, watch만 props로 넘기면 되서 편해짐</li>
+  <li>react-hook-form 도입 후 register, watch만 props로 넘기면 되서 편해짐</li>
   <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 되서 편해짐</li>
 </ul>
 
@@ -58,10 +58,8 @@ next.js 사용
   <li>xss 위험은 쿠키가 더 안전 (httpOnly, secure, sameSite)</li>
   <li>다만 API 서버에서 응답을 이스케이프하면 괜찮</li>
   <li>csrf 위험은 로컬 스토리지가 방어 비용 적음</li>
-  <li>로컬 스토리지 선택! → 브라우저에서 API 호출하므로, 관리자 페이지 URL인걸 들킴</li>
-  <ul>
-    <li>응답은 거절되지만, 브라우저 개발자 도구에서 API 호출 기록이 남기 때문</li>
-  </ul>
+  <li>로컬 스토리지 선택 → 단, 브라우저에서 API 호출하므로, 관리자 페이지 URL인걸 들킴</li>
+  <li>ex) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 남기 때문</li>
   <li>쿠키 방식은 next.js 서버에서 SSR을 통해 API를 미리 호출 가능하여 안 들킴</li>
 </ul>
 
@@ -102,3 +100,4 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
