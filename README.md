@@ -11,15 +11,42 @@
 next.js 15 앱 라우터, typeScript 5, tailwind 3
 
 ### 프로젝트로 얻은 경혐
-next.js 지식
+react-hook-form으로 props 줄이기
 <ul>
-  <li>pre-render를 통해 seo 또는 렌더링 속도 향상</li>
-  <li>csr도 pre-render 가능 (브라우저에서 API 호출, useSeachParam 사용한 경우 제외)</li>
-  <li>첫 웹 페이지 접속은 SSR → "localstorage is not defined" → useEffect에 담기</li>
+  <li>기존엔 state를 모두 넘겨야해서 힘들었음</li>
+  <li>react-hook-form 도입 이후 register, watch만 props로 넘기면 되서 편해짐</li>
+  <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 되서 편해짐</li>
+</ul>
+
+typeScript 사용
+<ul>
+  <li>응답 필드 타입을 지정해두니 자동완성이되서 오타날 일이 줄음</li>
+  <li>로컬 스토리지 타입을 써둘 수 있어서 까먹어도 다시 볼수 있음</li>
+</ul>
+
+tailwind 사용
+<ul>
+  <li>next.js가 추천하는 css 프레임워크라 사용 결정</li>
+  <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있었음</li>
+</ul>
+
+주문 페이지 컴포넌트 분리
+<ul>
+  <li>기존엔 코드가 하나의 파일에 모여있어서 1,000줄이 넘어가서 복잡했음</li>
+  <li>page.tsx, 입력 폼, 주문 아이템, 주문 버튼 컴포넌트 분리</li>
+  <li>공통 useState는 page.tsx에서 컴포넌트에 props로 전달</li>
+</ul>
+
+next.js 사용
+<ul>
+  <li>서버에서 만들거나 빌드 시점에, 페이지를 미리 만들어 렌더링 속도 향상 (pre-render)</li>
+  <li>csr의 경우도 pre-render 가능(단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
+  <li>첫 접속은 SSR → "localstorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
   <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
-  <li>코드 간소화를 위해 전역 에러 처리 적용</li>
-  <li>standalone 빌드·최소한의 파일만 압축 → 배포 시간 1분 줄임</li>
-  <li>loading, global-error, layout 사용</li>
+  <li>try-catch를 대신하기 위해 error.tsx 사용 (공통 예외 처리)</li>
+  <li>렌더링 중 로딩 애니메이션 출력 (loading.tsx)</li>
+  <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
+  <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
 </ul>
 
 ### 페이지
@@ -59,6 +86,7 @@ next.js 지식
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
