@@ -43,7 +43,7 @@ next.js 사용
   <li>csr의 경우도 pre-render 가능(단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
   <li>첫 접속은 SSR → "localstorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
   <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
-  <li>try-catch를 대신하기 위해 error.tsx 사용 (공통 예외 처리)</li>
+  <li>try-catch를 대신하기 위해, error.tsx 사용 (공통 예외 처리)</li>
   <li>렌더링 중 로딩 애니메이션 출력 (loading.tsx)</li>
   <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
   <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
@@ -86,6 +86,7 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
