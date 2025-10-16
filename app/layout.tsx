@@ -21,12 +21,15 @@ const geistSans = localFont({
 const nanumGothic = localFont({
   src: "./fonts/NanumGothic.woff2",
   variable: "--font-nanum-gothic",
+  display: "swap",
+  
 });
 
 const nanumGothicBold = localFont({
   src: "./fonts/NanumGothicBold.woff2",
   style: "bold",
   variable: "--font-nanum-gothic-bold",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

@@ -55,7 +55,7 @@ export default function BannerSlider() {
 
   //<Image>는 새로고침마다 이미지가 감빡 거림 (메모리 캐시라 0ms인데도 불구하고)
   //<img>는 안 감빡 거림 (단, 메모리 캐시는 아님)
-  //근데 페이지 전환할 땐 안 감빡거려서 <Image>가 난 듯. 
+  //근데 페이지 전환할 땐 안 감빡거려서 <Image>가 난 듯.
   return (
     <section className="pb-5">
       <Slider {...settings}>
@@ -66,6 +66,7 @@ export default function BannerSlider() {
               alt={image.alt}
               fill
               className=""
+              fetchPriority={index == 0 ? "high" : "low"}
             />
           </div>
         ))}
