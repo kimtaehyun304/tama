@@ -50,6 +50,7 @@ next.js 사용
   <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
   <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
   <li>폰트 최적화를 위해 로컬 폰트 사용</li>
+  <li>이미지 크기를 줄이기 위해 이미지 컴포넌트 사용</li>
 </ul>
 
 <a href="https://velog.io/@hyungman304/%ED%86%A0%ED%81%B0-%EB%B3%B4%EA%B4%80-%EC%9C%84%EC%B9%98-%EA%B3%A0%EC%B0%B0">
@@ -102,6 +103,7 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
