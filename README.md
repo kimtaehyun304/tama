@@ -55,11 +55,12 @@ next.js 사용
   로컬 스토리지와 쿠키 중 고민
 </a>
 <ul>
-  <li>xss 위험은 쿠키가 더 안전 (httpOnly, secure, sameSite)</li>
-  <li>다만 API 서버에서 응답을 이스케이프하면 괜찮</li>
-  <li>csrf 위험은 로컬 스토리지가 방어 비용 적음</li>
-  <li>로컬 스토리지 선택 → 단, 브라우저에서 API 호출하므로, 관리자 페이지 URL인걸 들킴</li>
-  <li>ex) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 남기 때문</li>
+  <li>xss 위험은 쿠키가 안전 (httpOnly, secure, sameSite)</li>
+  <li>p.s) API 서버에서 응답을 이스케이프하면 안전</li>
+  <li>csrf 위험은 로컬 스토리지가 안전</li>
+  <li>p.s) csrf 토큰은 메모리 필요</li>
+  <li>로컬 스토리지 선택 → 문제는 브라우저에서 API 호출하므로, 관리자 페이지 URL인걸 들킴</li>
+  <li>p.s) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 남기 때문</li>
   <li>쿠키 방식은 next.js 서버에서 SSR을 통해 API를 미리 호출 가능하여 안 들킴</li>
 </ul>
 
@@ -100,4 +101,5 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
