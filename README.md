@@ -79,7 +79,7 @@ next.js 사용
 <ul>
   <li>tailwind의 grid·flex·breakpoint prefix로 반응형 웹(pc·모바일) 제작</li>
   <li>렌더링 대기 시간 동안 로딩 애니메이션 출력</li>
-  <li>메시지가 잘 보이도록 모달 사용</li>
+  <li>알림 메시지가 잘 보이도록 모달 사용</li>
   <li>이미지 슬라이더 사용</li>
 </ul>
 
@@ -102,6 +102,7 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
