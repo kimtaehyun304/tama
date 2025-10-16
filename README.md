@@ -2,7 +2,8 @@
 
 ### 인프라
 <p align="center">
-<img src="https://github.com/user-attachments/assets/b3528f47-4cdb-4fd4-a5bb-2eed72233c6c" />
+  <img src="https://github.com/user-attachments/assets/fee97e3b-fe2a-4662-b7e6-555f3c8f68e5" />
+  <img src="https://github.com/user-attachments/assets/b3528f47-4cdb-4fd4-a5bb-2eed72233c6c" />
 </p>
 
 <p>https://dlta.kr</p>
@@ -11,15 +12,55 @@
 next.js 15 앱 라우터, typeScript 5, tailwind 3
 
 ### 프로젝트로 얻은 경혐
-next.js 지식
+react-hook-form으로 props 줄이기
 <ul>
-  <li>pre-render를 통해 seo 또는 렌더링 속도 향상</li>
-  <li>csr도 pre-render 가능 (브라우저에서 API 호출, useSeachParam 사용한 경우 제외)</li>
-  <li>첫 웹 페이지 접속은 SSR → "localstorage is not defined" → useEffect에 담기</li>
-  <li>서버 컴포넌트가 SSR 적용 안 됌 → force-dynamic</li>  
-  <li>코드 간소화를 위해 전역 에러 처리 적용</li>
-  <li>standalone 빌드·최소한의 파일만 압축 → 배포 시간 1분 줄임</li>
-  <li>loading, global-error, layout 사용</li>
+  <li>기존엔 state를 모두 넘겨야해서 힘들었음</li>
+  <li>react-hook-form 도입 후 register, watch만 props로 넘기면 되서 편해짐</li>
+  <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 되서 편해짐</li>
+</ul>
+
+typeScript 사용
+<ul>
+  <li>응답 필드 타입을 지정해두니 자동완성이되서 오타날 일이 줄음</li>
+  <li>로컬 스토리지 타입을 써둘 수 있어서 까먹어도 다시 볼 수 있음</li>
+</ul>
+
+tailwind 사용
+<ul>
+  <li>next.js가 추천하는 css 프레임워크라 사용 결정</li>
+  <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있었음</li>
+</ul>
+<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
+  주문 페이지 컴포넌트 분리
+</a>
+<ul>
+  <li>기존엔 코드가 하나의 파일에 모여있어서 1,000줄이 넘어가서 복잡했음</li>
+  <li>page.tsx, 입력 폼, 주문 아이템, 주문 버튼 컴포넌트 분리</li>
+  <li>공통 useState는 page.tsx에서 컴포넌트에 props로 전달</li>
+</ul>
+
+next.js 사용
+<ul>
+  <li>서버에서 만들거나 빌드 시점에, 페이지를 미리 만들어 렌더링 속도 향상 (pre-render)</li>
+  <li>csr의 경우도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
+  <li>첫 접속은 SSR → "localstorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
+  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
+  <li>try-catch를 대신하기 위해, error.tsx 사용 (공통 예외 처리)</li>
+  <li>렌더링 중 자동으로 로딩 애니메이션 출력 (loading.tsx)</li>
+  <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
+  <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
+</ul>
+
+<a href="https://velog.io/@hyungman304/%ED%86%A0%ED%81%B0-%EB%B3%B4%EA%B4%80-%EC%9C%84%EC%B9%98-%EA%B3%A0%EC%B0%B0">
+  로컬 스토리지와 쿠키 중 고민
+</a>
+<ul>
+  <li>xss 위험은 쿠키가 더 안전 (httpOnly, secure, sameSite)</li>
+  <li>다만 API 서버에서 응답을 이스케이프하면 괜찮</li>
+  <li>csrf 위험은 로컬 스토리지가 방어 비용 적음</li>
+  <li>로컬 스토리지 선택 → 단, 브라우저에서 API 호출하므로, 관리자 페이지 URL인걸 들킴</li>
+  <li>ex) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 남기 때문</li>
+  <li>쿠키 방식은 next.js 서버에서 SSR을 통해 API를 미리 호출 가능하여 안 들킴</li>
 </ul>
 
 ### 페이지
@@ -59,9 +100,4 @@ next.js 지식
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
-
-
-
-
-
 
