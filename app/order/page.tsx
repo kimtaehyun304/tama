@@ -7,11 +7,9 @@ import Agreements from "./Agreements";
 import { useForm } from "react-hook-form";
 import OrderForm, {
   DELIVERY_MESSAGES,
-  PAY_METHOD_LABELS,
-  PayMethodEng,
 } from "./OrderForm";
 import OrderItems from "./OrderItems";
-import OrderButton from "./OrderButton";
+import OrderButton, { PAY_METHOD_LABELS, PayMethodEng } from "./OrderButton";
 
 export default () => {
   const authContext = useContext(AuthContext);
@@ -62,7 +60,7 @@ export default () => {
     useState<PayMethodEng>(PAY_METHOD_LABELS[0].eng);
 
   const [selectedMemberCouponId, setSelectedMemberCouponId] =
-    useState<number>(0);
+    useState<number | null>(null);
   const [couponPrice, setCouponPrice] = useState<number>(0);
   const [usedPoint, setUsedPoint] = useState<number>(0);
 

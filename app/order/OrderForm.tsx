@@ -15,13 +15,7 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-
-export const PAY_METHOD_LABELS = [
-  //{ eng: PayMethodEnum.EASY_PAY, kor: "간편 결제" },
-  { eng: "CARD", kor: "신용/체크카드" },
-  //{ eng: PayMethodEnum.MOBILE, kor: "휴대폰 결제" },
-  { eng: "TRANSFER", kor: "계좌이체" },
-] as const;
+import { PAY_METHOD_LABELS, PayMethodEng } from "./OrderButton";
 
 export const DELIVERY_MESSAGES = [
   "배송 전에 미리 연락 바랍니다.",
@@ -30,8 +24,6 @@ export const DELIVERY_MESSAGES = [
   "부재 시 전화나 문자 주세요.",
   "택배함에 넣어주세요.",
 ];
-
-export type PayMethodEng = (typeof PAY_METHOD_LABELS)[number]["eng"];
 
 type Props = {
   senderFormRegister: UseFormRegister<SenderFormState>;
@@ -44,8 +36,8 @@ type Props = {
   receiverFormReset: UseFormReset<ReceiverFormState>;
   selectedPayMethodEng: PayMethodEng;
   setSelectedPayMethodEng: Dispatch<SetStateAction<PayMethodEng>>;
-  selectedMemberCouponId: number;
-  setSelectedMemberCouponId: Dispatch<SetStateAction<number>>;
+  selectedMemberCouponId: number | null;
+  setSelectedMemberCouponId: Dispatch<SetStateAction<number | null>>;
   orderItemsPrice: number;
   couponPrice: number;
   setCouponPrice: Dispatch<SetStateAction<number>>;

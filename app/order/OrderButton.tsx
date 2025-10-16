@@ -4,12 +4,23 @@ import { UseFormSetFocus, UseFormWatch } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import PortOne from "@portone/browser-sdk/v2";
 import { AuthContext } from "@/components/context/AuthContext";
-import { PayMethodEng } from "./OrderForm";
+
+export type PayMethodEng = (typeof PAY_METHOD_LABELS)[number]["eng"];
+
+export const PAY_METHOD_LABELS = [
+  //{ eng: "EASY_PAY", kor: "간편 결제" },
+  { eng: "CARD", kor: "신용/체크카드" },
+  //{ eng: PayMethodEnum.MOBILE, kor: "휴대폰 결제" },
+  { eng: "TRANSFER", kor: "계좌이체" },
+] as const;
+
+
 
 const TOSS_PAYMENTS_CHANNEL_KEY =
-  "channel-key-8f9a41df-ae97-4fbe-83b3-4d5f7b45944d";
-//const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
-
+  "channel-key-5573ee4c-63d3-467b-b3d6-5ef987952e96";
+const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
+const KAKAO_PAY_CHANNEL_KEY =
+  "channel-key-ffacf44e-5508-446e-9b4c-d136cfe12478";
 const CHANNEL_KEY = TOSS_PAYMENTS_CHANNEL_KEY;
 
 type Props = {
@@ -19,7 +30,7 @@ type Props = {
   receiverFormSetFocus: UseFormSetFocus<ReceiverFormState>;
   orderItemsPrice: number;
   selectedPayMethodEng: PayMethodEng;
-  selectedMemberCouponId: number;
+  selectedMemberCouponId: number | null;
   orderName: string;
   couponPrice: number;
   usedPoint: number;
@@ -252,6 +263,7 @@ export default ({
     }
   }
 
+  //무료 주문이라, PG사 안거치고 바로 주문
   async function orderForFree() {
     const tamaOrder = localStorage.getItem("tamaOrder");
     let parsedTamaOrder: StorageItemType[] = [];

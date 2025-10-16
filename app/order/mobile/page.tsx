@@ -22,6 +22,7 @@ export default () => {
     orderOnMobile();
   }, [authContext]);
 
+  // 결제는 order/page.tsx에서 이뤄짐
   async function orderOnMobile() {
     const memberOrGuest = authContext?.isLogined ? "member" : "guest";
     const fetchUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${memberOrGuest}?paymentId=${paymentId}`;

@@ -71,7 +71,7 @@ export default () => {
           return {
             ...prevOrders,
             content: prevOrders.content.map((order) =>
-              order.id === orderId ? { ...order, status: "CANCEL" } : order
+              order.id === orderId ? { ...order, status: "CANCEL_RECEIVED" } : order
             ),
           };
         });
@@ -105,7 +105,7 @@ export default () => {
               <div>{order.delivery.message}</div>
             </section>
 
-            {(order.status == "PAYMENT" || order.status == "CHECK") && (
+            {(order.status == "ORDER_RECEIVED" || order.status == "DELIVERED") && (
               <button
                 onClick={() => cancelOrder(order.id)}
                 className="border bg-black text-white p-2"
