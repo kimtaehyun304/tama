@@ -63,7 +63,7 @@ export default () => {
 
         return {
           ...prevOrder,
-          status: "CANCEL",
+          status: "CANCEL_RECEIVED",
         };
       });
     }
@@ -118,7 +118,7 @@ export default () => {
             <div>{order.delivery.message}</div>
           </section>
 
-          {(order.status == "PAYMENT" || order.status == "CHECK") && (
+          {(order.status == "ORDER_RECEIVED" || order.status == "DELIVERED") && (
             <button
               onClick={cancelOrder}
               disabled={cancelOrderDisable}

@@ -18,9 +18,8 @@ export const PAY_METHOD_LABELS = [
 
 const TOSS_PAYMENTS_CHANNEL_KEY =
   "channel-key-5573ee4c-63d3-467b-b3d6-5ef987952e96";
-const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
-const KAKAO_PAY_CHANNEL_KEY =
-  "channel-key-ffacf44e-5508-446e-9b4c-d136cfe12478";
+//const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
+//const KAKAO_PAY_CHANNEL_KEY = "channel-key-ffacf44e-5508-446e-9b4c-d136cfe12478";
 const CHANNEL_KEY = TOSS_PAYMENTS_CHANNEL_KEY;
 
 type Props = {
