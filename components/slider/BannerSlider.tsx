@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -52,17 +53,19 @@ export default function BannerSlider() {
     autoplaySpeed: 4000,
   };
 
-  //<Image> 쓰면 메모리 캐시라 0ms인데 감빡 거림
-  //<img> 는 메모리 캐시는 안되자만 안 감빡 거림
+  //<Image>는 새로고침마다 이미지가 감빡 거림 (메모리 캐시라 0ms인데도 불구하고)
+  //<img>는 안 감빡 거림 (단, 메모리 캐시는 아님)
+  //근데 페이지 전환할 땐 안 감빡거려서 <Image>가 난 듯. 
   return (
-    <section className="pb-5 ">
+    <section className="pb-5">
       <Slider {...settings}>
         {images.map((image, index) => (
-          <div key={index}>
-            <img
+          <div key={index} className="relative w-full h-[400px]">
+            <Image
               src={image.src}
               alt={image.alt}
-              className="w-full max-h-[400px]"
+              fill
+              className=""
             />
           </div>
         ))}
