@@ -28,7 +28,7 @@ typeScript 사용
 tailwind 사용
 <ul>
   <li>next.js가 추천하는 css 프레임워크라 사용 결정</li>
-  <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있었음</li>
+  <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있음</li>
 </ul>
 <a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
   주문 페이지 컴포넌트 분리
@@ -101,5 +101,6 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
