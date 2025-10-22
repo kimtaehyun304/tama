@@ -30,14 +30,6 @@ tailwind 사용
   <li>next.js가 추천하는 css 프레임워크라 사용 결정</li>
   <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있음</li>
 </ul>
-<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
-  주문 페이지 컴포넌트 분리
-</a>
-<ul>
-  <li>기존엔 코드가 하나의 파일에 모여있어서 1,000줄이 넘어가서 복잡했음</li>
-  <li>page.tsx, 입력 폼, 주문 아이템, 주문 버튼 컴포넌트 분리</li>
-  <li>공통 useState는 page.tsx에서 컴포넌트에 props로 전달</li>
-</ul>
 
 next.js 사용
 <ul>
@@ -50,6 +42,15 @@ next.js 사용
   <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
   <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
   <li>폰트 최적화를 위해 로컬 폰트 사용</li>
+</ul>
+
+<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
+  주문 페이지 컴포넌트 분리
+</a>
+<ul>
+  <li>기존엔 코드가 하나의 파일에 모여있어서 1,000줄이 넘어가서 복잡했음</li>
+  <li>page.tsx, 입력 폼, 주문 아이템, 주문 버튼 컴포넌트 분리</li>
+  <li>공통 useState는 page.tsx에서 컴포넌트에 props로 전달</li>
 </ul>
 
 이미지 최적화
@@ -108,6 +109,7 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
