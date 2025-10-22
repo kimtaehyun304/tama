@@ -6,13 +6,12 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { LoginModalContext } from "../context/LoginModalContext";
 
-
 export default function LoginModal() {
   const loginModalContext = useContext(LoginModalContext); // 모달 상태 관리
   const authContext = useContext(AuthContext);
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const [message, setMessage] = useState<string>();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
   const router = useRouter();
 
   const closeModal = () => {
@@ -74,6 +73,8 @@ export default function LoginModal() {
       closeModal();
     }
     fetchAccessToken();
+    setEmail("");
+    setPassword("");
   };
 
   if (!loginModalContext?.isOpenLoginModal) return null; // 모달이 닫힌 상태라면 렌더링하지 않음
@@ -109,13 +110,25 @@ export default function LoginModal() {
           </div>
 
           {/* Modal Body */}
-          <div className="p-10 pb-0">
+          <div className="px-10 pb-0">
+            <div className="text-center py-3">
+              <button
+                onClick={() => {
+                  setEmail("burnaby033@naver.com");
+                  setPassword("test");
+                }}
+              >
+                체험 계정 써보려면 클릭!
+              </button>
+            </div>
+
             <form onSubmit={login}>
               <input
                 className="border p-2 w-full mb-3"
                 type="email"
                 placeholder="아이디 (이메일주소)"
                 name="email"
+                value={email}
                 onChange={(event) => {
                   onChangeInput(event);
                   setMessage("");
@@ -126,6 +139,7 @@ export default function LoginModal() {
                 type="password"
                 placeholder="비밀번호"
                 name="password"
+                value={password}
                 onChange={(event) => {
                   onChangeInput(event);
                   setMessage("");
@@ -141,6 +155,7 @@ export default function LoginModal() {
                   />
                   <label htmlFor="checkbox">아이디 저장</label>
                 </span>
+
                 <Link href={"/"} className="underline text-[#787878]">
                   ID/PW 찾기
                 </Link>
