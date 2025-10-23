@@ -19,6 +19,17 @@ export default () => {
   useEffect(() => {
     if (authContext?.isLogined === undefined) return;
 
+    const jsonStrOrder = localStorage.getItem("tamaOrder");
+    const parsedOrder: StorageItemType[] = jsonStrOrder
+      ? JSON.parse(jsonStrOrder)
+      : null;
+
+    //주문 완료 이후 뒤로가기로 또는 URL 직접 쳐서 들어오는 경우를 대비
+    if (!parsedOrder || parsedOrder.length === 0) {
+      alert("주문할 상품이 없습니다");
+      router.push("/myPage/order");
+    }
+
     orderOnMobile();
   }, [authContext]);
 
@@ -34,22 +45,23 @@ export default () => {
         token && { Authorization: `Bearer ${token}` }),
     };
 
-    //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요 (?잘되네 뭐지)
     simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
     simpleModalContext?.setIsOpenSimpleModal(true);
 
-    const resultRes = await fetch(fetchUrl, {
+    const res = await fetch(fetchUrl, {
       method: "POST",
       headers: fetchHeader,
     });
 
-    const notifiedJson: SimpleResponseType = await resultRes.json();
-    simpleModalContext?.setMessage(notifiedJson.message);
-    setText(notifiedJson.message);
+    //주문 재시도를 위해 order 페이지로 이동시키기
+    if (res.status != 201) {
+      const notifiedJson: SimpleResponseType = await res.json();
+      simpleModalContext?.setMessage(notifiedJson.message);
+      setText(notifiedJson.message);
+      router.push("/order");
+    }
 
-    if (resultRes.status != 201) router.push("/order");
-
-    if (resultRes.status == 201) {
+    if (res.status == 201) {
       const stringCart = localStorage.getItem("tamaCart");
       const stringOrder = localStorage.getItem("tamaOrder");
 

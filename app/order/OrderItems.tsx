@@ -16,7 +16,7 @@ export default ({
   setOrderItems,
   setOrderItemsPrice,
   setOrderName,
-  setShippingFee
+  setShippingFee,
 }: Props) => {
   //const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -31,12 +31,10 @@ export default ({
         ? JSON.parse(jsonStrOrder)
         : null;
 
+      //주문 완료 이후 뒤로가기로 또는 URL 직접 쳐서 들어오는 경우를 대비
       if (!parsedOrder || parsedOrder.length === 0) {
-        //simpleModalContext?.setMessage("주문할 상품이 없습니다");
-        //simpleModalContext?.setIsOpenSimpleModal(true);
         alert("주문할 상품이 없습니다");
-        router.back();
-        return;
+        router.push("/myPage/order");
       }
 
       const itemStocks: number[] = [];
@@ -61,7 +59,6 @@ export default ({
 
       const orderItemsJson: StorageItemDetailType[] = await res.json(); // 정상 데이터 처리
       setOrderItems(orderItemsJson);
-
     }
     fetchOrderItem();
 
