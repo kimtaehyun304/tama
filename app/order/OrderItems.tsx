@@ -35,6 +35,7 @@ export default ({
       if (!parsedOrder || parsedOrder.length === 0) {
         alert("주문할 상품이 없습니다");
         router.push("/myPage/order");
+        return;
       }
 
       const itemStocks: number[] = [];

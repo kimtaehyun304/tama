@@ -226,15 +226,15 @@ export default ({
       simpleModalContext?.setMessage("결제 진행 중.. 나가지 마세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
 
-      const notifiedRes = await fetch(fetchUrl, {
+      const res = await fetch(fetchUrl, {
         method: "POST",
         headers: fetchHeader,
       });
 
-      const notifiedJson: SimpleResponseType = await notifiedRes.json();
+      const notifiedJson: SimpleResponseType = await res.json();
       simpleModalContext?.setMessage(notifiedJson.message);
 
-      if (notifiedRes.status === 201) {
+      if (res.status === 201) {
         const stringCart = localStorage.getItem("tamaCart");
         const stringOrder = localStorage.getItem("tamaOrder");
 
@@ -254,8 +254,10 @@ export default ({
 
         localStorage.removeItem("tamaOrder");
 
-        if (authContext?.isLogined) router.push("/myPage/order");
-        else router.push("/guest");
+        if (authContext?.isLogined)
+           router.push("/myPage/order");
+        else 
+           router.push("/guest");
 
         return;
       }

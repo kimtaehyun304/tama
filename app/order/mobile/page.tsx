@@ -28,6 +28,7 @@ export default () => {
     if (!parsedOrder || parsedOrder.length === 0) {
       alert("주문할 상품이 없습니다");
       router.push("/myPage/order");
+      return;
     }
 
     orderOnMobile();
@@ -59,6 +60,7 @@ export default () => {
       simpleModalContext?.setMessage(notifiedJson.message);
       setText(notifiedJson.message);
       router.push("/order");
+      return;
     }
 
     if (res.status == 201) {
