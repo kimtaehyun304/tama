@@ -54,11 +54,13 @@ export default () => {
       headers: fetchHeader,
     });
 
+    //결제 성공, 실패에 상관없이 메시지 출력
+    const notifiedJson: SimpleResponseType = await res.json();
+    simpleModalContext?.setMessage(notifiedJson.message);
+    setText(notifiedJson.message);
+
     //주문 재시도를 위해 order 페이지로 이동시키기
     if (res.status != 201) {
-      const notifiedJson: SimpleResponseType = await res.json();
-      simpleModalContext?.setMessage(notifiedJson.message);
-      setText(notifiedJson.message);
       router.push("/order");
       return;
     }

@@ -14,8 +14,6 @@ export const PAY_METHOD_LABELS = [
   { eng: "TRANSFER", kor: "계좌이체" },
 ] as const;
 
-
-
 const TOSS_PAYMENTS_CHANNEL_KEY =
   "channel-key-5573ee4c-63d3-467b-b3d6-5ef987952e96";
 //const EXIM_BAY_CHANNEL_KEY = "channel-key-352a50be-65d2-4b3c-97c1-5a606086aa9c";
@@ -254,10 +252,8 @@ export default ({
 
         localStorage.removeItem("tamaOrder");
 
-        if (authContext?.isLogined)
-           router.push("/myPage/order");
-        else 
-           router.push("/guest");
+        if (authContext?.isLogined) router.push("/myPage/order");
+        else router.push("/guest");
 
         return;
       }
@@ -349,14 +345,14 @@ export default ({
         <div className="flex justify-center">
           <span className="">쿠폰</span>
           <span className="grow text-right">
-            - {couponPrice.toLocaleString("ko-KR")}원
+            {couponPrice > 0 ? -couponPrice.toLocaleString("ko-kr") : 0}원
           </span>
         </div>
 
         <div className="flex justify-center">
           <span className="">포인트</span>
           <span className="grow text-right">
-            - {usedPoint.toLocaleString("ko-KR")}원
+            {usedPoint > 0 ? -usedPoint.toLocaleString("ko-kr") : 0}원
           </span>
         </div>
 

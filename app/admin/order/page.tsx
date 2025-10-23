@@ -115,7 +115,7 @@ export default () => {
               </button>
             )}
 
-            <div className=" grid xl:grid-cols-2 gap-3">
+            <div className="grid xl:grid-cols-2 gap-3">
               {order.orderItems.map((item, index) => (
                 <div
                   className="border flex gap-x-4 p-2"

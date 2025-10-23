@@ -214,13 +214,19 @@ export default () => {
               <div className="flex justify-center">
                 <span>쿠폰 할인 금액</span>
                 <span className="grow text-right">
-                  - {order.usedCouponPrice.toLocaleString("ko-kr")}원
+                  {order.usedCouponPrice > 0
+                    ? -order.usedCouponPrice.toLocaleString("ko-kr")
+                    : 0}
+                  원
                 </span>
               </div>
               <div className="flex justify-center">
                 <span>적립금 사용</span>
                 <span className="grow text-right">
-                  - {order.usedPoint.toLocaleString("ko-kr")}원
+                  {order.usedPoint > 0
+                    ? -order.usedPoint.toLocaleString("ko-kr")
+                    : 0}
+                  원
                 </span>
               </div>
               <div className="flex justify-center">
