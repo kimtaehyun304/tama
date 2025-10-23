@@ -42,7 +42,7 @@ export default () => {
     fetchOrder();
   }, [authContext?.isLogined, pagePrams]);
 
-  async function cancelOrder(orderId: number) {
+  async function cancelOrder(orderId: number, isFreeOrder: boolean) {
     if (authContext?.isLogined) {
       setCancelOrderDisable(true);
       simpleModalContext?.setMessage("결제 취소중.. 나가지 마세요");
@@ -57,6 +57,7 @@ export default () => {
           },
           body: JSON.stringify({
             orderId: orderId,
+            isFreeOrder: isFreeOrder,
           }),
         }
       );
@@ -71,7 +72,9 @@ export default () => {
           return {
             ...prevOrders,
             content: prevOrders.content.map((order) =>
-              order.id === orderId ? { ...order, status: "CANCEL_RECEIVED" } : order
+              order.id === orderId
+                ? { ...order, status: "CANCEL_RECEIVED" }
+                : order
             ),
           };
         });
@@ -105,9 +108,22 @@ export default () => {
               <div>{order.delivery.message}</div>
             </section>
 
-            {(order.status == "ORDER_RECEIVED" || order.status == "DELIVERED") && (
+            {(order.status == "ORDER_RECEIVED" ||
+              order.status == "DELIVERED") && (
               <button
-                onClick={() => cancelOrder(order.id)}
+                onClick={() =>
+                  cancelOrder(
+                    order.id,
+                    order.orderItems.reduce(
+                      (sum, item) => sum + item.orderPrice * item.count,
+                      0
+                    ) +
+                      order.shippingFee -
+                      order.usedCouponPrice -
+                      order.usedPoint ==
+                      0
+                  )
+                }
                 className="border bg-black text-white p-2"
                 disabled={cancelOrderDisable}
               >

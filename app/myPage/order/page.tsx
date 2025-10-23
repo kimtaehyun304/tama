@@ -87,7 +87,7 @@ export default () => {
     fetchMember();
   }, [authContext?.isLogined]);
 
-  async function cancelOrder(orderId: number) {
+  async function cancelOrder(orderId: number, isFreeOrder: boolean) {
     if (authContext?.isLogined) {
       setCancelOrderDisable(true);
       //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요
@@ -103,6 +103,7 @@ export default () => {
           },
           body: JSON.stringify({
             orderId: orderId,
+            isFreeOrder: isFreeOrder,
           }),
         }
       );
@@ -250,7 +251,19 @@ export default () => {
           {(order.status == "ORDER_RECEIVED" ||
             order.status == "DELIVERED") && (
             <button
-              onClick={() => cancelOrder(order.id)}
+              onClick={() =>
+                cancelOrder(
+                  order.id,
+                  order.orderItems.reduce(
+                    (sum, item) => sum + item.orderPrice * item.count,
+                    0
+                  ) +
+                    order.shippingFee -
+                    order.usedCouponPrice -
+                    order.usedPoint ==
+                    0
+                )
+              }
               disabled={cancelOrderDisable}
               className="border bg-black text-white p-2"
             >

@@ -11,6 +11,9 @@ type ContentAdminOrderResponse = {
   buyerName: string;
   status: OrderStatus;
   delivery: DeliveryResponse;
+  usedCouponPrice: number;
+  usedPoint: number;
+  shippingFee: number;
   orderItems: OrderItemResponse[];
 };
 
@@ -61,8 +64,6 @@ type OrderStatus =
   | "RETURNED" // 반품 완료
   | "IN_REFUND" // 환불 중 (반품 없이 결제 환불 — 예: 상품 파손, 오염 등)
   | "REFUNDED"; // 환불 완료
-
-
 
 // DeliveryResponse Type
 type DeliveryResponse = {
