@@ -64,7 +64,7 @@ useEffect < onClick 인 경우
 <ul>
   <li>장바구니에 담긴 상품을 구현하기 위해 로컬 스토리지를 사용</li>
   <li>주문 수량을 변경하면 로컬 스토리지에 자동으로 반영하기 위해, useEffect 사용</li>
-  <li>오히려 useEffect를 쓰니 어려워서, 수동으로 onClick 실행되는 게 쉬움/li>
+  <li>오히려 useEffect를 쓰니 어려워서, 수동으로 onClick 실행되는 게 쉬움</li>
   <li>ex) 로컬 스토리지 useState가 할당됐는지 if문 필요</li>
   <li>ex) 로직이 흩어져 있어서 결과 예측이 잘 안 됨</li>
 </ul>
