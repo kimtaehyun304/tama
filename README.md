@@ -33,8 +33,8 @@ next.js 클린 코드 및 성능
 
 react-hook-form으로 props 줄이기
 <ul>
-  <li>기존엔 state를 모두 넘겨야해서 힘들었음</li>
-  <li>react-hook-form 도입 후 register, watch만 props로 넘기면 되서 편해짐</li>
+  <li>기존엔 state를 모두 넘겨야 해서 힘들었음</li>
+  <li>react-hook-form 도입 후 register, watch만 props로 넘기면 돼서 편해짐</li>
   <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 돼서 편해짐</li>
 </ul>
 
