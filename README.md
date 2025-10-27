@@ -16,7 +16,7 @@ next.js 렌더링
 <ul>
   <li>서버에서 만들거나 빌드 시점에, 페이지를 미리 만들어 렌더링 속도 향상 (pre-render)</li>
   <li>csr의 경우도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
-  <li>첫 접속은 SSR → "localstorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
+  <li>첫 접속은 SSR → "localStorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
   <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
   <li>폰트 최적화를 위해 로컬 폰트 사용</li>
 </ul>
@@ -35,7 +35,7 @@ react-hook-form으로 props 줄이기
 <ul>
   <li>기존엔 state를 모두 넘겨야해서 힘들었음</li>
   <li>react-hook-form 도입 후 register, watch만 props로 넘기면 되서 편해짐</li>
-  <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 되서 편해짐</li>
+  <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 돼서 편해짐</li>
 </ul>
 
 typeScript 사용
@@ -60,7 +60,7 @@ tailwind 사용
 </ul>
 
 ### 문제 해결을 위한 고민
-useEffect < onClick 인 경우
+useEffect보다 onClick이 나은 경우
 <ul>
   <li>장바구니에 담긴 상품을 구현하기 위해 로컬 스토리지를 사용</li>
   <li>주문 수량을 변경하면 로컬 스토리지에 자동으로 반영하기 위해, useEffect 사용</li>
