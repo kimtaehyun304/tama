@@ -12,6 +12,25 @@
 next.js 15 앱 라우터, typeScript 5, tailwind 3
 
 ### 프로젝트로 얻은 경혐
+next.js 렌더링
+<ul>
+  <li>서버에서 만들거나 빌드 시점에, 페이지를 미리 만들어 렌더링 속도 향상 (pre-render)</li>
+  <li>csr의 경우도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
+  <li>첫 접속은 SSR → "localstorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
+  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
+  <li>폰트 최적화를 위해 로컬 폰트 사용</li>
+</ul>
+
+next.js 클린 코드 및 성능
+<ul>
+  <li>try-catch를 대신하기 위해, error.tsx 사용 (공통 예외 처리)</li>
+  <li>렌더링 중 자동으로 로딩 애니메이션 출력 (loading.tsx)</li>
+  <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
+  <li>이미지 크기를 줄이기 위해 next.js Image 컴포넌트 사용</li>
+  <li>이미지 캐싱을 위해, cdn(aws cloudFront) 사용</li>
+  <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
+</ul>
+
 react-hook-form으로 props 줄이기
 <ul>
   <li>기존엔 state를 모두 넘겨야해서 힘들었음</li>
@@ -31,19 +50,6 @@ tailwind 사용
   <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있음</li>
 </ul>
 
-next.js 사용
-<ul>
-  <li>서버에서 만들거나 빌드 시점에, 페이지를 미리 만들어 렌더링 속도 향상 (pre-render)</li>
-  <li>csr의 경우도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
-  <li>첫 접속은 SSR → "localstorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
-  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
-  <li>try-catch를 대신하기 위해, error.tsx 사용 (공통 예외 처리)</li>
-  <li>렌더링 중 자동으로 로딩 애니메이션 출력 (loading.tsx)</li>
-  <li>공통 레이아웃을 위해, layout.tsx 사용</li>  
-  <li>standalone 빌드 + 최소한의 파일만 압축 → aws 배포 시간 1분 감소</li>
-  <li>폰트 최적화를 위해 로컬 폰트 사용</li>
-</ul>
-
 <a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
   주문 페이지 컴포넌트 분리
 </a>
@@ -53,23 +59,59 @@ next.js 사용
   <li>공통 useState는 page.tsx에서 컴포넌트에 props로 전달</li>
 </ul>
 
-이미지 최적화
+### 문제 해결을 위한 고민
+useEffect < onClick 인 경우
 <ul>
-  <li>이미지 크기를 줄이기 위해 next.js Image 컴포넌트 사용</li>
-  <li>이미지 캐싱을 위해, cdn(aws cloudFront) 사용</li>
+  <li>장바구니에 담긴 상품을 구현하기 위해 로컬 스토리지를 사용</li>
+  <li>주문 수량을 변경하면 로컬 스토리지에 자동으로 반영하기 위해, useEffect 사용</li>
+  <li>오히려 useEffect를 쓰니 어려워서, 수동으로 onClick 실행되는 게 쉬움/li>
+  <li>ex) 로컬 스토리지 useState가 할당됐는지 if문 필요</li>
+  <li>ex) 로직이 흩어져 있어서 결과 예측이 잘 안 됨</li>
+</ul>
+
+useState의 setState는 비동기 함수라 바로 적용되지 않음
+<ul>
+  <li>분석: 비동기인 이유는 불필요한 연산을 줄이기 위함</li>
+  <li>해결: prev 또는 input tag event.value 사용</li>
+</ul>
+
+useState 배열은 setState로 일부만 바꿀 수 없음
+<ul>
+  <li>분석: 성능을 위해 참조만 비교해, 변경 여부를 판단하기 때문</li>
+  <li>해결: 아예 새로운 배열을 할당하면 됨</li>
+</ul>
+
+타입스크립트 에러 is possibly 'undefined'
+<ul>
+  <li>fetch api 응답이 배열만 있으면 []로 초기화하면 되지만, 필드가 여러 개면 기본값을 넣어야 함</li>
+  <li>근데 기본값을 넣으면, 진짜 데이터로 바뀌는 순간의 화면이 어지럽다고 느낌</li>
+  <li>p.s) 게다가 기본값을 만드는 일은 번거롭고, 코드가 복잡해짐</li>
+  <li>fetch api가 완료되기 전에는 로딩 애니메이션을 출력하기로 변경</li>
 </ul>
 
 <a href="https://velog.io/@hyungman304/%ED%86%A0%ED%81%B0-%EB%B3%B4%EA%B4%80-%EC%9C%84%EC%B9%98-%EA%B3%A0%EC%B0%B0">
-  로컬 스토리지와 쿠키 중 고민
+  로컬 스토리지와 쿠키 중 뭘 쓸지 고민 (경우의 수)
 </a>
+
+쿠키
 <ul>
-  <li>xss 위험은 쿠키가 안전 (httpOnly, secure, sameSite)</li>
-  <li>p.s) API 서버에서 응답을 이스케이프하면 안전</li>
-  <li>csrf 위험은 로컬 스토리지가 안전</li>
-  <li>p.s) csrf 토큰은 메모리 필요</li>
-  <li>로컬 스토리지 선택 → 문제는 브라우저에서 API 호출하므로, 관리자 페이지 URL인걸 들킴</li>
-  <li>p.s) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 남기 때문</li>
-  <li>쿠키 방식은 next.js 서버에서 SSR을 통해 API를 미리 호출 가능하여 안 들킴</li>
+  <li>xss 위험은 쿠키가 더 안전 ex) httpOnly, secure, sameSite 속성이 있기 때문</li>
+  <li>근데 쿠키는 csrf 위험이 존재 ex) csrf 토큰 쓰면 돼지만, 메모리 부담</li>
+</ul>
+
+로컬 스토리지
+<ul>
+  <li>xss 방어 속성이 없음. 단, API 서버에서 응답을 이스케이프하면 안전</li>
+  <li>작동 방식상 csrf 위험이 없음</li>  
+  <li>결론은, 쿠키는 메모리가 부담 돼서 로컬 스토리지 사용</li>
+</ul>
+
+로컬 스토리지는 브라우저 스펙이라 CSR만 가능 → 관리자 페이지인걸 들킴
+<ul>
+  <li>로컬 스토리지는 브라우저에서 관리자 API를 호출하여 들킴</li>
+  <li>ex) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 있는걸 보고 유추 가능</li>
+  <li>쿠키 방식은 next.js 서버에서 API를 미리 호출 가능하여 안 들킴 (SSR)</li>
+  <li>그래도 성능상 로컬 스토리지 선택</li>
 </ul>
 
 ### 페이지
@@ -109,6 +151,7 @@ next.js 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
