@@ -144,7 +144,7 @@ export default ({
   function applyCoupon(memberCoupon: MemberCouponType) {
     switch (memberCoupon.type) {
       case "PERCENT_DISCOUNT":
-        setCouponPrice(orderItemsPrice * (memberCoupon.discountValue / 100));
+        setCouponPrice(Math.round(orderItemsPrice * (memberCoupon.discountValue / 100)));
         /*
         setOrderFinalPrice(
           orderItemsPrice * (1 - memberCoupon.discountValue / 100)
