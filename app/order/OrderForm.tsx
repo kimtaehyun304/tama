@@ -145,24 +145,15 @@ export default ({
     switch (memberCoupon.type) {
       case "PERCENT_DISCOUNT":
         setCouponPrice(Math.round(orderItemsPrice * (memberCoupon.discountValue / 100)));
-        /*
-        setOrderFinalPrice(
-          orderItemsPrice * (1 - memberCoupon.discountValue / 100)
-        );
-        */
         break;
       case "FIXED_DISCOUNT":
         setCouponPrice(memberCoupon.discountValue);
-        //setOrderFinalPrice(orderItemsPrice - memberCoupon.discountValue);
         break;
     }
     if (selectedMemberCouponId === memberCoupon.id) {
       setSelectedMemberCouponId(0);
       setCouponPrice(0);
-      /*
-      setOrderPriceAfterCoupon(orderItemsPrice);
-      setOrderFinalPrice(orderItemsPrice);
-      */
+
     } else setSelectedMemberCouponId(memberCoupon.id);
     //쿠폰이 바뀌면 사용한 포인트 폼 재입력 시키기
     setUsedPoint(0);

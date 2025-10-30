@@ -345,14 +345,14 @@ export default ({
         <div className="flex justify-center">
           <span className="">쿠폰</span>
           <span className="grow text-right">
-            {couponPrice > 0 ? -couponPrice.toLocaleString("ko-kr") : 0}원
+            {couponPrice > 0 ? "-" + couponPrice.toLocaleString("ko-kr") : 0}원
           </span>
         </div>
 
         <div className="flex justify-center">
           <span className="">포인트</span>
           <span className="grow text-right">
-            {usedPoint > 0 ? -usedPoint.toLocaleString("ko-kr") : 0}원
+            {usedPoint > 0 ? "-" + usedPoint.toLocaleString("ko-kr") : 0}원
           </span>
         </div>
 
