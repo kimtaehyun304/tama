@@ -216,7 +216,7 @@ export default () => {
                 <span>쿠폰 할인 금액</span>
                 <span className="grow text-right">
                   {order.usedCouponPrice > 0
-                    ? -order.usedCouponPrice.toLocaleString("ko-kr")
+                    ? "-" + order.usedCouponPrice.toLocaleString("ko-kr")
                     : 0}
                   원
                 </span>
@@ -225,7 +225,7 @@ export default () => {
                 <span>적립금 사용</span>
                 <span className="grow text-right">
                   {order.usedPoint > 0
-                    ? -order.usedPoint.toLocaleString("ko-kr")
+                    ? "-" + order.usedPoint.toLocaleString("ko-kr")
                     : 0}
                   원
                 </span>
