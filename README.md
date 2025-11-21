@@ -17,7 +17,7 @@ next.js 렌더링
   <li>서버에서 만들거나 빌드 시점에, 페이지를 미리 만들어 렌더링 속도 향상 (pre-render)</li>
   <li>csr의 경우도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
   <li>첫 접속은 SSR → "localStorage is not defined" 가능성 → 로컬 스토리지 사용은 useEffect에서 하기</li>
-  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic</li>  
+  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic으로 강제</li>  
   <li>폰트 최적화를 위해 로컬 폰트 사용</li>
 </ul>
 
@@ -40,7 +40,7 @@ react-hook-form으로 props 줄이기
 
 typeScript 사용
 <ul>
-  <li>응답 필드 타입을 지정해두니 자동완성이되서 오타날 일이 줄음</li>
+  <li>응답 필드 타입을 지정해두니 자동완성돼서 오타날 일이 줄음</li>
   <li>로컬 스토리지 타입을 써둘 수 있어서 까먹어도 다시 볼 수 있음</li>
 </ul>
 
@@ -151,6 +151,7 @@ useState 배열은 setState로 일부만 바꿀 수 없음
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
