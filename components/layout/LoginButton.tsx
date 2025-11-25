@@ -16,15 +16,15 @@ export default function LoginButton() {
     if (accessToken) {
       const decoded: JwtPayload | string | null = jwt.decode(accessToken);
       const now = Math.floor(Date.now() / 1000); // 초 단위 시간
-
+      // 토큰 만료 검사
       if (
         decoded &&
         typeof decoded !== "string" &&
         decoded.exp !== undefined &&
         decoded.exp < now
       ) {
-        // 만료된 토큰
-        alert("로그인 만료");
+        // 굳이 만료 안띄워도 로그아웃으로 표시되니 괜찮
+        //alert("로그인 만료");
         localStorage.removeItem("tamaAccessToken");
         loginModalContext?.setIsOpenLoginModal(true);
       } else {
