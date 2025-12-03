@@ -86,6 +86,15 @@ react-hook-form으로 props 줄이기
   <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 돼서 편해짐</li>
 </ul>
 
+<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
+  주문 페이지 컴포넌트 분리
+</a>
+<ul>
+  <li>코드가 1,000 줄이 넘어가서 분리</li>
+  <li>page.tsx / 주문 입력 폼 / 주문 아이템 / 주문 버튼 컴포넌트</li>
+  <li>page.tsx에서 컴포넌트에 useState props 전달</li>
+</ul>
+
 typeScript 사용
 <ul>
   <li>응답 필드 타입을 지정해두니 자동완성돼서 오타날 일이 줄음</li>
@@ -96,15 +105,6 @@ tailwind 사용
 <ul>
   <li>next.js가 추천하는 css 프레임워크라 사용 결정</li>
   <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있음</li>
-</ul>
-
-<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
-  주문 페이지 컴포넌트 분리
-</a>
-<ul>
-  <li>코드가 1,000 줄이 넘어가서 분리</li>
-  <li>page.tsx / 주문 입력 폼 / 주문 아이템 / 주문 버튼 컴포넌트</li>
-  <li>page.tsx에서 컴포넌트에 useState props 전달</li>
 </ul>
 
 ### 페이지
@@ -144,6 +144,7 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
