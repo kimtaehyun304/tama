@@ -44,11 +44,11 @@ useState 배열은 setState로 일부만 바꿀 수 없음
   jwt 저장소 고민 (쿠키 vs 로컬 스토리지)
 </a>
 
-1) 쿠키 특징
+쿠키 특징
 - xss 공격으로부터 안전 ex) httpOnly, secure, sameSite
 - csrf 공격으로부터 위험 ex) csrf 토큰을 사용하면 되지만 메모리 필요
 
-2) 로컬 스토리지 특징
+로컬 스토리지 특징
 - xss 공격으로부터 안전 ex) API 서버에서 응답을 이스케이프 하면 안전
 - csrf 공격으로부터 안전
 
@@ -144,5 +144,6 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
