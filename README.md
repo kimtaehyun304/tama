@@ -12,7 +12,7 @@
 next.js 15 앱 라우터, typeScript 5, tailwind 3
 
 ### 문제 해결 고민
-onClick이 useEffect보다 나을 수도 있다
+onClick이 useEffect보다 나았다
 <ul>
   <li>결론! onClick으로 수동으로 주문 수량을 변경하는게 객관적이고 쉽다</li>
   <li>(장바구니 상품을 로컬 스토리지에 저장한 상태)</li>
@@ -144,6 +144,7 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
