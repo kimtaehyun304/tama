@@ -52,7 +52,7 @@ useState 배열은 setState로 일부만 바꿀 수 없음
 - xss 공격으로부터 안전 ex) API 서버에서 응답을 이스케이프 하면 안전
 - csrf 공격으로부터 안전
 
-로컬 스토리지로 결정했지만 만능은 아니다. CSR만 가능하여 관리자 페이지 URL 들킴
+로컬 스토리지로 결정했지만 CSR만 가능하여 관리자 페이지 URL 들킴
 <ul>
   <li>로컬 스토리지는 브라우저에서 관리자 API를 호출하여 들킴</li>
   <li>ex) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 있는걸 보고 유추 가능</li>
@@ -144,6 +144,7 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
