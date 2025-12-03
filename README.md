@@ -35,7 +35,7 @@ useState 배열은 setState로 일부만 바꿀 수 없음
 
 타입스크립트 에러 - is possibly 'undefined'
 <ul>
-  <li>결론! fetch api 완료 전에는 로딩 애니메이션을 출력</li>
+  <li>해결! fetch api 완료 전에는 로딩 애니메이션을 출력</li>
   <li>fetch api 응답이 배열이면 빈 배열로 초기화하면 되지만, 다른 타입이 있으면 기본값 할당 필요</li>
   <li>ㄴ기본값 할당하면 api 데이터로 바뀌는 순간 어지러움 & 번거롭고 코드 복잡</li>
 </ul>
@@ -144,6 +144,7 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
