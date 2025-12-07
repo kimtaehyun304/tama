@@ -151,9 +151,8 @@ export default ({
         break;
     }
     if (selectedMemberCouponId === memberCoupon.id) {
-      setSelectedMemberCouponId(0);
+      setSelectedMemberCouponId(null);
       setCouponPrice(0);
-
     } else setSelectedMemberCouponId(memberCoupon.id);
     //쿠폰이 바뀌면 사용한 포인트 폼 재입력 시키기
     setUsedPoint(0);
@@ -164,7 +163,7 @@ export default ({
   useEffect(() => {
     async function fetchOrderSetUp() {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/order/setup`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/orders/setup`,
         {
           method: "GET",
           headers: {
