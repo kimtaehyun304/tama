@@ -12,13 +12,13 @@
 next.js 15 앱 라우터, typeScript 5, tailwind 3
 
 ### 문제 해결 고민
-onClick이 useEffect보다 나은 경우
+onClick이 useEffect보다 나았다
 <ul>
-  <li>장바구니 상품을 로컬 스토리지에 저장한 상태</li>
+  <li>결론! onClick으로 수동으로 주문 수량을 변경하는게 객관적이고 쉽다</li>
+  <li>(장바구니 상품을 로컬 스토리지에 저장한 상태)</li>
   <li>주문 수량 변경을 자동으로 로컬 스토리지에 반영하기 위해 useEffect 사용</li>
-  <li>그러나.. 로컬 스토리지 useState가 할당됐는지 if문 필요</li>
-  <li>그러나.. 로직이 흩어져 있어서 결과 예측이 잘 안 됨</li>
-  <li>결론은? onClick으로 수동으로 주문 수량을 변경하는게 객관적이고 쉬웠음</li>
+  <li>ㄴ로컬 스토리지의 useState가 할당됐는지 if문 필요</li>
+  <li>ㄴ로직이 흩어져 있어서 결과 예측이 잘 안 됨</li>
 </ul>
 
 useState의 setState는 즉시 적용되지 않음
@@ -35,34 +35,28 @@ useState 배열은 setState로 일부만 바꿀 수 없음
 
 타입스크립트 에러 - is possibly 'undefined'
 <ul>
-  <li>fetch api 응답이 배열만 있으면 []로 초기화하면 되지만, 필드가 여러 개면 기본값을 넣어야 함</li>
-  <li>근데 기본값을 넣으면, api 응답 데이터로 바뀌는 순간의 화면이 어지러움을 유발</li>
-  <li>게다가.. 기본값을 만드는 일은 번거롭고, 코드가 복잡해짐</li>
-  <li>결론은? fetch api가 완료되기 전에는 로딩 애니메이션을 출력하기로 결정</li>
+  <li>결론! fetch api 완료 전에는 로딩 애니메이션을 출력</li>
+  <li>fetch api 응답이 배열이면 빈 배열로 초기화하면 되지만, 다른 타입이 있으면 기본값 할당 필요</li>
+  <li>ㄴ기본값 할당하면 api 데이터로 바뀌는 순간 어지러움 & 번거롭고 코드 복잡</li>
 </ul>
 
 <a href="https://velog.io/@hyungman304/%ED%86%A0%ED%81%B0-%EB%B3%B4%EA%B4%80-%EC%9C%84%EC%B9%98-%EA%B3%A0%EC%B0%B0">
-  로컬 스토리지와 쿠키 중 뭘 쓸지 고민 → 로컬 스토리지 결정! (jwt 보관 위치 고민)
+  jwt 저장소 고민 (쿠키 vs 로컬 스토리지)
 </a>
 
-쿠키
-<ul>
-  <li>xss 위험은 쿠키가 더 안전 ex) httpOnly, secure, sameSite 속성이 있기 때문</li>
-  <li>근데 쿠키는 csrf 위험이 존재 ex) csrf 토큰 쓰면 돼지만, 메모리 부담</li>
-</ul>
+쿠키 특징
+- xss 공격으로부터 안전 ex) httpOnly, secure, sameSite
+- csrf 공격으로부터 위험 ex) csrf 토큰을 사용하면 되지만 메모리 필요
 
-로컬 스토리지
-<ul>
-  <li>xss 방어 속성이 없음. 단, API 서버에서 응답을 이스케이프하면 안전</li>
-  <li>작동 방식상 csrf 위험이 없음</li>  
-</ul>
+로컬 스토리지 특징
+- xss 공격으로부터 안전 ex) API 서버에서 응답을 이스케이프 하면 안전
+- csrf 공격으로부터 안전
 
-다만.. 로컬 스토리지는 브라우저 스펙이라 CSR만 가능 → 관리자 페이지인걸 들킴
+로컬 스토리지로 결정했지만 CSR만 가능하여 관리자 페이지 URL 들킴
 <ul>
   <li>로컬 스토리지는 브라우저에서 관리자 API를 호출하여 들킴</li>
   <li>ex) 응답은 거절되지만, 개발자 도구에서 API 호출 기록이 있는걸 보고 유추 가능</li>
   <li>쿠키 방식은 next.js 서버에서 API를 미리 호출 가능하여 안 들킴 (SSR)</li>
-  <li>그래도 성능상 로컬 스토리지 선택</li>
 </ul>
 
 ### 프로젝트로 얻은 경혐
@@ -92,6 +86,15 @@ react-hook-form으로 props 줄이기
   <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 돼서 편해짐</li>
 </ul>
 
+<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
+  주문 페이지 컴포넌트 분리
+</a>
+<ul>
+  <li>코드가 1,000 줄이 넘어가서 분리</li>
+  <li>page.tsx / 주문 입력 폼 / 주문 아이템 / 주문 버튼 컴포넌트</li>
+  <li>page.tsx에서 컴포넌트에 useState props 전달</li>
+</ul>
+
 typeScript 사용
 <ul>
   <li>응답 필드 타입을 지정해두니 자동완성돼서 오타날 일이 줄음</li>
@@ -102,15 +105,6 @@ tailwind 사용
 <ul>
   <li>next.js가 추천하는 css 프레임워크라 사용 결정</li>
   <li>next.js 공식 사이트에 스타일 컴포넌트는 추천하지 않는다는 글이 있음</li>
-</ul>
-
-<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
-  주문 페이지 컴포넌트 분리
-</a>
-<ul>
-  <li>코드가 1,000 줄이 넘어가서 분리</li>
-  <li>page.tsx / 주문 입력 폼 / 주문 아이템 / 주문 버튼 컴포넌트</li>
-  <li>page.tsx에서 컴포넌트에 useState props 전달</li>
 </ul>
 
 ### 페이지
@@ -150,11 +144,6 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
-
-
-
-
-
 
 
 
