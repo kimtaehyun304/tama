@@ -32,6 +32,7 @@ export default () => {
     useState<boolean>(false);
 
   async function saveAddress() {
+    if (!validateForm()) return;
     if (authContext?.isLogined) {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/address`,
@@ -58,6 +59,51 @@ export default () => {
     } else {
       alert("로그인 해주세요");
     }
+  }
+
+  function validateForm(): boolean {
+    const addressName = addressFormWatch("addressName");
+    const receiverNickname = addressFormWatch("receiverNickname");
+    const receiverPhone = addressFormWatch("receiverPhone");
+    const zoneCode = addressFormWatch("zoneCode");
+    const streetAddress = addressFormWatch("streetAddress");
+
+    function activeModal(message: string) {
+      simpleModalContext?.setMessage(message);
+      simpleModalContext?.setIsOpenSimpleModal(true);
+    }
+
+    if (addressName == "") {
+      activeModal("배송지명을 입력해주세요");
+      return false;
+    }
+
+    if (!receiverNickname) {
+      activeModal("받으시는 분 이름을 입력해주세요");
+      return false;
+    }
+
+    if (!receiverPhone) {
+      activeModal("전화번호를 입력해주세요");
+      return false;
+    }
+
+    if (!/^[0-9]{10,11}$/.test(receiverPhone)) {
+      activeModal("전화번호는 10~11자리 숫자만 가능합니다");
+      return false;
+    }
+
+    if (!zoneCode) {
+      activeModal("우편번호를 입력해주세요");
+      return false;
+    }
+
+    if (!streetAddress) {
+      activeModal("도로명 주소를 입력해주세요");
+      return false;
+    }
+
+    return true;
   }
 
   return (
