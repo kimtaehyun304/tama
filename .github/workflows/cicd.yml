@@ -29,6 +29,13 @@ jobs:
           cp Dockerfile deploy
           cd deploy && zip -r app.zip .
 
+      - name: Get current time
+        uses: josStorer/get-current-time@v2.0.2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss
+          utcOffset: "+09:00"      
+
       - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v20
         with:
