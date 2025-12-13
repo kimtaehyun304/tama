@@ -9,6 +9,18 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
+const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  ORDER_RECEIVED: "주문 접수",
+  IN_DELIVERY: "배송 중",
+  DELIVERED: "배송 완료",
+  COMPLETED: "구매 확정",
+  CANCEL_RECEIVED: "취소 접수",
+  IN_RETURN: "반품 중",
+  RETURNED: "반품 완료",
+  IN_REFUND: "환불 중",
+  REFUNDED: "환불 완료",
+};
+
 export default () => {
   const [orders, setOrders] = useState<OrderResponse>();
   const authContext = useContext(AuthContext);
@@ -75,7 +87,7 @@ export default () => {
     fetchMember();
   }, [authContext?.isLogined]);
 
-  async function cancelOrder(orderId: number) {
+  async function cancelOrder(orderId: number, isFreeOrder: boolean) {
     if (authContext?.isLogined) {
       setCancelOrderDisable(true);
       //FETCH 한 후에 표시하는게 더 적절하지만, 그렇게하면 모달이 안뜨네요
@@ -91,6 +103,7 @@ export default () => {
           },
           body: JSON.stringify({
             orderId: orderId,
+            isFreeOrder: isFreeOrder,
           }),
         }
       );
@@ -106,7 +119,9 @@ export default () => {
           return {
             ...prevOrders,
             content: prevOrders.content.map((order) =>
-              order.id === orderId ? { ...order, status: "CANCEL" } : order
+              order.id === orderId
+                ? { ...order, status: "CANCEL_RECEIVED" }
+                : order
             ),
           };
         });
@@ -115,6 +130,7 @@ export default () => {
     }
   }
 
+  
   if (!orders || !authContext?.isLogined) {
     return <LoginScreen />;
   }
@@ -129,7 +145,7 @@ export default () => {
           <section className="space-y-2 ">
             <div className="flex gap-x-1">
               <div className="font-bold">{order.orderDate}</div>
-              <div>{order.status}</div>
+              <div>{ORDER_STATUS_LABELS[order.status]}</div>
             </div>
             <div>
               ({order.delivery.zipCode}) {order.delivery.street}{" "}
@@ -137,16 +153,6 @@ export default () => {
             </div>
             <div>{order.delivery.message}</div>
           </section>
-
-          {(order.status == "PAYMENT" || order.status == "CHECK") && (
-            <button
-              onClick={() => cancelOrder(order.id)}
-              disabled={cancelOrderDisable}
-              className="border bg-black text-white p-2"
-            >
-              주문 취소
-            </button>
-          )}
 
           {order.orderItems.map((item, index) => (
             <div key={`orderItems-${index}`}>
@@ -166,7 +172,8 @@ export default () => {
                     </div>
                     <div>{item.count}개 주문</div>
                     <div className="text-sm text-[#aaa]">
-                      {item.orderPrice.toLocaleString("ko-kr")}원
+                      {item.count != 1 && "총"}
+                      {(item.orderPrice * item.count).toLocaleString("ko-kr")}원
                     </div>
                   </div>
                 </div>
@@ -185,10 +192,91 @@ export default () => {
               )}
             </div>
           ))}
+
+          <section className="">
+            <div className="inline-block  space-y-1">
+              <div className="flex gap-x-20">
+                <span>상품 금액</span>
+                <span className="grow text-right">
+                  {order.orderItems
+                    .reduce(
+                      (sum, item) => sum + item.orderPrice * item.count,
+                      0
+                    )
+                    .toLocaleString("ko-kr")}
+                  원
+                </span>
+              </div>
+              <div className="flex">
+                <span>배송비</span>
+                <span className="grow text-right">
+                  {order.shippingFee.toLocaleString("ko-kr")}원
+                </span>
+              </div>
+              <div className="flex justify-center">
+                <span>쿠폰 할인 금액</span>
+                <span className="grow text-right">
+                  {order.usedCouponPrice > 0
+                    ? "-" + order.usedCouponPrice.toLocaleString("ko-kr")
+                    : 0}
+                  원
+                </span>
+              </div>
+              <div className="flex justify-center">
+                <span>적립금 사용</span>
+                <span className="grow text-right">
+                  {order.usedPoint > 0
+                    ? "-" + order.usedPoint.toLocaleString("ko-kr")
+                    : 0}
+                  원
+                </span>
+              </div>
+              <div className="flex justify-center">
+                <span className="font-bold">총</span>
+                <span className="grow text-right font-bold">
+                  {(
+                    order.orderItems.reduce(
+                      (sum, item) => sum + item.orderPrice * item.count,
+                      0
+                    ) +
+                    order.shippingFee -
+                    order.usedCouponPrice -
+                    order.usedPoint
+                  ).toLocaleString("ko-kr")}
+                  원
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {(order.status == "ORDER_RECEIVED" ||
+            order.status == "DELIVERED") && (
+            <button
+              onClick={() =>
+                cancelOrder(
+                  order.id,
+                  order.orderItems.reduce(
+                    (sum, item) => sum + item.orderPrice * item.count,
+                    0
+                  ) +
+                    order.shippingFee -
+                    order.usedCouponPrice -
+                    order.usedPoint ==
+                    0
+                )
+              }
+              disabled={cancelOrderDisable}
+              className="border bg-black text-white p-2"
+            >
+              주문 취소
+            </button>
+          )}
         </section>
       ))}
 
-      {!isLoadingFetchOrder && orders.content.length == 0 && <div>주문한 상품이 없습니다</div>}
+      {!isLoadingFetchOrder && orders.content.length == 0 && (
+        <div>주문한 상품이 없습니다</div>
+      )}
 
       <ReviewFormModal
         isOpenModal={isOpenReviewFormModal}

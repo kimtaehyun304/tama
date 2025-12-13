@@ -16,15 +16,20 @@ const geistSans = localFont({
   weight: "100 900",
 });
 */
+
+//로컬 폰트는 외부 요청이 없어 **렌더링 차단(LCP 지연)**이 거의 없음
 const nanumGothic = localFont({
   src: "./fonts/NanumGothic.woff2",
   variable: "--font-nanum-gothic",
+  display: "swap",
+  
 });
 
 const nanumGothicBold = localFont({
   src: "./fonts/NanumGothicBold.woff2",
   style: "bold",
   variable: "--font-nanum-gothic-bold",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

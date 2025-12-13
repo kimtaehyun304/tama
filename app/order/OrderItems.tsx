@@ -7,16 +7,16 @@ type Props = {
   orderItems: StorageItemDetailType[];
   setOrderItems: Dispatch<SetStateAction<StorageItemDetailType[]>>;
   setOrderItemsPrice: Dispatch<SetStateAction<number>>;
-  setOrderTotalPrice: Dispatch<SetStateAction<number>>;
   setOrderName: Dispatch<SetStateAction<string>>;
+  setShippingFee: Dispatch<SetStateAction<number>>;
 };
 
 export default ({
   orderItems,
   setOrderItems,
   setOrderItemsPrice,
-  setOrderTotalPrice,
   setOrderName,
+  setShippingFee,
 }: Props) => {
   //const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -31,11 +31,10 @@ export default ({
         ? JSON.parse(jsonStrOrder)
         : null;
 
+      //주문 완료 이후 뒤로가기로 또는 URL 직접 쳐서 들어오는 경우를 대비
       if (!parsedOrder || parsedOrder.length === 0) {
-        //simpleModalContext?.setMessage("주문할 상품이 없습니다");
-        //simpleModalContext?.setIsOpenSimpleModal(true);
         alert("주문할 상품이 없습니다");
-        router.back();
+        router.push("/myPage/order");
         return;
       }
 
@@ -89,9 +88,9 @@ export default ({
           (orderStorageMap.get(orderItem.sizeStock.id) ?? 0),
       0
     );
-
+    const shippingFee = orderItemsPrice > 40000 ? 0 : 3000;
+    setShippingFee(shippingFee);
     setOrderItemsPrice(orderItemsPrice);
-    setOrderTotalPrice(orderItemsPrice);
 
     setOrderName(
       orderItems.length === 1

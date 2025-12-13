@@ -7,11 +7,9 @@ import Agreements from "./Agreements";
 import { useForm } from "react-hook-form";
 import OrderForm, {
   DELIVERY_MESSAGES,
-  PAY_METHOD_LABELS,
-  PayMethodEng,
 } from "./OrderForm";
 import OrderItems from "./OrderItems";
-import OrderButton from "./OrderButton";
+import OrderButton, { PAY_METHOD_LABELS, PayMethodEng } from "./OrderButton";
 
 export default () => {
   const authContext = useContext(AuthContext);
@@ -52,16 +50,19 @@ export default () => {
 
   const [orderItems, setOrderItems] = useState<StorageItemDetailType[]>([]);
   const [orderItemsPrice, setOrderItemsPrice] = useState<number>(0);
-  const [orderTotalPrice, setOrderTotalPrice] = useState<number>(0);
+
+  //const [orderFinalPrice, setOrderFinalPrice] = useState<number>(0);
+
+  const [shippingFee, setShippingFee] = useState<number>(3000);
   const [orderName, setOrderName] = useState<string>("");
 
   const [selectedPayMethodEng, setSelectedPayMethodEng] =
     useState<PayMethodEng>(PAY_METHOD_LABELS[0].eng);
 
   const [selectedMemberCouponId, setSelectedMemberCouponId] =
-    useState<number>(0);
-
-  const [appliedPoint, setAppliedPoint] = useState<number>(0);
+    useState<number | null>(null);
+  const [couponPrice, setCouponPrice] = useState<number>(0);
+  const [usedPoint, setUsedPoint] = useState<number>(0);
 
   return (
     <article className="xl:mx-standard">
@@ -100,18 +101,19 @@ export default () => {
             senderFormReset={senderFormReset}
             receiverFormReset={receiverFormReset}
             orderItemsPrice={orderItemsPrice}
-            orderTotalPrice={orderTotalPrice}
-            setOrderTotalPrice={setOrderTotalPrice}
-            appliedPoint={appliedPoint}
-            setAppliedPoint={setAppliedPoint}
+            couponPrice={couponPrice}
+            setCouponPrice={setCouponPrice}
+            usedPoint={usedPoint}
+            setUsedPoint={setUsedPoint}
+            shippingFee={shippingFee}
           />
 
           <OrderItems
             orderItems={orderItems}
             setOrderItems={setOrderItems}
             setOrderItemsPrice={setOrderItemsPrice}
-            setOrderTotalPrice={setOrderTotalPrice}
             setOrderName={setOrderName}
+            setShippingFee={setShippingFee}
           />
 
           <OrderButton
@@ -119,11 +121,12 @@ export default () => {
             receiverFormWatch={receiverFormWatch}
             selectedPayMethodEng={selectedPayMethodEng}
             selectedMemberCouponId={selectedMemberCouponId}
-            orderTotalPrice={orderTotalPrice}
+            orderItemsPrice={orderItemsPrice}
             orderName={orderName}
             senderFormSetFocus={senderFormSetFocus}
             receiverFormSetFocus={receiverFormSetFocus}
-            appliedPoint={appliedPoint}
+            couponPrice={couponPrice}
+            usedPoint={usedPoint}
           />
         </>
       )}

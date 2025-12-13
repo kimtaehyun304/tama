@@ -15,13 +15,7 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
-
-export const PAY_METHOD_LABELS = [
-  //{ eng: PayMethodEnum.EASY_PAY, kor: "간편 결제" },
-  { eng: "CARD", kor: "신용/체크카드" },
-  //{ eng: PayMethodEnum.MOBILE, kor: "휴대폰 결제" },
-  { eng: "TRANSFER", kor: "계좌이체" },
-] as const;
+import { PAY_METHOD_LABELS, PayMethodEng } from "./OrderButton";
 
 export const DELIVERY_MESSAGES = [
   "배송 전에 미리 연락 바랍니다.",
@@ -30,8 +24,6 @@ export const DELIVERY_MESSAGES = [
   "부재 시 전화나 문자 주세요.",
   "택배함에 넣어주세요.",
 ];
-
-export type PayMethodEng = (typeof PAY_METHOD_LABELS)[number]["eng"];
 
 type Props = {
   senderFormRegister: UseFormRegister<SenderFormState>;
@@ -44,13 +36,14 @@ type Props = {
   receiverFormReset: UseFormReset<ReceiverFormState>;
   selectedPayMethodEng: PayMethodEng;
   setSelectedPayMethodEng: Dispatch<SetStateAction<PayMethodEng>>;
-  selectedMemberCouponId: number;
-  setSelectedMemberCouponId: Dispatch<SetStateAction<number>>;
+  selectedMemberCouponId: number | null;
+  setSelectedMemberCouponId: Dispatch<SetStateAction<number | null>>;
   orderItemsPrice: number;
-  orderTotalPrice: number;
-  setOrderTotalPrice: Dispatch<SetStateAction<number>>;
-  appliedPoint: number;
-  setAppliedPoint: Dispatch<SetStateAction<number>>;
+  couponPrice: number;
+  setCouponPrice: Dispatch<SetStateAction<number>>;
+  usedPoint: number;
+  setUsedPoint: Dispatch<SetStateAction<number>>;
+  shippingFee: number;
 };
 
 export default ({
@@ -67,10 +60,11 @@ export default ({
   selectedMemberCouponId,
   setSelectedMemberCouponId,
   orderItemsPrice,
-  orderTotalPrice,
-  setOrderTotalPrice,
-  appliedPoint,
-  setAppliedPoint,
+  couponPrice,
+  setCouponPrice,
+  usedPoint,
+  setUsedPoint,
+  shippingFee,
 }: Props) => {
   const authContext = useContext(AuthContext);
   const [isOpenMemberAddressModal, setIsOpenMemberAddressModal] =
@@ -84,7 +78,7 @@ export default ({
   const [isSelfDeliveryMsg, setIsSelfDeliveryMsg] = useState<boolean>(false);
 
   const [isDisabled, setIsDisabled] = useState(false);
-  const [orderPriceAfterCoupon, setOrderPriceAfterCoupon] = useState<number>(0);
+  //const [orderPriceAfterCoupon, setOrderPriceAfterCoupon] = useState<number>(0);
 
   const [memberCoupons, setMemberCoupons] = useState<MemberCouponType[]>([]);
   const [memberPoint, setMemberPoint] = useState<number>(0);
@@ -150,24 +144,18 @@ export default ({
   function applyCoupon(memberCoupon: MemberCouponType) {
     switch (memberCoupon.type) {
       case "PERCENT_DISCOUNT":
-        setOrderPriceAfterCoupon(
-          orderItemsPrice * (1 - memberCoupon.discountValue / 100)
-        );
-        setOrderTotalPrice(
-          orderItemsPrice * (1 - memberCoupon.discountValue / 100)
-        );
+        setCouponPrice(Math.round(orderItemsPrice * (memberCoupon.discountValue / 100)));
         break;
       case "FIXED_DISCOUNT":
-        setOrderPriceAfterCoupon(orderItemsPrice - memberCoupon.discountValue);
-        setOrderTotalPrice(orderItemsPrice - memberCoupon.discountValue);
+        setCouponPrice(memberCoupon.discountValue);
         break;
     }
     if (selectedMemberCouponId === memberCoupon.id) {
-      setSelectedMemberCouponId(0);
-      setOrderPriceAfterCoupon(orderItemsPrice);
-      setOrderTotalPrice(orderItemsPrice);
+      setSelectedMemberCouponId(null);
+      setCouponPrice(0);
     } else setSelectedMemberCouponId(memberCoupon.id);
-    setAppliedPoint(0);
+    //쿠폰이 바뀌면 사용한 포인트 폼 재입력 시키기
+    setUsedPoint(0);
   }
 
   //전역 객체 할당 딜레이 때문에 필요
@@ -175,7 +163,7 @@ export default ({
   useEffect(() => {
     async function fetchOrderSetUp() {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/order/setup`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/member/orders/setup`,
         {
           method: "GET",
           headers: {
@@ -485,36 +473,48 @@ export default ({
               type="text"
               className="border p-3 grow"
               placeholder="사용할 포인트"
-              value={appliedPoint ?? ""}
+              value={usedPoint ?? ""}
               onChange={(event) => {
-                const appliedPointValue = Number(
+                const usedPointValue = Number(
                   event.target.value.replace(/\D/g, "")
                 ); // 숫자 이외의 문자 제거
 
-                if (memberPoint < appliedPointValue) {
+                if (memberPoint < usedPointValue) {
                   alert("보유한 포인트보다 넘게 사용할 수 없습니다");
                   return;
                 }
 
-                if (orderPriceAfterCoupon < appliedPointValue) {
+                if (
+                  orderItemsPrice + shippingFee - couponPrice <
+                  usedPointValue
+                ) {
                   alert("주문 가격이 넘게 포인트를 사용할 수 없습니다");
                   return;
                 }
 
-                setOrderTotalPrice(orderPriceAfterCoupon);
-                setOrderTotalPrice((prev) => prev - appliedPointValue);
-                setAppliedPoint(appliedPointValue);
+                setUsedPoint(usedPointValue);
               }}
             />
             <button
               className="bg-[#131922] text-[#fff] border p-3 whitespace-nowrap disabled:bg-gray-500 disabled:text-gray-300"
               onClick={() => {
+<<<<<<< HEAD
                 const availablePoint = Math.min(memberPoint, orderTotalPrice);
+=======
+                const availablePoint = Math.min(
+                  memberPoint,
+                  orderItemsPrice + shippingFee - couponPrice
+                );
+>>>>>>> fe049d352348d488b2afcc12483a98199ed4be55
 
-                setAppliedPoint(availablePoint);
-                setOrderTotalPrice((prev) => prev - availablePoint);
+                setUsedPoint(availablePoint);
               }}
-              disabled={Math.min(memberPoint, orderTotalPrice) === 0}
+              disabled={
+                Math.min(
+                  memberPoint,
+                  orderItemsPrice + shippingFee - (couponPrice + usedPoint)
+                ) === 0
+              }
             >
               전액 사용
             </button>
@@ -524,7 +524,7 @@ export default ({
         {/*안내 문구*/}
         <div className="p-[2%] ">
           <ul>
-            <li>* 배송비에는 적용되지 않습니다</li>
+            <li>* 배송비에는 쿠폰 할인이 적용되지 않습니다</li>
           </ul>
         </div>
       </section>
