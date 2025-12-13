@@ -498,14 +498,10 @@ export default ({
             <button
               className="bg-[#131922] text-[#fff] border p-3 whitespace-nowrap disabled:bg-gray-500 disabled:text-gray-300"
               onClick={() => {
-<<<<<<< HEAD
-                const availablePoint = Math.min(memberPoint, orderTotalPrice);
-=======
                 const availablePoint = Math.min(
                   memberPoint,
                   orderItemsPrice + shippingFee - couponPrice
                 );
->>>>>>> fe049d352348d488b2afcc12483a98199ed4be55
 
                 setUsedPoint(availablePoint);
               }}
