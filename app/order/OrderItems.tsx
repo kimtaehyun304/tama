@@ -82,7 +82,7 @@ export default ({
   useEffect(() => {
     if (orderItems.length === 0) return;
 
-    let orderItemsPrice: number = orderItems.reduce(
+    const orderItemsPrice: number = orderItems.reduce(
       (total, orderItem) =>
         total +
         (orderItem.nowPrice ?? orderItem.originalPrice) *

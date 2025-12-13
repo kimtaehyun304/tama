@@ -508,7 +508,7 @@ export default ({
             />
             <button
               className="bg-[#131922] text-[#fff] border p-3 whitespace-nowrap disabled:bg-gray-500 disabled:text-gray-300"
-              onClick={(event) => {
+              onClick={() => {
                 const availablePoint = Math.min(memberPoint, orderTotalPrice);
 
                 setAppliedPoint(availablePoint);
