@@ -27,7 +27,7 @@ useState의 setState는 즉시 적용되지 않음
   <li>해결: prev 또는 input tag event.value를 활용하면 즉시 적용됨</li>
 </ul>
 
-useState 배열은 setState로 일부만 바꿀 수 없음
+useState 배열은 일부 원소만 바꿀 수 없음
 <ul>
   <li>원인: 성능을 위해 참조만 비교해, 변경 여부를 판단하기 때문</li>
   <li>해결: 아예 새로운 배열을 만들어서 할당하면 됨</li>
@@ -144,6 +144,7 @@ tailwind 사용
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
 
 
 
