@@ -30,6 +30,7 @@ tailwind
 * try-catch 대용으로 error.tsx 사용
 * 자동 로딩바 출력을 위해 loading.tsx 사용
 * 공통 레이아웃을 위해 layout.tsx 사용
+* 매번 랜더링마다 jwt 유효기간 확인
 * standalone 빌드
 
 ### 트러블 슈팅
@@ -86,12 +87,13 @@ react-hook-form으로 props 줄이기
 <ul>
   <li>최대한 pre-render 활용</li>
   <li>csr 환경도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
-  <li>서버 컴포넌트가 SSR 적용 안될 때 → force-dynamic으로 강제</li>  
+  <li>서버 컴포넌트가 SSR로 미동작 → force-dynamic으로 SSR 강제</li>  
   <li>웹 폰트 → 로컬 폰트 변경</li>
   <li>이미지 크기 절약 - next.js Image 컴포넌트 사용</li>
   <li>이미지 캐싱 - cdn(aws cloudFront) 사용</li>
 </ul>
 
+### 인증 고민
 <a href="https://velog.io/@hyungman304/%ED%86%A0%ED%81%B0-%EB%B3%B4%EA%B4%80-%EC%9C%84%EC%B9%98-%EA%B3%A0%EC%B0%B0">
   jwt 저장소 고민 (쿠키 vs 로컬 스토리지)
 </a>
@@ -148,3 +150,4 @@ react-hook-form으로 props 줄이기
 <p align="center">
 <img src="https://github.com/user-attachments/assets/3987367e-4403-4355-9e77-7a3fedacd27b" />
 </p>
+
