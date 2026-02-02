@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
@@ -58,10 +57,10 @@ export default function ItemSlider({ uploadFiles }) {
             className="relative w-full h-[400px] xl:h-[600px]"
             key={`item-${index}`}
           >
-            <Image
+            <img
               src={`${process.env.NEXT_PUBLIC_CDN_URL}/${uploadFile.storedFileName}`}
               alt={uploadFile.originalFileName}
-              fill
+              className="w-full h-full object-cover"
             />
           </div>
         ))}
@@ -83,10 +82,9 @@ export default function ItemSlider({ uploadFiles }) {
         {uploadFiles.map((uploadFile, index) => (
           <div className="pr-1" key={`item-detail-${index}`}>
             <div className="w-[100px] h-[100px] relative">
-              <Image
+              <img
                 src={`${process.env.NEXT_PUBLIC_CDN_URL}/${uploadFile.storedFileName}`}
                 alt={uploadFile.originalFileName}
-                fill
                 className={`object-contain ${
                   activeIndex === index ? "border border-black" : ""
                 }`}

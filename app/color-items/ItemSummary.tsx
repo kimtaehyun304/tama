@@ -48,7 +48,7 @@ export default ({ colorItem }: Props) => {
     if (jsonString) {
       const jsons: StorageItemType[] = JSON.parse(jsonString);
       const foundIndex = jsons.findIndex(
-        (json) => json.colorItemSizeStockId === itemToPut.colorItemSizeStockId
+        (json) => json.colorItemSizeStockId === itemToPut.colorItemSizeStockId,
       );
 
       if (foundIndex === -1) jsons.push(itemToPut);
@@ -120,7 +120,7 @@ export default ({ colorItem }: Props) => {
             <span className="font-semibold text-3xl text-[#d99c63]">
               {100 -
                 Math.round(
-                  (colorItem.nowPrice / colorItem.originalPrice) * 100
+                  (colorItem.nowPrice / colorItem.originalPrice) * 100,
                 )}
               %
             </span>
@@ -219,10 +219,9 @@ export default ({ colorItem }: Props) => {
                     key={`relatedItem-${index}`}
                   >
                     <div className="w-[50px] h-[50px] relative bg-gray-100">
-                      <Image
+                      <img
                         src={`${process.env.NEXT_PUBLIC_CDN_URL}/${related.uploadFile.storedFileName}`}
                         alt={related.color}
-                        fill
                         className={
                           related.id === colorItem.id
                             ? "object-contain border-[1px] border-black"
@@ -235,7 +234,7 @@ export default ({ colorItem }: Props) => {
               </div>
             </div>
           </div>
-          
+
           {/*구매 옵션 */}
           <div className="flex justify-between">
             <div className="font-semibold">옵션</div>
@@ -294,7 +293,7 @@ export default ({ colorItem }: Props) => {
                 {colorItem.nowPrice
                   ? (colorItem.nowPrice * orderCount).toLocaleString("ko-KR")
                   : (colorItem.originalPrice * orderCount).toLocaleString(
-                      "ko-KR"
+                      "ko-KR",
                     )}
               </span>
               원
