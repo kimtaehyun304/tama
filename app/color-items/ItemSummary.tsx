@@ -219,7 +219,7 @@ export default ({ colorItem }: Props) => {
                     key={`relatedItem-${index}`}
                   >
                     <div className="w-[50px] h-[50px] relative bg-gray-100">
-                      <img
+                      <Image
                         src={`${process.env.NEXT_PUBLIC_CDN_URL}/${related.uploadFile.storedFileName}`}
                         alt={related.color}
                         className={
@@ -227,6 +227,8 @@ export default ({ colorItem }: Props) => {
                             ? "object-contain border-[1px] border-black"
                             : "object-contain"
                         }
+                        fill
+                        unoptimized
                       />
                     </div>
                   </Link>

@@ -16,10 +16,10 @@ const defaultReview: ReviewType = {
   avgRating: 0,
   content: [],
   page: {
-    page: 1,
-    size: 10,
-    pageCount: 1,
-    rowCount: 1,
+    page: 0,
+    size: 0,
+    pageCount: 0,
+    rowCount: 0,
   },
 };
 

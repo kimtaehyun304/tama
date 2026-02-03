@@ -1,9 +1,11 @@
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 // 타입스크립트로하니까 에러 못잡겠습니다 2024-12-20
+
 
 function HiddenNextArrow(props) {
   const { className, style, onClick } = props;
@@ -57,10 +59,11 @@ export default function ItemSlider({ uploadFiles }) {
             className="relative w-full h-[400px] xl:h-[600px]"
             key={`item-${index}`}
           >
-            <img
+            <Image
               src={`${process.env.NEXT_PUBLIC_CDN_URL}/${uploadFile.storedFileName}`}
               alt={uploadFile.originalFileName}
-              className="w-full h-full object-cover"
+              fill
+              unoptimized
             />
           </div>
         ))}
@@ -82,12 +85,14 @@ export default function ItemSlider({ uploadFiles }) {
         {uploadFiles.map((uploadFile, index) => (
           <div className="pr-1" key={`item-detail-${index}`}>
             <div className="w-[100px] h-[100px] relative">
-              <img
+              <Image
                 src={`${process.env.NEXT_PUBLIC_CDN_URL}/${uploadFile.storedFileName}`}
                 alt={uploadFile.originalFileName}
                 className={`object-contain ${
                   activeIndex === index ? "border border-black" : ""
                 }`}
+                fill
+                unoptimized
               />
             </div>
           </div>
