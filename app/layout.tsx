@@ -22,7 +22,6 @@ const nanumGothic = localFont({
   src: "./fonts/NanumGothic.woff2",
   variable: "--font-nanum-gothic",
   display: "swap",
-  
 });
 
 const nanumGothicBold = localFont({
@@ -36,6 +35,21 @@ export const metadata: Metadata = {
   title: {
     template: "TAMA %s",
     default: "TAMA", // 템플릿을 설정할때 default는 필수 요소입니다.
+  },
+  description: "옷을 판매하는 쇼핑몰입니다",
+  openGraph: {
+    type: "website",
+    title: "TAMA",
+    description: "옷을 판매하는 쇼핑몰입니다",
+    url: "https://dlta.kr",
+    images: [
+      {
+        url: "/tama_panel.png",
+        width: 800,
+        height: 600,
+        alt: "대표 이미지",
+      },
+    ],
   },
 };
 

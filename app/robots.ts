@@ -28,6 +28,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: "/",
       },
     ],
-    sitemap: "https://example.com/sitemap.xml",
+    sitemap: "https://dlta.kr/sitemap.xml",
   };
 }
