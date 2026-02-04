@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import LoginModal from "@/components/modal/LoginModal";
 import SimpleModal from "@/components/modal/SimpleModal";
+import Script from "next/script";
 /*
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -60,6 +61,25 @@ export default function RootLayout({
 }>) {
   return (
     <html>
+      <head>
+        {/* GA4 gtag.js */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZQS95P54WT"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-ZQS95P54WT');
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${nanumGothic.className} ${nanumGothicBold.variable} flex flex-col h-[100vh] overflow-y-scroll`}
       >
