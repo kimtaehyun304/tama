@@ -2,7 +2,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-#ENV NODE_ENV=production
+#benastalk 환경에선 자동으로 설정 
+ENV NODE_ENV=production
 
 COPY ./ ./          
 RUN [ -f Dockerfile ] && rm Dockerfile || true
