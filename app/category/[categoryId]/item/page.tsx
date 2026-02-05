@@ -497,6 +497,7 @@ export default () => {
                     alt={item.name}
                     width={232}
                     height={232}
+                    unoptimized
                   />
                 </Link>
                 <div className="pt-3">

@@ -142,6 +142,7 @@ export default () => {
                     alt={item.name}
                     width={100}
                     height={100}
+                    unoptimized
                   />
 
                   <div className="flex flex-col gap-y-2 flex-1">
