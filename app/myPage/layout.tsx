@@ -16,7 +16,7 @@ export default function MyPageLayout({ children }: { children: ReactNode }) {
       const token = localStorage.getItem("tamaAccessToken");
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/isAdmin`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/auth/isAdmin`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

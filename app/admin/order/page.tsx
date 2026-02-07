@@ -7,7 +7,6 @@ import MyPagination from "@/components/MyPagination";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import MenuList from "../MenuList";
 
 export default () => {
   const [orders, setOrders] = useState<AdminOrderResponse>();
@@ -30,7 +29,7 @@ export default () => {
               Authorization:
                 "Bearer " + localStorage.getItem("tamaAccessToken"),
             },
-          }
+          },
         );
         const ordersJson = await res.json();
         if (!res.ok) {
@@ -59,7 +58,7 @@ export default () => {
             orderId: orderId,
             isFreeOrder: isFreeOrder,
           }),
-        }
+        },
       );
       const ordersJson: SimpleResponseType = await res.json();
       simpleModalContext?.setMessage(ordersJson.message);
@@ -74,7 +73,7 @@ export default () => {
             content: prevOrders.content.map((order) =>
               order.id === orderId
                 ? { ...order, status: "CANCEL_RECEIVED" }
-                : order
+                : order,
             ),
           };
         });
@@ -89,84 +88,78 @@ export default () => {
   }
 
   return (
-    <article className="xl:mx-32 m-[2%] xl:flex xl:gap-16">
-      <MenuList />
-      <section className="space-y-4">
-        <div className="font-bold text-xl">주문/배송 조회</div>
-        {orders.content.map((order, index) => (
-          <section className="border p-4 space-y-2" key={`order-${index}`}>
-            <section className="space-y-2 ">
-              <div className="flex gap-x-1">
-                <div className="font-bold">{order.orderDate}</div>
-                <div>{order.status}</div>
-              </div>
-              <div>{order.buyerName}</div>
-              <div>
-                ({order.delivery.zipCode}) {order.delivery.street}{" "}
-                {order.delivery.detail}
-              </div>
-              <div>{order.delivery.message}</div>
-            </section>
+    <section className="space-y-4">
+      <div className="font-bold text-xl">주문/배송 조회</div>
+      {orders.content.map((order, index) => (
+        <section className="border p-4 space-y-2" key={`order-${index}`}>
+          <section className="space-y-2 ">
+            <div className="flex gap-x-1">
+              <div className="font-bold">{order.orderDate}</div>
+              <div>{order.status}</div>
+            </div>
+            <div>{order.buyerName}</div>
+            <div>
+              ({order.delivery.zipCode}) {order.delivery.street}{" "}
+              {order.delivery.detail}
+            </div>
+            <div>{order.delivery.message}</div>
+          </section>
 
-            {(order.status == "ORDER_RECEIVED" ||
-              order.status == "DELIVERED") && (
-              <button
-                onClick={() =>
-                  cancelOrder(
-                    order.id,
-                    order.orderItems.reduce(
-                      (sum, item) => sum + item.orderPrice * item.count,
-                      0
-                    ) +
-                      order.shippingFee -
-                      order.usedCouponPrice -
-                      order.usedPoint ==
-                      0
-                  )
-                }
-                className="border bg-black text-white p-2"
-                disabled={cancelOrderDisable}
+          {(order.status == "ORDER_RECEIVED" ||
+            order.status == "DELIVERED") && (
+            <button
+              onClick={() =>
+                cancelOrder(
+                  order.id,
+                  order.orderItems.reduce(
+                    (sum, item) => sum + item.orderPrice * item.count,
+                    0,
+                  ) +
+                    order.shippingFee -
+                    order.usedCouponPrice -
+                    order.usedPoint ==
+                    0,
+                )
+              }
+              className="border bg-black text-white p-2"
+              disabled={cancelOrderDisable}
+            >
+              주문 취소
+            </button>
+          )}
+
+          <div className="grid xl:grid-cols-2 gap-3">
+            {order.orderItems.map((item, index) => (
+              <div
+                className="border flex gap-x-4 p-2"
+                key={`orderItems-${index}`}
               >
-                주문 취소
-              </button>
-            )}
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
+                  alt={item.name}
+                  width={100}
+                  height={100}
+                  unoptimized
+                />
 
-            <div className="grid xl:grid-cols-2 gap-3">
-              {order.orderItems.map((item, index) => (
-                <div
-                  className="border flex gap-x-4 p-2"
-                  key={`orderItems-${index}`}
-                >
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}
-                    alt={item.name}
-                    width={100}
-                    height={100}
-                    unoptimized
-                  />
-
-                  <div className="flex flex-col gap-y-2 flex-1">
+                <div className="flex flex-col gap-y-2 flex-1">
+                  <div>
+                    <div>{item.name}</div>
                     <div>
-                      <div>{item.name}</div>
-                      <div>
-                        {item.color}/{item.size}
-                      </div>
-                      <div>{item.count}개 주문</div>
+                      {item.color}/{item.size}
                     </div>
-                    <div className="text-sm text-[#aaa]">
-                      {item.orderPrice.toLocaleString("ko-kr")}원
-                    </div>
+                    <div>{item.count}개 주문</div>
+                  </div>
+                  <div className="text-sm text-[#aaa]">
+                    {item.orderPrice.toLocaleString("ko-kr")}원
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-        ))}
-        <MyPagination
-          pageCount={orders.page.pageCount}
-          pageRangeDisplayed={5}
-        />
-      </section>
-    </article>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+      <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
+    </section>
   );
 };

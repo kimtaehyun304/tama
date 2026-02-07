@@ -2,7 +2,6 @@
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import React, { useContext, useState } from "react";
-import MenuList from "../MenuList";
 import ItemSummaryForm from "./ItemSummaryForm";
 import ItemDetailForm from "./ItemDetailForm";
 import { useForm } from "react-hook-form";
@@ -148,7 +147,7 @@ export default () => {
       if (
         !stocks.length ||
         stocks.some((stockArr) =>
-          stockArr.some((stock) => isNaN(stock) || stock < 0)
+          stockArr.some((stock) => isNaN(stock) || stock < 0),
         )
       ) {
         alert("재고 정보를 올바르게 입력해주세요. (0 이상의 숫자만 허용)");
@@ -167,7 +166,7 @@ export default () => {
           size,
           stock: stocks[colorIndex]?.[sizeIndex] ?? 0,
         })),
-      })
+      }),
     );
 
     // 상품 저장 API 호출
@@ -194,7 +193,7 @@ export default () => {
           precaution: itemDetailWatch("precaution"),
           colorItems,
         }),
-      }
+      },
     );
 
     if (savedItemRes.status !== 201) {
@@ -212,13 +211,13 @@ export default () => {
         if (savedColorItemId) {
           formData.append(
             `requests[${index}].colorItemId`,
-            savedColorItemId.toString()
+            savedColorItemId.toString(),
           );
         }
         itemColorIdImageWatch("files")[index]?.forEach((file) => {
           formData.append(`requests[${index}].files`, file);
         });
-      }
+      },
     );
 
     const savedImageRes = await fetch(
@@ -229,7 +228,7 @@ export default () => {
           Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
         },
         body: formData,
-      }
+      },
     );
 
     if (!savedImageRes.ok) {
@@ -243,115 +242,112 @@ export default () => {
   }
 
   return (
-    <article className="xl:mx-32 m-[2%] flex flex-wrap gap-x-16 gap-y-4 justify-center xl:justify-start">
-      <MenuList />
-      <article className="grow">
-        <div className="font-bold text-xl text-center p-3">상품 등록</div>
+    <article className="grow">
+      <div className="font-bold text-xl text-center p-3">상품 등록</div>
 
-        <section className="flex flex-wrap gap-x-10">
-          <ItemSummaryForm
-            register={itemSummaryRegister}
-            watch={itemSummaryWatch}
-            control={itemSummaryControl}
-            setValue={itemSummarySetValue}
-          />
-          <ItemDetailForm register={itemDetailRegister} />
-        </section>
+      <section className="flex flex-wrap gap-x-10">
+        <ItemSummaryForm
+          register={itemSummaryRegister}
+          watch={itemSummaryWatch}
+          control={itemSummaryControl}
+          setValue={itemSummarySetValue}
+        />
+        <ItemDetailForm register={itemDetailRegister} />
+      </section>
 
-        {/* 색상 & 이미지 & 사이즈*/}
-        <section className="flex flex-wrap gap-x-10">
-          {/* 색상 & 이미지*/}
-          <ItemColorIdImageForm
-            watch={itemColorIdImageWatch}
-            colorMap={colorMap}
-            setColorMap={setColorMap}
-            setValue={itemColorIdImageWatchSetValue}
-          />
-          {/* 사이즈 */}
-          <section>
-            <div className="font-bold text-2xl p-[1%] ">사이즈</div>
-            <button
-              onClick={() => {
-                setSizes((prev) => [...prev, ""]);
-              }}
-              className="border p-3"
-            >
-              사이즈 추가
-            </button>
-            {sizes.map((size, index) => (
-              <React.Fragment key={`selectedColorId-${index}`}>
-                <label className="flex items-center flex-wrap gap-y-3 p-3">
-                  <div className="w-32">{`사이즈${index + 1}`}</div>
-                  <input
-                    type="text"
-                    placeholder="S(100)"
-                    className="border p-3"
-                    value={size}
-                    onChange={(event) =>
-                      setSizes((prev) => {
-                        const newSizes = [...prev];
-                        newSizes[index] = event.target.value;
-                        return newSizes;
-                      })
-                    }
-                  />
-                </label>
-              </React.Fragment>
-            ))}
-          </section>
-        </section>
-
-        {/*재고 */}
+      {/* 색상 & 이미지 & 사이즈*/}
+      <section className="flex flex-wrap gap-x-10">
+        {/* 색상 & 이미지*/}
+        <ItemColorIdImageForm
+          watch={itemColorIdImageWatch}
+          colorMap={colorMap}
+          setColorMap={setColorMap}
+          setValue={itemColorIdImageWatchSetValue}
+        />
+        {/* 사이즈 */}
         <section>
-          <div className="font-bold text-2xl p-[1%] ">재고</div>
-
-          {itemColorIdImageWatch("selectedColorIds").map(
-            (selectedColorId, index) => (
-              <React.Fragment key={`selectedColorIds-${index}`}>
-                {sizes.map((size, sizeIndex) => (
-                  <React.Fragment key={`size-${sizeIndex}`}>
-                    <label className="flex items-center flex-wrap gap-3 border-b p-3">
-                      <div>
-                        {`${
-                          selectedColorId
-                            ? colorMap?.get(selectedColorId)
-                            : "색상 미정"
-                        } / ${size || "사이즈 미정"}`}
-                      </div>
-
-                      <input
-                        type="number"
-                        min="1"
-                        className="border p-3"
-                        placeholder={"재고"}
-                        onChange={(event) => {
-                          // setStocks 함수가 재고 값을 업데이트하도록 해야 합니다.
-                          setStocks((prevStocks) => {
-                            // 새로운 재고 값을 입력한 경우, prevStocks에서 적절히 변경할 항목을 찾아 업데이트합니다.
-                            const updatedStocks = [...prevStocks];
-                            updatedStocks[index] = updatedStocks[index] || []; // index에 맞는 항목이 없으면 빈 배열로 초기화
-                            updatedStocks[index][sizeIndex] = Number(
-                              event.target.value
-                            ); // 해당 색상 및 사이즈에 대한 재고 업데이트
-                            return updatedStocks;
-                          });
-                        }}
-                      />
-                    </label>
-                  </React.Fragment>
-                ))}
-              </React.Fragment>
-            )
-          )}
-
+          <div className="font-bold text-2xl p-[1%] ">사이즈</div>
           <button
-            onClick={saveItem}
-            className="bg-black text-white border p-3 block mx-auto"
+            onClick={() => {
+              setSizes((prev) => [...prev, ""]);
+            }}
+            className="border p-3"
           >
-            상품 등록
+            사이즈 추가
           </button>
+          {sizes.map((size, index) => (
+            <React.Fragment key={`selectedColorId-${index}`}>
+              <label className="flex items-center flex-wrap gap-y-3 p-3">
+                <div className="w-32">{`사이즈${index + 1}`}</div>
+                <input
+                  type="text"
+                  placeholder="S(100)"
+                  className="border p-3"
+                  value={size}
+                  onChange={(event) =>
+                    setSizes((prev) => {
+                      const newSizes = [...prev];
+                      newSizes[index] = event.target.value;
+                      return newSizes;
+                    })
+                  }
+                />
+              </label>
+            </React.Fragment>
+          ))}
         </section>
-      </article>
+      </section>
+
+      {/*재고 */}
+      <section>
+        <div className="font-bold text-2xl p-[1%] ">재고</div>
+
+        {itemColorIdImageWatch("selectedColorIds").map(
+          (selectedColorId, index) => (
+            <React.Fragment key={`selectedColorIds-${index}`}>
+              {sizes.map((size, sizeIndex) => (
+                <React.Fragment key={`size-${sizeIndex}`}>
+                  <label className="flex items-center flex-wrap gap-3 border-b p-3">
+                    <div>
+                      {`${
+                        selectedColorId
+                          ? colorMap?.get(selectedColorId)
+                          : "색상 미정"
+                      } / ${size || "사이즈 미정"}`}
+                    </div>
+
+                    <input
+                      type="number"
+                      min="1"
+                      className="border p-3"
+                      placeholder={"재고"}
+                      onChange={(event) => {
+                        // setStocks 함수가 재고 값을 업데이트하도록 해야 합니다.
+                        setStocks((prevStocks) => {
+                          // 새로운 재고 값을 입력한 경우, prevStocks에서 적절히 변경할 항목을 찾아 업데이트합니다.
+                          const updatedStocks = [...prevStocks];
+                          updatedStocks[index] = updatedStocks[index] || []; // index에 맞는 항목이 없으면 빈 배열로 초기화
+                          updatedStocks[index][sizeIndex] = Number(
+                            event.target.value,
+                          ); // 해당 색상 및 사이즈에 대한 재고 업데이트
+                          return updatedStocks;
+                        });
+                      }}
+                    />
+                  </label>
+                </React.Fragment>
+              ))}
+            </React.Fragment>
+          ),
+        )}
+
+        <button
+          onClick={saveItem}
+          className="bg-black text-white border p-3 block mx-auto"
+        >
+          상품 등록
+        </button>
+      </section>
     </article>
   );
 };
