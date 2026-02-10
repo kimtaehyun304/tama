@@ -9,6 +9,9 @@ import {
   Tooltip,
   Legend,
   Title,
+  BarController,
+  LineController,
+  DoughnutController,
 } from "chart.js";
 
 ChartJS.register(
@@ -18,7 +21,10 @@ ChartJS.register(
   LineElement,
   PointElement,
   ArcElement,
+  BarController,
+  LineController,
+  DoughnutController,
   Tooltip,
   Legend,
-  Title
+  Title,
 );
