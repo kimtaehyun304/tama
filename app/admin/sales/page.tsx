@@ -1,49 +1,75 @@
 "use client";
 
-import { useContext, useState } from "react";
-import AddressForm from "./AddressForm";
-import AddressList from "./AddressList";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/components/context/AuthContext";
 import LoginScreen from "@/components/LoginScreen";
+import MonthlySalesChart from "@/components/chart/MonthlySalesChart";
+import CategorySalesChart from "@/components/chart/CategorySalesChart";
 
 export default () => {
-  const BUTTONS_STR = ["배송지 추가", "배송지 목록"];
-  const [activeButton, setActiveButton] = useState<string>(BUTTONS_STR[0]);
   const authContext = useContext(AuthContext);
+  const [monthlySales, setMonthlySales] = useState<MonthSale[]>([]);
+  const [parentCategorySales, setParentCategorySales] = useState<
+    CategorySale[]
+  >([]);
+  // 오늘 날짜
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // 월은 0~11
+  const defaultValue = `${year}-${month}`;
 
-  function getComponent(activeButton: string) {
-    switch (activeButton) {
-      case "배송지 추가":
-        return <AddressForm />;
-      case "배송지 목록":
-        return <AddressList />;
-    }
-  }
+  const [selectedMonth, setSelectedMonth] = useState(defaultValue);
 
   if (!authContext?.isLogined) {
     return <LoginScreen />;
   }
 
-  return (
-    
-    <section className="space-y-4 grow">
-      <div className="flex">
-        {BUTTONS_STR.map((button, index) => (
-          <button
-            onClick={() => {
-              setActiveButton(button);
-            }}
-            className={`border-b p-3 grow ${
-              activeButton == button && "border-black font-bold"
-            }`}
-            key={`button-${index}`}
-          >
-            {button}
-          </button>
-        ))}
-      </div>
+  async function fetchMonthlySales() {
+    if (authContext?.isLogined) {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/sales?yearMonth=${selectedMonth}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
+          },
+        },
+      );
+      const resJson: AdminSalesResponse = await res.json();
+      if (!res.ok) return;
+      setMonthlySales(resJson.monthSales);
+      setParentCategorySales(resJson.categorySales);
+    }
+  }
+  useEffect(() => {
+    fetchMonthlySales();
+  }, [authContext?.isLogined]);
 
-      {getComponent(activeButton)}
+  return (
+    <section className="grow">
+      <div className="flex items-center gap-2">
+        <input
+          type="month"
+          className="border rounded px-2 py-1"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+        />
+        <button
+          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+          onClick={() => fetchMonthlySales()} 
+        >
+          검색
+        </button>
+      </div>
+      <section className="flex flex-col md:flex-row gap-4">
+        <div className="flex-1">
+          <MonthlySalesChart data={monthlySales} />
+        </div>
+        <div className="flex-1">
+          <CategorySalesChart data={parentCategorySales} />
+        </div>
+      </section>
     </section>
   );
 };

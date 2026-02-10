@@ -5,9 +5,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default () => {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>();
-  const [categoryBestItems, setCategoryBestItems] =useState<CategoryBestItemType[]>();
-  const [parentCategories, setParentCategories] = useState<BaseCateogoryType[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    number | undefined
+  >();
+  const [categoryBestItems, setCategoryBestItems] =
+    useState<CategoryBestItemType[]>();
+  const [parentCategories, setParentCategories] = useState<BaseCateogoryType[]>(
+    [],
+  );
 
   useEffect(() => {
     async function fetchParentCategory() {
@@ -15,7 +20,7 @@ export default () => {
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category/parent`,
         {
           cache: "no-store",
-        }
+        },
       );
 
       const parentCategoryJson = await parentCategoryRes.json();
@@ -43,7 +48,7 @@ export default () => {
       }/api/items/best?${params.toString()}`,
       {
         cache: "no-store",
-      }
+      },
     );
 
     const categoryBestItems = await categoryBestItemRes.json();
@@ -59,6 +64,7 @@ export default () => {
       <nav className="flex justify-between items-end border-b pb-6 px-3 xl:px-0 text">
         <div className="flex justify-start items-end gap-x-4">
           <span className="font-extrabold text-3xl">카테고리 베스트</span>
+          <span className="">전일 주문 순위입니다</span>
         </div>
         <Link href={"/category/0/item"} className="text-end text-[#777]">
           더보기 &#10095;
@@ -106,14 +112,14 @@ export default () => {
             </button>
           ))}
         </div>
-        
+
         <div className="px-1 sm:px-0 gap-x-1 sm:gap-x-0 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 xl:gap-6">
           {categoryBestItems?.map((item, index) => (
             <Link
               href={`/color-items/${item.colorItemId}`}
               key={`categoryBestimages-${index}`}
             >
-              <ul className="">
+              <ul className="positon: relative">
                 <li>
                   <Image
                     src={`${process.env.NEXT_PUBLIC_CDN_URL}/${item.uploadFile.storedFileName}`}

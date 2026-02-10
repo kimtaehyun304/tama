@@ -9,6 +9,7 @@ const menuMap = new Map<string, string>();
 menuMap.set("주문/배송 조회", "order");
 menuMap.set("상품 등록", "item");
 menuMap.set("매출 조회", "sales");
+menuMap.set("VIP 고객", "vip");
 
 export default () => {
   const path = usePathname(); // "/admin/item"
