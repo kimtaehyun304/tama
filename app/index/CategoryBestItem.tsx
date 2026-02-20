@@ -61,14 +61,16 @@ export default () => {
 
   return (
     <section className="xl:block my-16">
-      <nav className="flex justify-between items-end border-b pb-6 px-3 xl:px-0 text">
-        <div className="flex justify-start items-end gap-x-4">
-          <span className="font-extrabold text-3xl">카테고리 베스트</span>
-          <span className="">전일 주문 순위입니다</span>
+      <nav className="pb-3 px-3 xl:px-0 text border-b">
+        <div className="flex justify-between items-end  ">
+          <div className="flex justify-start items-end gap-x-4">
+            <span className="font-extrabold text-3xl">카테고리 베스트</span>
+          </div>
+          <Link href={"/category/0/item"} className="text-end text-[#777]">
+            더보기 &#10095;
+          </Link>
         </div>
-        <Link href={"/category/0/item"} className="text-end text-[#777]">
-          더보기 &#10095;
-        </Link>
+        <span className="">전일 주문 순위입니다</span>
       </nav>
 
       <nav className="">
