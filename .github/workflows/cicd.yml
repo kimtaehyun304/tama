@@ -26,6 +26,7 @@ jobs:
           cp -r .next/static deploy/.next
           cp -r public deploy
           cp -r .platform deploy/.platform
+          cp Procfile deploy
           cd deploy && zip -r app.zip .
 
       - name: Get current time
