@@ -17,7 +17,7 @@ export default () => {
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/category`,
         {
           cache: "no-store",
-        }
+        },
       );
       const categoriesRes = await res.json();
 
@@ -39,37 +39,33 @@ export default () => {
     <section>
       <nav className="border-b">
         <div className="xl:mx-standard">
-          <div className="flex items-center gap-x-4 py-1">
+          <div className="flex items-center divide-x border-x divide-gray-300">
             <button
               onClick={() => setIsVisible(!isVisible)}
-              className="hidden xl:block"
+              className="hidden xl:flex items-center gap-2 px-5 py-3"
             >
-              <div className="border-x grid grid-flow-col items-center px-5">
-                <Image
-                  src="/icon/icon-hamburger.png"
-                  alt="mypae"
-                  width={30}
-                  height={30}
-                />
-                <div className="py-2">전체 카테고리</div>
-              </div>
+              <Image
+                src="/icon/icon-hamburger.png"
+                alt="mypae"
+                width={30}
+                height={30}
+              />
+              <span>전체 카테고리</span>
             </button>
 
-            <Link href={"/"} className="">
-              <div className="px-4 xl:px-0">홈</div>
+            <Link href={"/"} className="px-5 py-3">
+              홈
             </Link>
 
-            <div className="xl:hidden">
+            <Link href={"/"} className="px-5 py-3">
+              추천
+            </Link>
+
+            <div className="xl:hidden px-5 py-3">
               <LoginButton />
             </div>
 
-            <div className="px-4 xl:px-0 xl:hidden">고객센터</div>
-
-            {/*
-            <Link href={"/"} className="">
-              <div className="">베스트</div>
-            </Link>
-            */}
+            <div className="xl:hidden px-5 py-3">고객센터</div>
           </div>
         </div>
       </nav>
