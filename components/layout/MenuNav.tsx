@@ -57,7 +57,7 @@ export default () => {
               홈
             </Link>
 
-            <Link href={"/"} className="px-5 py-3">
+            <Link href={"/recommend"} className="px-5 py-3">
               추천
             </Link>
 
