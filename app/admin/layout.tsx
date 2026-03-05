@@ -28,9 +28,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     checkAdmin();
   }, []);
 
-  if (isAdmin === null) {
-    return <LoadingScreen />;
-  }
+  if (isAdmin === null) return <LoadingScreen />;
 
   if (!isAdmin) return <NotFoundScreen />;
 
