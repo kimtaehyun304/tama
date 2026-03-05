@@ -124,7 +124,7 @@ export default function ChatPage() {
   }, [loading]);
 
   return (
-    <article className="flex flex-col h-[80vh] bg-gray-50 xl:mx-standard">
+    <article className="flex flex-col h-[70vh] bg-gray-50 xl:mx-standard">
       {/* 메시지 영역 */}
       <div ref={messagesRef} className="flex-1 overflow-auto px-4 py-3">
         {messages.map((msg, index) => (
@@ -219,7 +219,7 @@ export default function ChatPage() {
           className="flex-1 border rounded-xl px-4 py-3 focus:outline-none"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
-          placeholder="프롬프트를 입력하세요 ex) 밝은 색상의 여자 옷 추천해줘"
+          placeholder="ex) 밝은 색상의 여자 옷 추천해줘"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !loading) handleSend();
           }}
