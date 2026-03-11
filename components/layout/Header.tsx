@@ -12,7 +12,7 @@ export default async function Header() {
         <div className="xl:mx-standard">
           <div className="flex justify-end gap-x-4 text-sm py-3">
             <LoginButton />
-            <Link href={"/"} className="">
+            <Link href={"/customer-support"} className="">
               <div className="">고객센터</div>
             </Link>
           </div>

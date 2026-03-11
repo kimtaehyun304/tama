@@ -57,15 +57,18 @@ export default () => {
               홈
             </Link>
 
-            <Link href={"/recommend"} className="px-5 py-3">
-              추천
+            <Link href={"/chatbot"} className="px-5 py-3">
+              챗봇
             </Link>
 
             <div className="xl:hidden px-5 py-3">
               <LoginButton />
             </div>
 
-            <div className="xl:hidden px-5 py-3">고객센터</div>
+            <Link href={"/customer-support"} className="px-5 py-3 xl:hidden">
+              고객센터
+            </Link>
+            
           </div>
         </div>
       </nav>

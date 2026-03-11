@@ -19,11 +19,16 @@ type RecommendedItem = {
 };
 
 //user, assistant에 따라 구조가 달라져서 ? 씀
-type ChatMessage = {
+type ReommendChatMessage = {
   role: "user" | "assistant";
   content?: string;
   recommendedCondition?: RecommendedCondition;
   recommendedItems?: RecommendedItem[];
+};
+
+type FaqChatMessage = {
+  role: "user" | "assistant";
+  content: string;
 };
 
 type Gender = "MALE" | "FEMALE" | "BOTH";
