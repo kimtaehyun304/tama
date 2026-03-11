@@ -1,8 +1,6 @@
 "use client";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import Image from "next/image";
-import Link from "next/link";
 import { useState, useRef, useEffect, useContext } from "react";
 
 export default function ChatPage() {
