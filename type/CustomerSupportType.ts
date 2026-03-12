@@ -5,8 +5,8 @@ type FaqPagingType = {
 };
 
 type FaqType = {
-  title: string;
-  description: string;
+  question: string;
+  answer: string;
   category: string;
 };
 

@@ -1,8 +1,12 @@
 "use client";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import LoadingScreen from "@/components/LoadingScreen";
+import MyPagination from "@/components/MyPagination";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, useContext } from "react";
 
 const CATEGORYS: String[] = [
@@ -14,20 +18,35 @@ const CATEGORYS: String[] = [
 ];
 
 export default function ChatPage() {
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
+  const searchParams = useSearchParams();
+  const pagePrams = Number(searchParams.get("page")) || 1;
+  const categoryPrams = Number(searchParams.get("category")) || 0;
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(categoryPrams);
   const [faqPaging, setFaqPaging] = useState<FaqPagingType>();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
+  const router = useRouter();
+  //아이템 개수
+  const pageSize = 10;
+  async function fetchFaq() {
+    const params = new URLSearchParams();
+    params.append("category", String(CATEGORYS[selectedCategoryIndex]));
+    params.append("page", String(pagePrams));
+    params.append("size", String(pageSize));
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/customer-support/faq?${params.toString()}`,
+    );
+    const faqPaging: FaqPagingType = await res.json();
+    setFaqPaging(faqPaging);
+  }
+
   useEffect(() => {
-    async function fetchFaq() {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/customer-support/faq?category=${CATEGORYS[selectedCategoryIndex]}`,
-      );
-      const faqPaging: FaqPagingType = await res.json();
-      setFaqPaging(faqPaging);
-    }
     fetchFaq();
-  }, [selectedCategoryIndex]);
+  }, [selectedCategoryIndex, pagePrams]);
+
+  //기본값 넣는 방벋도 있지만, 그러면 컴포넌트가 이동해서 어지러움
+  if (!faqPaging) return <LoadingScreen />;
 
   return (
     <article className="mx-[5%] xl:mx-[10%]">
@@ -51,6 +70,7 @@ export default function ChatPage() {
                 }`}
                 onClick={() => {
                   setSelectedCategoryIndex(index);
+                  router.push(`?page=1`);
                 }}
               >
                 {category}
@@ -67,16 +87,23 @@ export default function ChatPage() {
               className="w-full text-left text-lg flex justify-between"
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
             >
-              <span>Q. {faq.title}</span>
+              <span>Q. {faq.question}</span>
               <span>{openIndex === index ? "▲" : "▼"}</span>
             </button>
 
             {openIndex === index && (
-              <div className="mt-3 text-gray-600 whitespace-pre-wrap">{faq.description}</div>
+              <div className="mt-3 text-gray-600 whitespace-pre-wrap">
+                {faq.answer}
+              </div>
             )}
           </div>
         ))}
       </section>
+
+      <MyPagination
+        pageCount={faqPaging.page.pageCount}
+        pageRangeDisplayed={5}
+      />
     </article>
   );
 }
