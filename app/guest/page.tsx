@@ -37,13 +37,13 @@ export default () => {
 
   async function cancelOrder() {
     setCancelOrderDisable(true);
-    simpleModalContext?.setMessage("결제 취소중.. 나가지 마세요");
+    simpleModalContext?.setMessage("주문 취소중.. 나가지 마세요");
     simpleModalContext?.setIsOpenSimpleModal(true);
     const credentials = btoa(
       unescape(encodeURIComponent(`${buyerName}:${orderId}`))
     );
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/guest/cancel`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/guest/cancel/received`,
       {
         method: "PUT",
         headers: {

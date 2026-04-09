@@ -4,6 +4,7 @@ import { AuthContext } from "@/components/context/AuthContext";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
 import MyPagination from "@/components/MyPagination";
+import { ORDER_STATUS_LABELS } from "@/type/Label";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -42,12 +43,15 @@ export default () => {
   }, [authContext?.isLogined, pagePrams]);
 
   async function cancelOrder(orderId: number, isFreeOrder: boolean) {
+    if (!confirm("관리자가 임의로 주문 취소하는 기능입니다. 진짜 취소하시겠습니까?",) )
+      return;
+
     if (authContext?.isLogined) {
       setCancelOrderDisable(true);
-      simpleModalContext?.setMessage("결제 취소중.. 나가지 마세요");
+      simpleModalContext?.setMessage("주문 취소중.. 나가지 마세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/member/cancel`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/cancel`,
         {
           method: "PUT",
           headers: {
@@ -72,7 +76,7 @@ export default () => {
             ...prevOrders,
             content: prevOrders.content.map((order) =>
               order.id === orderId
-                ? { ...order, status: "CANCEL_RECEIVED" }
+                ? { ...order, status: "REFUNDED" }
                 : order,
             ),
           };
@@ -95,7 +99,7 @@ export default () => {
           <section className="space-y-2 ">
             <div className="flex gap-x-1">
               <div className="font-bold">{order.orderDate}</div>
-              <div>{order.status}</div>
+              <div>{ORDER_STATUS_LABELS[order.status]}</div>
             </div>
             <div>{order.buyerName}</div>
             <div>
@@ -124,7 +128,7 @@ export default () => {
               className="border bg-black text-white p-2"
               disabled={cancelOrderDisable}
             >
-              주문 취소
+              주문 강제 취소
             </button>
           )}
 
@@ -157,6 +161,71 @@ export default () => {
               </div>
             ))}
           </div>
+
+          <section className="">
+            <div className="inline-block  space-y-1">
+              <div className="flex gap-x-20">
+                <span>상품 금액</span>
+                <span className="grow text-right">
+                  {order.orderItems
+                    .reduce(
+                      (sum, item) => sum + item.orderPrice * item.count,
+                      0,
+                    )
+                    .toLocaleString("ko-kr")}
+                  원
+                </span>
+              </div>
+
+              {order.shippingFee != 0 && (
+                <div className="flex">
+                  <span>배송비</span>
+                  <span className="grow text-right">
+                    {order.shippingFee.toLocaleString("ko-kr")}원
+                  </span>
+                </div>
+              )}
+
+              {order.usedCouponPrice != 0 && (
+                <div className="flex justify-center">
+                  <span>쿠폰 할인 금액</span>
+                  <span className="grow text-right">
+                    {order.usedCouponPrice > 0
+                      ? "-" + order.usedCouponPrice.toLocaleString("ko-kr")
+                      : 0}
+                    원
+                  </span>
+                </div>
+              )}
+              {order.usedPoint != 0 && (
+                <div className="flex justify-center">
+                  <span>적립금 사용</span>
+                  <span className="grow text-right">
+                    {order.usedPoint > 0
+                      ? "-" + order.usedPoint.toLocaleString("ko-kr")
+                      : 0}
+                    원
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-center">
+                <span className="font-bold">총</span>
+                <span className="grow text-right font-bold">
+                  {(
+                    order.orderItems.reduce(
+                      (sum, item) => sum + item.orderPrice * item.count,
+                      0,
+                    ) +
+                    order.shippingFee -
+                    order.usedCouponPrice -
+                    order.usedPoint
+                  ).toLocaleString("ko-kr")}
+                  원
+                </span>
+              </div>
+            </div>
+          </section>
         </section>
       ))}
       <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
