@@ -3,6 +3,7 @@
 import { AuthContext } from "@/components/context/AuthContext";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import DeliveryTrackingModal from "@/components/modal/DeliveryTrackingModal";
 import MyPagination from "@/components/MyPagination";
 import { ORDER_STATUS_LABELS } from "@/type/Label";
 import Image from "next/image";
@@ -17,6 +18,8 @@ export default () => {
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
   const pageSize = 10;
+  const [isOpenDeliveryTrackingModal, setIsOpenDeliveryTrackingModal] =
+    useState<boolean>(false);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -43,7 +46,11 @@ export default () => {
   }, [authContext?.isLogined, pagePrams]);
 
   async function cancelOrder(orderId: number, isFreeOrder: boolean) {
-    if (!confirm("관리자가 임의로 주문 취소하는 기능입니다. 진짜 취소하시겠습니까?",) )
+    if (
+      !confirm(
+        "관리자가 임의로 주문 취소하는 기능입니다. 진짜 취소하시겠습니까?",
+      )
+    )
       return;
 
     if (authContext?.isLogined) {
@@ -51,7 +58,7 @@ export default () => {
       simpleModalContext?.setMessage("주문 취소중.. 나가지 마세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/cancel`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${orderId}/cancel`,
         {
           method: "PUT",
           headers: {
@@ -59,7 +66,6 @@ export default () => {
             Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
           },
           body: JSON.stringify({
-            orderId: orderId,
             isFreeOrder: isFreeOrder,
           }),
         },
@@ -75,9 +81,7 @@ export default () => {
           return {
             ...prevOrders,
             content: prevOrders.content.map((order) =>
-              order.id === orderId
-                ? { ...order, status: "REFUNDED" }
-                : order,
+              order.id === orderId ? { ...order, status: "REFUNDED" } : order,
             ),
           };
         });
@@ -109,29 +113,42 @@ export default () => {
             <div>{order.delivery.message}</div>
           </section>
 
-          {(order.status == "ORDER_RECEIVED" ||
-            order.status == "DELIVERED") && (
-            <button
-              onClick={() =>
-                cancelOrder(
-                  order.id,
-                  order.orderItems.reduce(
-                    (sum, item) => sum + item.orderPrice * item.count,
-                    0,
-                  ) +
-                    order.shippingFee -
-                    order.usedCouponPrice -
-                    order.usedPoint ==
-                    0,
-                )
-              }
-              className="border bg-black text-white p-2"
-              disabled={cancelOrderDisable}
-            >
-              주문 강제 취소
-            </button>
-          )}
-
+          <div className="flex gap-x-3">
+            {!order.delivery.carrierCode && !order.delivery.trackingNumber && (
+              <button
+                className="border bg-white text-black p-2"
+                onClick={() => setIsOpenDeliveryTrackingModal(true)}
+              >
+                운송장 등록 폼
+              </button>
+            )}
+            <DeliveryTrackingModal
+              isOpenModal={isOpenDeliveryTrackingModal}
+              setIsOpenModal={setIsOpenDeliveryTrackingModal}
+            />
+            {(order.status == "ORDER_RECEIVED" ||
+              order.status == "DELIVERED") && (
+              <button
+                onClick={() =>
+                  cancelOrder(
+                    order.id,
+                    order.orderItems.reduce(
+                      (sum, item) => sum + item.orderPrice * item.count,
+                      0,
+                    ) +
+                      order.shippingFee -
+                      order.usedCouponPrice -
+                      order.usedPoint ==
+                      0,
+                  )
+                }
+                className="border bg-black text-white p-2"
+                disabled={cancelOrderDisable}
+              >
+                주문 강제 취소
+              </button>
+            )}
+          </div>
           <div className="grid xl:grid-cols-2 gap-3">
             {order.orderItems.map((item, index) => (
               <div

@@ -74,6 +74,8 @@ type DeliveryResponse = {
   message: string;
   receiverNickname: string;
   receiverPhone: string;
+  trackingNumber: string;
+  carrierCode: string;
 };
 
 type SenderFormState = {

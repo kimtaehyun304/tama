@@ -83,7 +83,7 @@ export default () => {
       simpleModalContext?.setMessage("결제 취소 접수 중.. 나가지 마세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/member/cancel/received`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${orderId}/member/cancel/received`,
         {
           method: "PUT",
           headers: {
@@ -91,7 +91,6 @@ export default () => {
             Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
           },
           body: JSON.stringify({
-            orderId: orderId,
             isFreeOrder: isFreeOrder,
           }),
         },
@@ -140,6 +139,14 @@ export default () => {
               {order.delivery.detail}
             </div>
             <div>{order.delivery.message}</div>
+            {order.delivery.carrierCode && order.delivery.trackingNumber && (
+              <button
+                className="border bg-white text-black p-2"
+                disabled={cancelOrderDisable}
+              >
+                배송 조회
+              </button>
+            )}
           </section>
 
           {order.orderItems.map((item, index) => (
