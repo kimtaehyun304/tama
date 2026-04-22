@@ -52,7 +52,7 @@ export default () => {
   }, [authContext?.isLogined, pagePrams]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/delivery/courier/available")
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/delivery/courier/available`)
       .then((res) => res.json())
       .then((data) => setCouriers(data))
       .catch((err) => console.error("택배사 조회 실패:", err));

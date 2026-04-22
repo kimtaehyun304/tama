@@ -57,7 +57,7 @@ export default function ({
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/delivery/${delivery?.id}/tracking`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/delivery/${delivery?.id}/tracking`,
         {
           method: "PUT",
           headers: {

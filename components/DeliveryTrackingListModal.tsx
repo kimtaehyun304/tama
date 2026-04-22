@@ -48,7 +48,7 @@ export default function ({
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/delivery/tracking?courier=${courier}&trackingNumber=${trackingNumber}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/delivery/tracking?courier=${courier}&trackingNumber=${trackingNumber}`,
       );
 
       const data: DeliveryTrackingResponse = await res.json();
