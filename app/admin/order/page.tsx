@@ -3,7 +3,8 @@
 import { AuthContext } from "@/components/context/AuthContext";
 
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
-import DeliveryTrackingModal from "@/components/modal/DeliveryTrackingModal";
+import DeliveryTrackingListModal from "@/components/DeliveryTrackingListModal";
+import DeliveryTrackingFormModal from "@/components/modal/DeliveryTrackingFormModal";
 import MyPagination from "@/components/MyPagination";
 import { ORDER_STATUS_LABELS } from "@/type/Label";
 import Image from "next/image";
@@ -18,8 +19,13 @@ export default () => {
   const searchParams = useSearchParams();
   const pagePrams = Number(searchParams.get("page")) || 1;
   const pageSize = 10;
-  const [isOpenDeliveryTrackingModal, setIsOpenDeliveryTrackingModal] =
+  const [isOpenTrackingFormModal, setIsOpenTrackingFormModal] =
     useState<boolean>(false);
+  const [isOpenTrackingListModal, setIsOpenTrackingListModal] =
+    useState<boolean>(false);
+  const [selectedDelivery, setSelectedDelivery] =
+    useState<DeliveryResponse | null>(null);
+  const [couriers, setCouriers] = useState<CourierResponse[]>([]);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -44,6 +50,13 @@ export default () => {
     }
     fetchOrder();
   }, [authContext?.isLogined, pagePrams]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/delivery/courier/available")
+      .then((res) => res.json())
+      .then((data) => setCouriers(data))
+      .catch((err) => console.error("택배사 조회 실패:", err));
+  }, []);
 
   async function cancelOrder(orderId: number, isFreeOrder: boolean) {
     if (
@@ -90,6 +103,33 @@ export default () => {
     }
   }
 
+  function updateDeliveryState(
+    deliveryId: number,
+    courier: string,
+    trackingNumber: string,
+  ) {
+    setOrders((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        content: prev.content.map((order) => {
+          if (order.delivery.id === deliveryId) {
+            return {
+              ...order,
+              delivery: {
+                ...order.delivery,
+                courier,
+                trackingNumber,
+              },
+            };
+          }
+          return order;
+        }),
+      };
+    });
+  }
+
   //forbiddebScreen 띄우면 화면 바뀌어서 눈 아픔
   if (!orders) {
     return null;
@@ -114,18 +154,30 @@ export default () => {
           </section>
 
           <div className="flex gap-x-3">
-            {!order.delivery.carrierCode && !order.delivery.trackingNumber && (
+            {order.delivery.courier && order.delivery.trackingNumber && (
               <button
+                type="button"
                 className="border bg-white text-black p-2"
-                onClick={() => setIsOpenDeliveryTrackingModal(true)}
+                onClick={() => {
+                  setSelectedDelivery(order.delivery);
+                  setIsOpenTrackingListModal(true);
+                }}
               >
-                운송장 등록 폼
+                배송 조회
               </button>
             )}
-            <DeliveryTrackingModal
-              isOpenModal={isOpenDeliveryTrackingModal}
-              setIsOpenModal={setIsOpenDeliveryTrackingModal}
-            />
+
+            <button
+              type="button"
+              className="border bg-white text-black p-2"
+              onClick={() => {
+                setSelectedDelivery(order.delivery);
+                setIsOpenTrackingFormModal(true);
+              }}
+            >
+              운송장 수정
+            </button>
+
             {(order.status == "ORDER_RECEIVED" ||
               order.status == "DELIVERED") && (
               <button
@@ -149,6 +201,7 @@ export default () => {
               </button>
             )}
           </div>
+
           <div className="grid xl:grid-cols-2 gap-3">
             {order.orderItems.map((item, index) => (
               <div
@@ -245,6 +298,22 @@ export default () => {
           </section>
         </section>
       ))}
+
+      <DeliveryTrackingFormModal
+        isOpenModal={isOpenTrackingFormModal}
+        setIsOpenModal={setIsOpenTrackingFormModal}
+        delivery={selectedDelivery}
+        couriers={couriers}
+        updateDeliveryState={updateDeliveryState}
+      />
+
+      <DeliveryTrackingListModal
+        isOpenModal={isOpenTrackingListModal}
+        setIsOpenModal={setIsOpenTrackingListModal}
+        delivery={selectedDelivery}
+        couriers={couriers}
+      />
+
       <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
     </section>
   );

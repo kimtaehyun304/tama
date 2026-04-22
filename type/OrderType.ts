@@ -68,6 +68,7 @@ type OrderStatus =
 
 // DeliveryResponse Type
 type DeliveryResponse = {
+  id: number;
   zipCode: string; // 우편번호
   street: string; // 도로명 주소
   detail: string; // 상세 주소
@@ -75,7 +76,7 @@ type DeliveryResponse = {
   receiverNickname: string;
   receiverPhone: string;
   trackingNumber: string;
-  carrierCode: string;
+  courier: string;
 };
 
 type SenderFormState = {

@@ -2,6 +2,7 @@
 
 import { AuthContext } from "@/components/context/AuthContext";
 import { SimpleModalContext } from "@/components/context/SimpleModalContex";
+import DeliveryTrackingListModal from "@/components/DeliveryTrackingListModal";
 import LoginScreen from "@/components/LoginScreen";
 import ReviewFormModal from "@/components/modal/ReviewFormModal";
 import MyPagination from "@/components/MyPagination";
@@ -25,6 +26,11 @@ export default () => {
   const [orderItemId, setOrderItemId] = useState<number | undefined>(undefined);
   const [cancelOrderDisable, setCancelOrderDisable] = useState<boolean>(false);
   const [isLoadingFetchOrder, setIsLoadingFetchOrder] = useState<boolean>(true);
+  const [isOpenTrackingListModal, setIsOpenTrackingListModal] =
+    useState<boolean>(false);
+  const [selectedDelivery, setSelectedDelivery] =
+    useState<DeliveryResponse | null>(null);
+  const [couriers, setCouriers] = useState<CourierResponse[]>([]);
 
   useEffect(() => {
     async function fetchOrder() {
@@ -139,10 +145,13 @@ export default () => {
               {order.delivery.detail}
             </div>
             <div>{order.delivery.message}</div>
-            {order.delivery.carrierCode && order.delivery.trackingNumber && (
+            {order.delivery.courier && order.delivery.trackingNumber && (
               <button
                 className="border bg-white text-black p-2"
-                disabled={cancelOrderDisable}
+                onClick={() => {
+                  setSelectedDelivery(order.delivery);
+                  setIsOpenTrackingListModal(true);
+                }}
               >
                 배송 조회
               </button>
@@ -306,6 +315,13 @@ export default () => {
             };
           });
         }}
+      />
+
+      <DeliveryTrackingListModal
+        isOpenModal={isOpenTrackingListModal}
+        setIsOpenModal={setIsOpenTrackingListModal}
+        delivery={selectedDelivery}
+        couriers={couriers}
       />
 
       <MyPagination pageCount={orders.page.pageCount} pageRangeDisplayed={5} />
