@@ -28,7 +28,8 @@ tailwind
 * 자동 로딩바 출력을 위해 loading.tsx 사용 (dot animation)
 * 공통 레이아웃을 위해 layout.tsx 사용
 * 매번 랜더링마다 jwt 유효기간 확인 (jsonwebtoken npm)
-  
+* jaju 웹 페이지 디자인 카피 (px 단위의 섬세함)
+
 ### 성능 개선
 <ul>
   <li>최대한 pre-render 활용</li>
