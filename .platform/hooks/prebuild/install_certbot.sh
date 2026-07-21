@@ -4,8 +4,6 @@
 
 set -e
 
-# cerbot은 있는데, 인증서만 날라간 경우가 있음
-# 그거 떄문에 이렇게 한거같은데 로직 수정헤야할듯 2026-04-07
 # certbot 설치 여부 확인
 if [ ! -d /etc/letsencrypt/live ]; then
     echo "Certbot not installed, installing..."

@@ -8,4 +8,4 @@ else
     sudo pkill -f nginx
     sudo systemctl start nginx
     echo "[INFO] nginx restart successfully"
-fi    
+fi
