@@ -7,20 +7,20 @@ set -e
 # certbot 설치 여부 확인
 if [ ! -d /etc/letsencrypt/live ]; then
     echo "Certbot not installed, installing..."
-    sudo yum install -y certbot python3-certbot-nginx
+    yum install -y certbot python3-certbot-nginx
 
     # 인증서 발급
-    sudo certbot --nginx \
+    certbot --nginx \
         -d dlta.kr \
         --email kimapbel@gmail.com \
         --agree-tos \
         --no-eff-email \
         --non-interactive
 
-    sudo systemctl enable --now certbot-renew.timer
+    systemctl enable --now certbot-renew.timer
 
     # 인증서 갱신 후 Nginx 재시작/시작 스크립트 생성
-    sudo tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh > /dev/null <<'EOF'
+    tee /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh > /dev/null <<'EOF'
 #!/bin/bash
 
 # Nginx reload 시도
