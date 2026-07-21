@@ -5,7 +5,7 @@ if  systemctl is-active --quiet nginx; then
     echo "[INFO] nginx is active. so skip to restart nginx"
 else 
     echo "[WARN] nginx is not active. try to start nginx"
-    sudo pkill -f nginx
-    sudo systemctl start nginx
+    pkill -f nginx
+    systemctl start nginx
     echo "[INFO] nginx restart successfully"
 fi
