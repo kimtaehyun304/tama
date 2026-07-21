@@ -1,17 +1,13 @@
 <h1>쇼핑몰 1인 개발 / 2024.12 ~ </h1>
 
-### 인프라
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/fee97e3b-fe2a-4662-b7e6-555f3c8f68e5" />
-  <img src="https://github.com/user-attachments/assets/b3528f47-4cdb-4fd4-a5bb-2eed72233c6c" />
-</p>
-
 <p>https://dlta.kr</p>
 
 ### 기술
 * next.js 15 앱 라우터, typeScript 5, tailwind 3
-* react 18 (react-hook-form, react-slick, react-paginate)
-* turbopack, styled-components, eslint
+* react 18 (hook-form, slick, paginate, daum-postcode)
+* turbopack, standalone 빌드, context state
+* chart.js, styled-components, 모달
+* eslint, jsonwebtoken
 
 ### 기술 선택 근거
 typeScript
@@ -27,11 +23,40 @@ tailwind
 </ul>
 
 ### 구조
+* tailwind의 grid·flex·breakpoint prefix로 구현한 반응형 웹(pc·모바일)
 * try-catch 대용으로 error.tsx 사용
-* 자동 로딩바 출력을 위해 loading.tsx 사용
+* 자동 로딩바 출력을 위해 loading.tsx 사용 (dot animation)
 * 공통 레이아웃을 위해 layout.tsx 사용
-* 매번 랜더링마다 jwt 유효기간 확인
-* standalone 빌드
+* 매번 랜더링마다 jwt 유효기간 확인 (jsonwebtoken npm)
+* jaju 웹 페이지 디자인 카피 (px 단위의 섬세함)
+
+### 성능 개선
+<ul>
+  <li>최대한 pre-render 활용</li>
+  <li>csr 환경도 pre-render 가능하므로 활용 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
+  <li>서버 컴포넌트가 SSR로 미동작 → force-dynamic으로 SSR 강제</li>  
+  <li>웹 폰트 → 로컬 폰트 변경</li>
+  <li>이미지 크기 절약 - next.js Image 컴포넌트 사용</li>
+  <li>이미지 캐싱 - cdn(aws cloudFront) 사용</li>
+</ul>
+
+### 코드 개선
+<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
+  주문 페이지 컴포넌트 분리
+</a>
+<ul>
+  <li>코드가 1,000 줄이 넘어가서 분리</li>
+  <li>page.tsx / 주문 입력 폼 / 주문 아이템 / 주문 버튼 컴포넌트</li>
+  <li>page.tsx에서 컴포넌트에 useState props 전달</li>
+</ul>
+
+react-hook-form으로 props 줄이기
+<ul>
+  <li>기존엔 state를 모두 넘겨야 해서 힘들었음</li>
+  <li>react-hook-form 도입 후 register, watch만 props로 넘기면 돼서 편해짐</li>
+  <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 돼서 편해짐</li>
+</ul>
+
 
 ### 트러블 슈팅
 onClick이 useEffect보다 나았다
@@ -66,34 +91,7 @@ localStorage is not defined
 * 원인: next.js 앱 첫 접속은 SSR → 서버에서는 로컬스토리지를 찾을 수 없음 
 * 해결: useEffect에서 로컬스토리지 조회하기
 
-### 코드 개선
-<a href="https://github.com/kimtaehyun304/tama/blob/309649ccf024d3f8a79896fe5216417f5f0d516f/app/order/page.tsx#L92">
-  주문 페이지 컴포넌트 분리
-</a>
-<ul>
-  <li>코드가 1,000 줄이 넘어가서 분리</li>
-  <li>page.tsx / 주문 입력 폼 / 주문 아이템 / 주문 버튼 컴포넌트</li>
-  <li>page.tsx에서 컴포넌트에 useState props 전달</li>
-</ul>
-
-react-hook-form으로 props 줄이기
-<ul>
-  <li>기존엔 state를 모두 넘겨야 해서 힘들었음</li>
-  <li>react-hook-form 도입 후 register, watch만 props로 넘기면 돼서 편해짐</li>
-  <li>useRef도 일일히 넘기는 게 아니라, SetFocus 하나만 넘기면 돼서 편해짐</li>
-</ul>
-
-### 성능 개선
-<ul>
-  <li>최대한 pre-render 활용</li>
-  <li>csr 환경도 pre-render 가능 (단, API 호출로 세팅한 useState, useSeachParam 사용한 경우 제외)</li>
-  <li>서버 컴포넌트가 SSR로 미동작 → force-dynamic으로 SSR 강제</li>  
-  <li>웹 폰트 → 로컬 폰트 변경</li>
-  <li>이미지 크기 절약 - next.js Image 컴포넌트 사용</li>
-  <li>이미지 캐싱 - cdn(aws cloudFront) 사용</li>
-</ul>
-
-### 인증 고민
+#### 인증 처리 고민
 <a href="https://velog.io/@hyungman304/%ED%86%A0%ED%81%B0-%EB%B3%B4%EA%B4%80-%EC%9C%84%EC%B9%98-%EA%B3%A0%EC%B0%B0">
   jwt 저장소 고민 (쿠키 vs 로컬 스토리지)
 </a>
@@ -121,14 +119,6 @@ react-hook-form으로 props 줄이기
   <li>상품 주문</li>
   <li>마이 페이지 (개인 주문 조회·배송지 조회·유저 정보 변경)</li>
   <li>관리자 페이지 (전체 주문 조회·상품 등록)</li>
-</ul>
-
-### UI/UX
-<ul>
-  <li>tailwind의 grid·flex·breakpoint prefix로 반응형 웹(pc·모바일) 제작</li>
-  <li>렌더링 대기 시간 동안 로딩 애니메이션 출력</li>
-  <li>알림 메시지가 잘 보이도록 모달 사용</li>
-  <li>이미지 슬라이더 사용</li>
 </ul>
 
 ### 화면
