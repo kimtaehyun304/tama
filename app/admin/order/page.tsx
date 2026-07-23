@@ -52,20 +52,15 @@ export default () => {
   }, [authContext?.isLogined, pagePrams]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/delivery/courier/available`)
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/delivery/courier/available`,
+    )
       .then((res) => res.json())
       .then((data) => setCouriers(data))
       .catch((err) => console.error("택배사 조회 실패:", err));
   }, []);
 
-  async function cancelOrder(orderId: number, isFreeOrder: boolean) {
-    if (
-      !confirm(
-        "관리자가 임의로 주문 취소하는 기능입니다. 진짜 취소하시겠습니까?",
-      )
-    )
-      return;
-
+  async function cancelOrder(orderId: number) {
     if (authContext?.isLogined) {
       setCancelOrderDisable(true);
       simpleModalContext?.setMessage("주문 취소중.. 나가지 마세요");
@@ -78,9 +73,6 @@ export default () => {
             "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
           },
-          body: JSON.stringify({
-            isFreeOrder: isFreeOrder,
-          }),
         },
       );
       const ordersJson: SimpleResponseType = await res.json();
@@ -181,23 +173,31 @@ export default () => {
             {(order.status == "ORDER_RECEIVED" ||
               order.status == "DELIVERED") && (
               <button
-                onClick={() =>
-                  cancelOrder(
-                    order.id,
-                    order.orderItems.reduce(
-                      (sum, item) => sum + item.orderPrice * item.count,
-                      0,
-                    ) +
-                      order.shippingFee -
-                      order.usedCouponPrice -
-                      order.usedPoint ==
-                      0,
-                  )
-                }
+                onClick={() => {
+                  if (
+                    !confirm(
+                      "관리자가 임의로 주문 취소하는 기능입니다. 진짜 취소하시겠습니까?",
+                    )
+                  ) {
+                    return;
+                  }
+
+                  cancelOrder(order.id);
+                }}
                 className="border bg-black text-white p-2"
                 disabled={cancelOrderDisable}
               >
                 주문 강제 취소
+              </button>
+            )}
+
+            {order.status == "CANCEL_RECEIVED" && (
+              <button
+                onClick={() => cancelOrder(order.id)}
+                className="border bg-black text-white p-2"
+                disabled={cancelOrderDisable}
+              >
+                환불 승인
               </button>
             )}
           </div>
