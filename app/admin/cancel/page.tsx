@@ -42,23 +42,19 @@ export default () => {
     fetchOrder();
   }, [authContext?.isLogined, pagePrams]);
 
-  async function cancelOrder(orderId: number, isFreeOrder: boolean) {
+  async function cancelOrder(orderId: number) {
     if (authContext?.isLogined) {
       setCancelOrderDisable(true);
       simpleModalContext?.setMessage("주문 취소중.. 나가지 마세요");
       simpleModalContext?.setIsOpenSimpleModal(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/cancel`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders/${orderId}/cancel`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("tamaAccessToken"),
           },
-          body: JSON.stringify({
-            orderId: orderId,
-            isFreeOrder: isFreeOrder,
-          }),
         },
       );
       const ordersJson: SimpleResponseType = await res.json();
@@ -72,9 +68,7 @@ export default () => {
           return {
             ...prevOrders,
             content: prevOrders.content.map((order) =>
-              order.id === orderId
-                ? { ...order, status: "REFUNDED" }
-                : order,
+              order.id === orderId ? { ...order, status: "REFUNDED" } : order,
             ),
           };
         });
@@ -203,23 +197,11 @@ export default () => {
 
           {order.status == "CANCEL_RECEIVED" && (
             <button
-              onClick={() =>
-                cancelOrder(
-                  order.id,
-                  order.orderItems.reduce(
-                    (sum, item) => sum + item.orderPrice * item.count,
-                    0,
-                  ) +
-                    order.shippingFee -
-                    order.usedCouponPrice -
-                    order.usedPoint ==
-                    0,
-                )
-              }
+              onClick={() => cancelOrder(order.id)}
               className="border bg-black text-white p-2"
               disabled={cancelOrderDisable}
             >
-              취소 확정
+              환불 승인
             </button>
           )}
         </section>
