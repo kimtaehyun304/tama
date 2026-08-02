@@ -1,11 +1,12 @@
 #!/bin/bash
 # Beanstalk EC2 재생성 시 Certbot 설치 + 인증서 발급 + 자동 갱신 설정
 # 인증서만 지워지는 경우도 있음
-
+# postdeploy에 만들면, 인증서 없는 경우 postdeploy 단계어서 nginx -t 실패함
 set -e
 
 DOMAIN="dlta.kr"
 EMAIL="kimapbel@gmail.com"
+WEBROOT="/usr/share/nginx/html"
 
 # 1. Certbot 없으면 설치
 if ! command -v certbot >/dev/null 2>&1; then
@@ -18,6 +19,8 @@ fi
 # 2. 인증서가 없으면 발급
 if [ ! -d "/etc/letsencrypt/live" ] || [ ! -d "/etc/letsencrypt/live/${DOMAIN}" ]; then
     echo "[INFO] Certificate not found. Issuing certificate..."
+
+    mkdir -p "$WEBROOT/.well-known/acme-challenge"
 
     certbot certonly --webroot \
         -w "$WEBROOT" \
